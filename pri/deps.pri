@@ -29,6 +29,8 @@ win32 {
               -lssleay32
     }
 
+    DEFINES += GOOGLE_NAMESPACE=google
+
 }
 
 osx {
@@ -59,6 +61,8 @@ macx{
     LIBS+=$DIRPREFIX/osx/lib/libcrypto.a
     PRE_TARGETDEPS+=$DIRPREFIX/osx/lib/libcrypto.a
 
+    DEFINES += GOOGLE_NAMESPACE=google
+
 }
 
 ##############
@@ -83,6 +87,8 @@ ios {
     ## PROTOBUFF
     LIBS +=$DIRPREFIX/ios/extrenal/lib/libprotobuf.a
     PRE_TARGETDEPS +=$DIRPREFIX/ios/extrenal/lib/libprotobuf.a
+
+    DEFINES += GOOGLE_NAMESPACE=google_public
 
 }
 
@@ -110,6 +116,8 @@ android {
 
         # PROTOBUFF
         LIBS += $$DIRPREFIX/android/extrenal-android/lib/libprotobuf.so
+
+        DEFINES += GOOGLE_NAMESPACE=google
 }
 
 
@@ -126,5 +134,7 @@ linux!android{
         ##  SECP251K1
         LIBS +=$$DIRPREFIX/linux/lib/libsecp256k1.a
         PRE_TARGETDEPS += $$DIRPREFIX/linux/lib/libsecp256k1.a
+
+        DEFINES += GOOGLE_NAMESPACE=google
 }
 

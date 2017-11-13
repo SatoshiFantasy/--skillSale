@@ -3,8 +3,8 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
     $$PWD/genprotos/genprotos.pro \
-    $$PWD/apps
-
+    $$PWD/apps \
+    $$PWD/share
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
