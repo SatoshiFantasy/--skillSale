@@ -8,7 +8,7 @@ CONFIG += c++11 \
 
 ## SOURCES
 PROTOS += \
-    $$PWD/StateData.proto
+    $$PWD/*.proto
 
 
 DEFINES += BUILD_PROTO
