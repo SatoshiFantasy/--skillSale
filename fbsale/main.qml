@@ -30,10 +30,10 @@ ApplicationWindow {
         id: tabBar
         currentIndex: swipeView.currentIndex
         TabButton {
-            text: qsTr("First")
+            text: qsTr("Home")
         }
         TabButton {
-            text: qsTr("Second")
+            text: qsTr("Wallet")
         }
     }
 }
