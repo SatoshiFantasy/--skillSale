@@ -1,9 +1,16 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include "ExData.pb.h"
+#include "RunGuard.h"
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
+    RunGuard guard( "fbsaleclient" );
+        if ( !guard.tryToRun() ) {
+            qCritical() << "fbsaleclient is running";
+            return 0;
+        }
+
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
 
