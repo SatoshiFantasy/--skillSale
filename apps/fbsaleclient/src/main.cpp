@@ -6,10 +6,10 @@
 int main(int argc, char *argv[])
 {
     RunGuard guard( "fbsaleclient" );
-        if ( !guard.tryToRun() ) {
-            qCritical() << "fbsaleclient is running";
-            return 0;
-        }
+    if ( !guard.tryToRun() ) {
+        qCritical() << "fbsaleclient is running";
+        return 0;
+    }
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);

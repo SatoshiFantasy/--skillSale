@@ -18,9 +18,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     $$PWD/src/main.cpp \
-    $$PWD/src/runguard.cpp
+    $$PWD/src/runguard.cpp \
+    $$PWD/src/clientgateway.cpp
 
-HEADERS += $$PWD/src/runguard.h
+HEADERS += $$PWD/src/runguard.h \
+    $$PWD/src/clientgateway.h
 
 RESOURCES += $$PWD/qml/qml.qrc
 
