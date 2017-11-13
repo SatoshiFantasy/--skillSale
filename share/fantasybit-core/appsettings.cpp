@@ -1,4 +1,5 @@
 #include "appsettings.h"
+#include <globals.h>
 
 QMutex AppSettings::myMutex;
 AppSettings::AppSettings(){

@@ -10,8 +10,8 @@
 #ifndef APP_SETTINGS
 #define APP_SETTINGS
 #define ORGANIZATION_NAME "Protoblock, Inc"
-#define ORGANIZATION_DOMAIN "protoblock.com"
-#define APPLICATION_NAME "Protoblock"
+#define ORGANIZATION_DOMAIN "fantasybit.com"
+#define APPLICATION_NAME "fantasybit"
 #endif
 
 
