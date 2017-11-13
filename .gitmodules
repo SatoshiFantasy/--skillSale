@@ -1,0 +1,3 @@
+[submodule "protoblock-prebuiltLibs"]
+	path = protoblock-prebuiltLibs
+	url = https://github.com/protoblock/prebuiltLibs
