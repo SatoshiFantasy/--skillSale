@@ -19,12 +19,25 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     $$PWD/src/main.cpp \
     $$PWD/src/runguard.cpp \
-    $$PWD/src/clientgateway.cpp
+    $$PWD/src/clientgateway.cpp \
+    $$PWD/sm/CoinSale_sm.cpp \
+    $$PWD/src/CoinSale.cpp
+
+
 
 HEADERS += $$PWD/src/runguard.h \
-    $$PWD/src/clientgateway.h
+    $$PWD/src/clientgateway.h \
+    $$PWD/sm/CoinSale_sm.h  \
+    $$PWD/sm/statemap.h  \
+    $$PWD/src/CoinSale.h
+
+INCLUDEPATH +=  $$PWD/src $$PWD/sm
+
 
 RESOURCES += $$PWD/qml/qml.qrc
+
+OTHER_FILES += $$PWD/sm/CoinSale.sm
+
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH = . ..

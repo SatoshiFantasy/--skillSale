@@ -1,0 +1,104 @@
+
+%start StartMap::Init
+%class CoinSale
+%header CoinSale.h
+
+%map StartMap
+%%
+// State    Transition  End State       Action(s)
+Init
+{
+			Buy				[ !ctxt.HasName() ]
+							NoName				{ NewNameDialog(); }
+
+			Buy				[ !ctxt.IsSecretVerified() ]
+							WaitingShowAddress	{ }
+
+			Buy				WaitingForFunds		{ }			
+}
+
+NoName 
+{
+			Import			WaitingImportConfirm {}
+			
+			Claim			WaitingNameConfirm {} 
+
+			Select			[ !ctxt.IsSecretVerified() ]
+							WaitingShowAddress	{ }
+
+			Select			WaitingForFunds		{ }			
+
+}
+
+WaitingImportConfirm 
+{
+			NameConfimed 	WaitingForFunds { SetNameIsNew(); }
+}
+
+WaitingNameConfirm 
+{
+			NameConfimed 	[ !ctxt.SecretDisplayed(); ]
+							nil				 	{ DisplaySecretDialog(); }
+
+			SecretOk		WaitingShowAddress     {}
+}
+
+WaitingShowAddress  Entry	{ DisplayHiddenFundingAddress(); }
+{
+			ShowAddress		[ !ctxt.IsSecretVerified() ]
+							VerifySecret 		{}
+
+			ShowAddress		WaitingForFunds 	{}
+
+}
+
+WaitingForFunds 			Entry		{ DisplayFundingAddress(); StartCheckFundsTimer(); }
+{
+
+			Funded 			[ !ctxt.hasUTXO() ]
+							nil  		{ }
+
+			Funded 			[ !ctxt.isConfirmed() ] 
+							WaitingConfirm 		{ SignSendServer(); }
+
+			Funded 			WaitingExedos 		{ SignSendExedos(); StopCheckFundsTimer(); }
+}
+
+
+VerifySecret				Entry		{ VerifySecretDialog(); }
+{
+			Verify 			[ ctxt.DoVerifySecret(); ]
+							WaitingForfunds 			{ ctxt.SecretIsVerified(); }
+
+			Verify 			nil 						{ ctxt.VerifyError(); }
+}
+
+WaitingConfirm
+{
+			Funded 			[ !ctxt.isConfirmed() ]  nil {}
+
+			Funded 			WaitingExedos 		{ SignSendExedos(); StopCheckFundsTimer(); }
+}
+
+WaitingExedos				
+			Entry			{ DisplayAddressBalance(); StartCheckExedosTimer(); }
+			Exiy			{ StopCheckExedosTimer(); }
+{
+			ExedosReceived		[ ctxt.isEqualFundedAmount(); ]
+							WaitingPacks	{ DisplayAddressBalance(); }
+
+			ExedosReceived		nil			{ DisplayAddressBalance(); }
+
+}
+
+WaitingPacks 	
+			Entry			{ DisplayAddressPacksBalance(); StartCheckPacksTimer(); }
+			Exit			{ StopCheckPacksTimer(); }
+{
+			PacksConfirmed	[ !ctxt.isPacksEqualExedosAmount(); ]
+							nil				{ RequestNewPacks(); }	
+
+			PacksConfirmed	Init 	{ SetVerifySecret(ctxt.isNameNew()); }			
+}
+
+%%
