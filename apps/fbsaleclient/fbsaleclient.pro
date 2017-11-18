@@ -2,7 +2,7 @@ include ($$PWD/../../pri/deps.pri)
 include ($$PWD/../../pri/artwork.pri)
 #include($$PWD/../../pri/protos.pri)
 include($$PWD/../../pri/genproto.pri)
-#include($$PWD/../../pri/macrosAndModels.pri)
+include($$PWD/../../pri/macrosAndModels.pri)
 
 #QT += quick
 CONFIG += c++11
@@ -35,10 +35,32 @@ HEADERS += $$PWD/src/runguard.h \
     $$PWD/sm/statemap.h  \
     $$PWD/src/CoinSale.h
 
+
+FANTASYBITLIB += fantasybit-core
+!contains(DEFINES, PRODFOOTBALL){
+    FBCOREPATH = STAGING-$${FANTASYBITLIB}
+}
+
+FBCOREPATH = $$OUT_PWD/../../share/$$FANTASYBITLIB
+
+
+win32:CONFIG(release, debug|release): LIBS += -L$$FBCOREPATH/release/ -l$$FANTASYBITLIB
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$FBCOREPATH/debug/ -l$$FANTASYBITLIB
+else:macx: LIBS += -L$$FBCOREPATH/ -l$$FANTASYBITLIB
+
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$FBCOREPATH/release/lib$${FANTASYBITLIB}.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$FBCOREPATH/debug/lib$${FANTASYBITLIB}.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$FBCOREPATH/release/$${FANTASYBITLIB}.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$FBCOREPATH/debug/$${FANTASYBITLIB}.lib
+else:macx: PRE_TARGETDEPS += $$FBCOREPATH6/lib$${FANTASYBITLIB}.a
+
+message (PRE_TARGETDEPS $$PRE_TARGETDEPS)
+
 INCLUDEPATH  +=  $$PWD/src $$PWD/sm
 INCLUDEPATH  += $$PWD/../../share/fantasybit-core
-INCLUDEPATH  += $$PWD//../../share/fantasybit-core/bitcoin-core-base58
-INCLUDEPATH  += $$PWD//../../share/fantasybit-core/utils
+INCLUDEPATH  += $$PWD/../../share/fantasybit-core/bitcoin-core-base58
+INCLUDEPATH  += $$PWD/../../share/fantasybit-core/utils
 
 RESOURCES += $$PWD/qml/qml.qrc
 

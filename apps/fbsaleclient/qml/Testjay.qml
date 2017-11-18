@@ -9,9 +9,6 @@ Item {
     property alias price: price
 
 
-
-
-
     ColumnLayout {
         id: columnLayout2
         clip: false
@@ -39,7 +36,7 @@ Item {
             Image {
                 id: image1
                 fillMode: Image.PreserveAspectFit
-                source: "images/FantsyBitLogoSmall.png"
+                source: "FantsyBitLogoSmall.png"
             }
 
             ColumnLayout {

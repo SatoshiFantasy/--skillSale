@@ -2,6 +2,9 @@
 #include <QQmlApplicationEngine>
 #include "RunGuard.h"
 #include <QDebug>
+#include <CoinSale.h>
+
+using namespace fantasybit;
 
 int main(int argc, char *argv[])
 {
@@ -13,6 +16,10 @@ int main(int argc, char *argv[])
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
+
+
+    CoinSale cs;
+
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));

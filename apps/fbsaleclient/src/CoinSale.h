@@ -6,7 +6,7 @@
 #ifndef COINSALE_H
 #define COINSALE_H
 
-//#include <QQmlConstRefPropertyHelpers.h>
+#include <QQmlConstRefPropertyHelpers.h>
 //#include <QQmlPtrPropertyHelpers.h>
 //#include <QQmlAutoPropertyHelpers.h>
 //#include <QQmlEnumClassHelper.h>
@@ -17,23 +17,57 @@
 #include "FantasyAgent.h"
 
 #include "StateData.pb.h"
+#include <fbutils.h>
 
 #include "CoinSale_sm.h"
 
 namespace fantasybit {
 
-class CoinSale : public CoinSaleContext<CoinSale>,
-                 public QObject {
-
+class CoinSale : public QObject, public CoinSaleContext<CoinSale>
+{
     Q_OBJECT
 
-//    QML_WRITABLE_CSTREF_PROPERTY(int,totalAvailable)
+    QML_WRITABLE_CSTREF_PROPERTY(int,totalAvailable)
 
     QWebSocket m_webSocket;
     std::string lastPk2name;
     fantasybit::FantasyAgent agent;
     int errCount;
+    QUrl theServer;
 public:
+    CoinSale() {
+        connect(&m_webSocket, SIGNAL(connected()), this, SLOT(onConnected()));
+        connect (&m_webSocket,SIGNAL(aboutToClose()),this,SLOT(handleAboutToClose()));
+        connect (&m_webSocket, SIGNAL(disconnected()), this, SLOT(handleClosed()));
+
+        // socket error
+        connect (&m_webSocket, SIGNAL(error(QAbstractSocket::SocketError)), this,
+                 SLOT(handleSocketError(QAbstractSocket::SocketError)));
+
+        // socket statte
+        connect (&m_webSocket, SIGNAL (stateChanged(QAbstractSocket::SocketState)),
+                 this, SLOT(handleSocketState(QAbstractSocket::SocketState)));
+
+        QString wss("ws://%1:%2");
+        QString lserver = wss.arg(PB_WS_LITE_AGENT.data()).arg(FBSALE_AGENT_PORT);
+
+    #ifndef NODEBUG
+        qDebug() << " connecting to lserver" << lserver;
+    #endif
+
+        theServer = QUrl(lserver);
+        m_webSocket.open(theServer);
+
+//        signPlayerStatus.setInterval(2000);
+//        connect(&signPlayerStatus, SIGNAL(timeout()),
+//                this, SLOT(getSignedPlayerStatus()),Qt::QueuedConnection);
+
+
+//        connect(Mediator::instance(),&Mediator::ready,this, &LightGateway::ClientReady,Qt::QueuedConnection);
+
+
+    }
+
     bool HasName() {
         return false;
     }
@@ -152,12 +186,16 @@ protected slots:
         #endif
 
         switch ( rep.ctype()) {
-            case GETSALESTATE:
+            case GETSALESTATE: {
                 qDebug() << "GETSALESTATE";
                 const GetSaleStateRep &ss = rep.GetExtension(GetSaleStateRep::rep);
                 set_totalAvailable(ss.available());
                 //ss.fbperbitcoin();
                 break;
+            }
+            default:
+                break;
+        }
 //            case PK2FNAME: {
 //                const Pk2FnameRep &pk2 = rep.GetExtension(Pk2FnameRep::rep);
 //                auto name= pk2.fname();
@@ -190,9 +228,7 @@ protected slots:
 //            }
 
 
-            default:
-                    break;
-        }
+
     }
 
 //    void getSignedPlayerStatus() {
