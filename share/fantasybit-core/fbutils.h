@@ -52,7 +52,7 @@ namespace fantasybit {
     static int PB_WS_TX_PORT = 9110;
     static int PB_WS_CHAT_PORT = 9112;
 
-    static int FBSALE_AGENT_PORT = 9222;
+
 #ifdef USE_LOCALNETWORKHOST_SERVER
     static std::string PB_WS_LITE_AGENT = "192.168.42.80";
     static std::string PB_WS_CHAT = "192.168.42.80";
@@ -70,6 +70,12 @@ namespace fantasybit {
     static std::string PAPIURL = "https://app.trading.football:4545";
     static std::string LAPIURL = "https://app.trading.football:9854";
 #endif
+
+
+    static std::string FBSALE_LOCALNET = "192.168.42.80";
+    static std::string FBSALE_LOCALHOST = "localhost";
+    static std::string FBSALE_HOST = PB_WS_LITE_AGENT;
+    static int FBSALE_AGENT_PORT = 9222;
 
     //forwards
     struct FantasyName;

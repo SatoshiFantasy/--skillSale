@@ -698,7 +698,7 @@ bool FantasyAgent::finishImportMnemonic(const std::string &pk,
     auto it = m_pending.find(pk);
     if ( it == end(m_pending) ) return false;
 
-    WalletD &sec = it->second;
+    WalletD sec = it->second;
     sec.set_fantasy_name(name);
 
     for ( auto s2 : m_secrets ) {

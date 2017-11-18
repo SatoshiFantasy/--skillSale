@@ -18,12 +18,17 @@ ApplicationWindow {
         Page1 {
         }
 
-        Page {
-            Label {
-                text: qsTr("Second page")
-                anchors.centerIn: parent
-            }
+        Page3 {
+
         }
+
+
+    }
+
+    BusyIndicator {
+        id: busy
+        anchors.centerIn: parent
+        running: CoinSale.busySend
     }
 
     footer: TabBar {
@@ -34,6 +39,29 @@ ApplicationWindow {
         }
         TabButton {
             text: qsTr("Wallet")
+        }
+        TabButton {
+            text: qsTr("Fund")
+        }
+    }
+
+    Connections {
+        target: CoinSale
+
+
+        onCurrDialogChanged: {
+           switch  ( currDialog ) {
+               case "name":
+                   tabBar.currentIndex = 1
+                   break;
+               case "fund":
+                   tabBar.currentIndex = 2
+                   break;
+               default:
+                   tabBar.currentIndex = 0
+                   break;
+
+           }
         }
     }
 }

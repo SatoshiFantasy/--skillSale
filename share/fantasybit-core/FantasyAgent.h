@@ -66,7 +66,7 @@ public:
 
     status signPlayer(std::string name);
 
-    status useName(std::string name);
+//    status useName(std::string name);
 
     std::string getSecret() const ;
     pb::public_key_data pubKey();

@@ -22,12 +22,16 @@ Item {
 
         TextField {
             id: textField1
-            placeholderText: qsTr("Text Field")
+            placeholderText: qsTr("Enter 12 word Secret")
         }
 
         Button {
             id: button1
-            text: qsTr("Press Me")
+            text: qsTr("Import")
+            onClicked: {
+                if ( textField1.text !== '')
+                    CoinSale.doimport(textField1.text)
+            }
         }
     }
 }

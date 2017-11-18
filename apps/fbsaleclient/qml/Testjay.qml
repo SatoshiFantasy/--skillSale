@@ -93,7 +93,11 @@ Item {
 
             Button {
                 id: button1
-                text: qsTr("BUY")
+                text: enabled ? "BUY" : "..."
+                enabled: CoinSale.totalAvailable > 0
+                onClicked: {
+                    CoinSale.buy()
+                }
             }
         }
     }
