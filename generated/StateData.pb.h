@@ -100,6 +100,7 @@ class ProjByName;
 class GetProjectionRep;
 class SignPackRep;
 class SignPackReq;
+class GetSaleStateRep;
 class KeyValue;
 class Bootstrap;
 
@@ -120,11 +121,12 @@ enum CType {
   GETGAMEROSTER = 13,
   GETPROJECTIONS = 15,
   GETGAMESTART = 16,
-  SIGNPACK = 17
+  SIGNPACK = 17,
+  GETSALESTATE = 18
 };
 bool CType_IsValid(int value);
 const CType CType_MIN = NONE;
-const CType CType_MAX = SIGNPACK;
+const CType CType_MAX = GETSALESTATE;
 const int CType_ARRAYSIZE = CType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* CType_descriptor();
@@ -7830,6 +7832,102 @@ class SignPackReq : public ::google::protobuf::Message {
 
   void InitAsDefaultInstance();
   static SignPackReq* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class GetSaleStateRep : public ::google::protobuf::Message {
+ public:
+  GetSaleStateRep();
+  virtual ~GetSaleStateRep();
+
+  GetSaleStateRep(const GetSaleStateRep& from);
+
+  inline GetSaleStateRep& operator=(const GetSaleStateRep& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const GetSaleStateRep& default_instance();
+
+  void Swap(GetSaleStateRep* other);
+
+  // implements Message ----------------------------------------------
+
+  GetSaleStateRep* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const GetSaleStateRep& from);
+  void MergeFrom(const GetSaleStateRep& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 available = 10;
+  inline bool has_available() const;
+  inline void clear_available();
+  static const int kAvailableFieldNumber = 10;
+  inline ::google::protobuf::int32 available() const;
+  inline void set_available(::google::protobuf::int32 value);
+
+  // optional int32 fbperbitcoin = 20;
+  inline bool has_fbperbitcoin() const;
+  inline void clear_fbperbitcoin();
+  static const int kFbperbitcoinFieldNumber = 20;
+  inline ::google::protobuf::int32 fbperbitcoin() const;
+  inline void set_fbperbitcoin(::google::protobuf::int32 value);
+
+  static const int kRepFieldNumber = 951;
+  static ::google::protobuf::internal::ExtensionIdentifier< ::fantasybit::WSReply,
+      ::google::protobuf::internal::MessageTypeTraits< ::fantasybit::GetSaleStateRep >, 11, false >
+    rep;
+  // @@protoc_insertion_point(class_scope:fantasybit.GetSaleStateRep)
+ private:
+  inline void set_has_available();
+  inline void clear_has_available();
+  inline void set_has_fbperbitcoin();
+  inline void clear_has_fbperbitcoin();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::int32 available_;
+  ::google::protobuf::int32 fbperbitcoin_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+
+  friend void  protobuf_AddDesc_StateData_2eproto();
+  friend void protobuf_AssignDesc_StateData_2eproto();
+  friend void protobuf_ShutdownFile_StateData_2eproto();
+
+  void InitAsDefaultInstance();
+  static GetSaleStateRep* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -20954,6 +21052,54 @@ SignPackReq::sig() const {
 inline ::google::protobuf::RepeatedPtrField< ::fantasybit::KeyValue >*
 SignPackReq::mutable_sig() {
   return &sig_;
+}
+
+// -------------------------------------------------------------------
+
+// GetSaleStateRep
+
+// optional int32 available = 10;
+inline bool GetSaleStateRep::has_available() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void GetSaleStateRep::set_has_available() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void GetSaleStateRep::clear_has_available() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void GetSaleStateRep::clear_available() {
+  available_ = 0;
+  clear_has_available();
+}
+inline ::google::protobuf::int32 GetSaleStateRep::available() const {
+  return available_;
+}
+inline void GetSaleStateRep::set_available(::google::protobuf::int32 value) {
+  set_has_available();
+  available_ = value;
+}
+
+// optional int32 fbperbitcoin = 20;
+inline bool GetSaleStateRep::has_fbperbitcoin() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void GetSaleStateRep::set_has_fbperbitcoin() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void GetSaleStateRep::clear_has_fbperbitcoin() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void GetSaleStateRep::clear_fbperbitcoin() {
+  fbperbitcoin_ = 0;
+  clear_has_fbperbitcoin();
+}
+inline ::google::protobuf::int32 GetSaleStateRep::fbperbitcoin() const {
+  return fbperbitcoin_;
+}
+inline void GetSaleStateRep::set_fbperbitcoin(::google::protobuf::int32 value) {
+  set_has_fbperbitcoin();
+  fbperbitcoin_ = value;
 }
 
 // -------------------------------------------------------------------

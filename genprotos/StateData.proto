@@ -467,6 +467,7 @@ enum CType {
 
     SIGNPACK = 17;
 //    GETORDERS = 11;
+    GETSALESTATE = 18;
 }
 
 //message WsReq {
@@ -716,6 +717,16 @@ message SignPackReq {
 
     repeated KeyValue sig = 10;
 }
+
+message GetSaleStateRep {
+    extend WSReply {
+        optional GetSaleStateRep rep = 951;
+    }
+
+    optional int32 available  = 10;
+    optional int32 fbperbitcoin = 20;
+}
+
 
 
 message KeyValue {

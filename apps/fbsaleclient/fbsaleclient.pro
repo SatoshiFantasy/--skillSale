@@ -1,9 +1,13 @@
 include ($$PWD/../../pri/deps.pri)
 include ($$PWD/../../pri/artwork.pri)
-include($$PWD/../../pri/protos.pri)
+#include($$PWD/../../pri/protos.pri)
+include($$PWD/../../pri/genproto.pri)
+#include($$PWD/../../pri/macrosAndModels.pri)
 
-QT += quick
+#QT += quick
 CONFIG += c++11
+QT += qml quick core websockets network xmlpatterns qml-private quick-private
+TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -31,8 +35,10 @@ HEADERS += $$PWD/src/runguard.h \
     $$PWD/sm/statemap.h  \
     $$PWD/src/CoinSale.h
 
-INCLUDEPATH +=  $$PWD/src $$PWD/sm
-
+INCLUDEPATH  +=  $$PWD/src $$PWD/sm
+INCLUDEPATH  += $$PWD/../../share/fantasybit-core
+INCLUDEPATH  += $$PWD//../../share/fantasybit-core/bitcoin-core-base58
+INCLUDEPATH  += $$PWD//../../share/fantasybit-core/utils
 
 RESOURCES += $$PWD/qml/qml.qrc
 

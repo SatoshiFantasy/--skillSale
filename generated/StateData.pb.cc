@@ -203,6 +203,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* SignPackReq_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   SignPackReq_reflection_ = NULL;
+const ::google::protobuf::Descriptor* GetSaleStateRep_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  GetSaleStateRep_reflection_ = NULL;
 const ::google::protobuf::Descriptor* KeyValue_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   KeyValue_reflection_ = NULL;
@@ -1315,7 +1318,23 @@ void protobuf_AssignDesc_StateData_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(SignPackReq));
-  KeyValue_descriptor_ = file->message_type(61);
+  GetSaleStateRep_descriptor_ = file->message_type(61);
+  static const int GetSaleStateRep_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetSaleStateRep, available_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetSaleStateRep, fbperbitcoin_),
+  };
+  GetSaleStateRep_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      GetSaleStateRep_descriptor_,
+      GetSaleStateRep::default_instance_,
+      GetSaleStateRep_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetSaleStateRep, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GetSaleStateRep, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(GetSaleStateRep));
+  KeyValue_descriptor_ = file->message_type(62);
   static const int KeyValue_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(KeyValue, key_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(KeyValue, value_),
@@ -1331,7 +1350,7 @@ void protobuf_AssignDesc_StateData_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(KeyValue));
-  Bootstrap_descriptor_ = file->message_type(62);
+  Bootstrap_descriptor_ = file->message_type(63);
   static const int Bootstrap_offsets_[9] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Bootstrap, key_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Bootstrap, blocknum_),
@@ -1490,6 +1509,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     SignPackReq_descriptor_, &SignPackReq::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    GetSaleStateRep_descriptor_, &GetSaleStateRep::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     KeyValue_descriptor_, &KeyValue::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Bootstrap_descriptor_, &Bootstrap::default_instance());
@@ -1620,6 +1641,8 @@ void protobuf_ShutdownFile_StateData_2eproto() {
   delete SignPackRep_reflection_;
   delete SignPackReq::default_instance_;
   delete SignPackReq_reflection_;
+  delete GetSaleStateRep::default_instance_;
+  delete GetSaleStateRep_reflection_;
   delete KeyValue::default_instance_;
   delete KeyValue_reflection_;
   delete Bootstrap::default_instance_;
@@ -1830,20 +1853,23 @@ void protobuf_AddDesc_StateData_2eproto() {
     "\0132\027.fantasybit.SignPackRep\"j\n\013SignPackRe"
     "q\022!\n\003sig\030\n \003(\0132\024.fantasybit.KeyValue28\n\003"
     "req\022\021.fantasybit.WsReq\030\266\007 \001(\0132\027.fantasyb"
-    "it.SignPackReq\"&\n\010KeyValue\022\013\n\003key\030\n \001(\014\022"
-    "\r\n\005value\030\024 \001(\014\"\265\001\n\tBootstrap\022\013\n\003key\030\001 \001("
-    "\t\022\020\n\010blocknum\030\002 \001(\005\022\014\n\004week\030\003 \001(\005\022\016\n\006sea"
-    "son\030\004 \001(\005\022\024\n\014gamemetaroot\030\n \001(\014\022\026\n\016playe"
-    "rmetaroot\030\024 \001(\014\022\025\n\rfnamemetaroot\030\036 \001(\014\022\016"
-    "\n\006previd\030( \001(\014\022\026\n\016gameresultroot\0302 \001(\014*\232"
-    "\002\n\005CType\022\010\n\004NONE\020\000\022\r\n\tCHECKNAME\020\001\022\t\n\005NEW"
-    "TX\020\002\022\014\n\010PK2FNAME\020\003\022\r\n\tGETSTATUS\020\004\022\017\n\013GET"
-    "ALLNAMES\020\005\022\020\n\014GETROWMARKET\020\006\022\014\n\010GETDEPTH"
-    "\020\007\022\r\n\tGETORDERS\020\010\022\020\n\014GETPOSITIONS\020\t\022\022\n\016S"
-    "UBSCRIBEFNAME\020\n\022\022\n\016GETGLOBALSTATE\020\013\022\017\n\013G"
-    "ETSCHEDULE\020\014\022\021\n\rGETGAMEROSTER\020\r\022\022\n\016GETPR"
-    "OJECTIONS\020\017\022\020\n\014GETGAMESTART\020\020\022\014\n\010SIGNPAC"
-    "K\020\021", 8203);
+    "it.SignPackReq\"z\n\017GetSaleStateRep\022\021\n\tava"
+    "ilable\030\n \001(\005\022\024\n\014fbperbitcoin\030\024 \001(\0052>\n\003re"
+    "p\022\023.fantasybit.WSReply\030\267\007 \001(\0132\033.fantasyb"
+    "it.GetSaleStateRep\"&\n\010KeyValue\022\013\n\003key\030\n "
+    "\001(\014\022\r\n\005value\030\024 \001(\014\"\265\001\n\tBootstrap\022\013\n\003key\030"
+    "\001 \001(\t\022\020\n\010blocknum\030\002 \001(\005\022\014\n\004week\030\003 \001(\005\022\016\n"
+    "\006season\030\004 \001(\005\022\024\n\014gamemetaroot\030\n \001(\014\022\026\n\016p"
+    "layermetaroot\030\024 \001(\014\022\025\n\rfnamemetaroot\030\036 \001"
+    "(\014\022\016\n\006previd\030( \001(\014\022\026\n\016gameresultroot\0302 \001"
+    "(\014*\254\002\n\005CType\022\010\n\004NONE\020\000\022\r\n\tCHECKNAME\020\001\022\t\n"
+    "\005NEWTX\020\002\022\014\n\010PK2FNAME\020\003\022\r\n\tGETSTATUS\020\004\022\017\n"
+    "\013GETALLNAMES\020\005\022\020\n\014GETROWMARKET\020\006\022\014\n\010GETD"
+    "EPTH\020\007\022\r\n\tGETORDERS\020\010\022\020\n\014GETPOSITIONS\020\t\022"
+    "\022\n\016SUBSCRIBEFNAME\020\n\022\022\n\016GETGLOBALSTATE\020\013\022"
+    "\017\n\013GETSCHEDULE\020\014\022\021\n\rGETGAMEROSTER\020\r\022\022\n\016G"
+    "ETPROJECTIONS\020\017\022\020\n\014GETGAMESTART\020\020\022\014\n\010SIG"
+    "NPACK\020\021\022\020\n\014GETSALESTATE\020\022", 8345);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "StateData.proto", &protobuf_RegisterTypes);
   BlockMeta::default_instance_ = new BlockMeta();
@@ -1907,6 +1933,7 @@ void protobuf_AddDesc_StateData_2eproto() {
   GetProjectionRep::default_instance_ = new GetProjectionRep();
   SignPackRep::default_instance_ = new SignPackRep();
   SignPackReq::default_instance_ = new SignPackReq();
+  GetSaleStateRep::default_instance_ = new GetSaleStateRep();
   KeyValue::default_instance_ = new KeyValue();
   Bootstrap::default_instance_ = new Bootstrap();
   BlockMeta::default_instance_->InitAsDefaultInstance();
@@ -2050,6 +2077,11 @@ void protobuf_AddDesc_StateData_2eproto() {
     &::fantasybit::WsReq::default_instance(),
     950, 11, false, false,
     &::fantasybit::SignPackReq::default_instance());
+  GetSaleStateRep::default_instance_->InitAsDefaultInstance();
+  ::google::protobuf::internal::ExtensionSet::RegisterMessageExtension(
+    &::fantasybit::WSReply::default_instance(),
+    951, 11, false, false,
+    &::fantasybit::GetSaleStateRep::default_instance());
   KeyValue::default_instance_->InitAsDefaultInstance();
   Bootstrap::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_StateData_2eproto);
@@ -2084,6 +2116,7 @@ bool CType_IsValid(int value) {
     case 15:
     case 16:
     case 17:
+    case 18:
       return true;
     default:
       return false;
@@ -23846,6 +23879,260 @@ void SignPackReq::Swap(SignPackReq* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = SignPackReq_descriptor_;
   metadata.reflection = SignPackReq_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int GetSaleStateRep::kAvailableFieldNumber;
+const int GetSaleStateRep::kFbperbitcoinFieldNumber;
+#endif  // !_MSC_VER
+
+#ifndef _MSC_VER
+const int GetSaleStateRep::kRepFieldNumber;
+#endif
+::google::protobuf::internal::ExtensionIdentifier< ::fantasybit::WSReply,
+    ::google::protobuf::internal::MessageTypeTraits< ::fantasybit::GetSaleStateRep >, 11, false >
+  GetSaleStateRep::rep(kRepFieldNumber, ::fantasybit::GetSaleStateRep::default_instance());
+GetSaleStateRep::GetSaleStateRep()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void GetSaleStateRep::InitAsDefaultInstance() {
+}
+
+GetSaleStateRep::GetSaleStateRep(const GetSaleStateRep& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void GetSaleStateRep::SharedCtor() {
+  _cached_size_ = 0;
+  available_ = 0;
+  fbperbitcoin_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+GetSaleStateRep::~GetSaleStateRep() {
+  SharedDtor();
+}
+
+void GetSaleStateRep::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void GetSaleStateRep::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* GetSaleStateRep::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return GetSaleStateRep_descriptor_;
+}
+
+const GetSaleStateRep& GetSaleStateRep::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_StateData_2eproto();
+  return *default_instance_;
+}
+
+GetSaleStateRep* GetSaleStateRep::default_instance_ = NULL;
+
+GetSaleStateRep* GetSaleStateRep::New() const {
+  return new GetSaleStateRep;
+}
+
+void GetSaleStateRep::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    available_ = 0;
+    fbperbitcoin_ = 0;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool GetSaleStateRep::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional int32 available = 10;
+      case 10: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &available_)));
+          set_has_available();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(160)) goto parse_fbperbitcoin;
+        break;
+      }
+
+      // optional int32 fbperbitcoin = 20;
+      case 20: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_fbperbitcoin:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &fbperbitcoin_)));
+          set_has_fbperbitcoin();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void GetSaleStateRep::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // optional int32 available = 10;
+  if (has_available()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(10, this->available(), output);
+  }
+
+  // optional int32 fbperbitcoin = 20;
+  if (has_fbperbitcoin()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(20, this->fbperbitcoin(), output);
+  }
+
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* GetSaleStateRep::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // optional int32 available = 10;
+  if (has_available()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(10, this->available(), target);
+  }
+
+  // optional int32 fbperbitcoin = 20;
+  if (has_fbperbitcoin()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(20, this->fbperbitcoin(), target);
+  }
+
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int GetSaleStateRep::ByteSize() const {
+  int total_size = 0;
+
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // optional int32 available = 10;
+    if (has_available()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->available());
+    }
+
+    // optional int32 fbperbitcoin = 20;
+    if (has_fbperbitcoin()) {
+      total_size += 2 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->fbperbitcoin());
+    }
+
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void GetSaleStateRep::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const GetSaleStateRep* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const GetSaleStateRep*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void GetSaleStateRep::MergeFrom(const GetSaleStateRep& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_available()) {
+      set_available(from.available());
+    }
+    if (from.has_fbperbitcoin()) {
+      set_fbperbitcoin(from.fbperbitcoin());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void GetSaleStateRep::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void GetSaleStateRep::CopyFrom(const GetSaleStateRep& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool GetSaleStateRep::IsInitialized() const {
+
+  return true;
+}
+
+void GetSaleStateRep::Swap(GetSaleStateRep* other) {
+  if (other != this) {
+    std::swap(available_, other->available_);
+    std::swap(fbperbitcoin_, other->fbperbitcoin_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata GetSaleStateRep::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = GetSaleStateRep_descriptor_;
+  metadata.reflection = GetSaleStateRep_reflection_;
   return metadata;
 }
 
