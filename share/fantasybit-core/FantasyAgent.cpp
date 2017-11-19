@@ -415,6 +415,10 @@ bool FantasyAgent::testBtc(WalletD secret) {
 
 }
 
+string FantasyAgent::sign(const string &in) {
+    return Commissioner::sig2str(m_priv.sign(pb::sha256(in)));
+}
+
 bool FantasyAgent::testIt(WalletD secret) {
 
 

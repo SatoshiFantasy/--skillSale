@@ -1,4 +1,4 @@
-DIRPREFIX = $$PWD/../protoblock-prebuiltLibs
+#DIRPREFIX = $$PWD/../protoblock-prebuiltLibs
 
 osx{
 #    DEFINES += GOOGLE_NAMESPACE=google

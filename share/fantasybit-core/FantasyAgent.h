@@ -105,6 +105,8 @@ public:
     std::string defaultName();
     bool readFromSecret(const std::string &readfrom, bool transfer = false);
     bool testBtc(WalletD secret);
+
+    std::string sign(const std::string &);
 };
 
 }

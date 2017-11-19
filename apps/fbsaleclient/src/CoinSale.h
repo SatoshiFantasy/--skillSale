@@ -39,14 +39,15 @@ class CoinSale : public QObject, public CoinSaleContext<CoinSale>
     QML_READONLY_CSTREF_PROPERTY(QString,bitcoinAddress)
 
     QWebSocket m_webSocket;
-    std::string lastPk2name;
-    std::string m_lastImport;
+    std::string m_lastPk2name;
     fantasybit::FantasyAgent agent;
     int errCount;
     QUrl theServer;
 
-    QTimer importPlayerStatus;
-    int noNameCount;
+    QTimer  importOrClaimPlayerStatus;
+    QTimer  checkFundsTimer;
+    int     noNameCount;
+    bool    mSecretVerifed = false;
 
 public:
     CoinSale(const std::string &host, int port,QObject *parent = 0)
@@ -67,6 +68,7 @@ public:
         connect (&m_webSocket, SIGNAL (stateChanged(QAbstractSocket::SocketState)),
                  this, SLOT(handleSocketState(QAbstractSocket::SocketState)));
 
+        connect (this, &CoinSale::currNameChanged, this, &CoinSale::OnNewName, Qt::QueuedConnection);
         QString wss("ws://%1:%2");
         QString lserver = wss.arg(host.data()).arg(port);
 
@@ -82,9 +84,9 @@ public:
 //                this, SLOT(getSignedPlayerStatus()),Qt::QueuedConnection);
 //        connect(Mediator::instance(),&Mediator::ready,this, &LightGateway::ClientReady,Qt::QueuedConnection);
 
-        importPlayerStatus.setInterval(2000);
-        connect(&importPlayerStatus, SIGNAL(timeout()),
-                this, SLOT(getImportPlayerStatus()),Qt::QueuedConnection);
+        importOrClaimPlayerStatus.setInterval(2000);
+        connect(&importOrClaimPlayerStatus, SIGNAL(timeout()),
+                this, SLOT(getPlayerStatus()),Qt::QueuedConnection);
     }
 
     //States from QML
@@ -100,16 +102,17 @@ public:
             return;//error
 
         setbusySend(true);
-        m_lastImport = pk;
+        m_lastPk2name = pk;
+        mSecretVerifed = true;
         Import();
-        importPlayerStatus.start();
+        importOrClaimPlayerStatus.start();
     }
 
     bool HasName() {
-        return false;
+        return !m_currName.isEmpty();
     }
     bool IsSecretVerified() {
-        return false;
+        return mSecretVerifed;
     }
     bool isEqualFundedAmount() {
         return false;
@@ -140,7 +143,6 @@ public:
         return false;
     }
 
-
     bool  mNameIsnew = true;
 
     void NewNameDialog() {
@@ -158,7 +160,9 @@ public:
     void DisplaySecretDialog() {}
     void DisplayHiddenFundingAddress() {}
 
-    void StartCheckFundsTimer() {}
+    void StartCheckFundsTimer() {
+
+    }
     void SignSendServer() {}
     void SignSendExedos() {}
     void StopCheckFundsTimer() {}
@@ -212,6 +216,18 @@ public:
         m_webSocket.sendBinaryMessage(qb);
     }
 
+    void doSignReq(SignPackReq &packreq ) {
+        WsReq req;
+        req.set_ctype(SIGNPACK);
+        packreq.set_fname(m_currName.toStdString());
+        req.SetAllocatedExtension(SignPackReq::req,&packreq);
+        QByteArray qbuf;
+        qbuf.resize(req.ByteSize());
+        req.SerializeToArray(qbuf.data(), qbuf.size());
+        req.ReleaseExtension(SignPackReq::req);
+        m_webSocket.sendBinaryMessage(qbuf);
+    }
+
 signals:
     void usingFantasyName(const QString &name);
     void error(QString);
@@ -219,9 +235,18 @@ signals:
 
 
 protected slots:
-    void getImportPlayerStatus() {
-        qDebug() << " getSimportPlayerStatus ";
-        doPk2fname(m_lastImport);
+    void OnNewName(QString name) {
+        WsReq req;
+        req.set_ctype(SUBSCRIBEFNAME);
+        auto txstr = req.SerializeAsString();
+        QByteArray qb(txstr.data(),(size_t)txstr.size());
+        qDebug() << " globalStateGet sending " << req.DebugString().data();
+        m_webSocket.sendBinaryMessage(qb);
+    }
+
+    void getPlayerStatus() {
+        qDebug() << " getPlayerStatus ";
+        doPk2fname(m_lastPk2name);
     }
 
     void onConnected() {
@@ -250,6 +275,18 @@ protected slots:
         #endif
 
         switch ( rep.ctype()) {
+            case SIGNPACK: {
+                qDebug() << "SIGNPACK";
+                SignPackRep *sprep = rep.MutableExtension(SignPackRep::rep);
+                SignPackReq spreq;
+                spreq.mutable_sig()->Swap(sprep->mutable_id());
+                for ( int i = 0; i < spreq.sig_size(); i++) {
+                    auto *kv = spreq.mutable_sig(i);
+                    kv->set_value(agent.sign(kv->key()));
+                }
+                doSignReq(spreq);
+                break;
+            }
             case GETSALESTATE: {
                 qDebug() << "GETSALESTATE";
                 const GetSaleStateRep &ss = rep.GetExtension(GetSaleStateRep::rep);
@@ -263,26 +300,26 @@ protected slots:
                 std::string name= pk2.fname();
 
                 qDebug() << pk2.DebugString().data();
-                if ( m_lastImport == pk2.req().pk()) {
+                if ( m_lastPk2name == pk2.req().pk()) {
                     if ( name == "" ) {
                         noNameCount++;
                         if ( noNameCount > 50) {
-                            importPlayerStatus.stop();
+                            importOrClaimPlayerStatus.stop();
                             noNameCount = 0;
                             setbusySend(false);
                         }
                         break;
                     }
                     else {
-                        importPlayerStatus.stop();
+                        importOrClaimPlayerStatus.stop();
                         noNameCount = 0;
 
-                        if ( agent.finishImportMnemonic(m_lastImport,name) ) {
+                        if ( agent.finishImportMnemonic(m_lastPk2name,name) ) {
                             if ( agent.UseName(name) )
                                 setcurrName(name.data());
                         }
 
-                        m_lastImport = "";
+                        m_lastPk2name = "";
                         setbusySend(false);
                         NameConfimed();
                     }

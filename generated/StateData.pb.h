@@ -7800,6 +7800,18 @@ class SignPackReq : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
+  // optional string fname = 5;
+  inline bool has_fname() const;
+  inline void clear_fname();
+  static const int kFnameFieldNumber = 5;
+  inline const ::std::string& fname() const;
+  inline void set_fname(const ::std::string& value);
+  inline void set_fname(const char* value);
+  inline void set_fname(const char* value, size_t size);
+  inline ::std::string* mutable_fname();
+  inline ::std::string* release_fname();
+  inline void set_allocated_fname(::std::string* fname);
+
   // repeated .fantasybit.KeyValue sig = 10;
   inline int sig_size() const;
   inline void clear_sig();
@@ -7818,13 +7830,16 @@ class SignPackReq : public ::google::protobuf::Message {
     req;
   // @@protoc_insertion_point(class_scope:fantasybit.SignPackReq)
  private:
+  inline void set_has_fname();
+  inline void clear_has_fname();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
+  ::std::string* fname_;
   ::google::protobuf::RepeatedPtrField< ::fantasybit::KeyValue > sig_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
 
   friend void  protobuf_AddDesc_StateData_2eproto();
   friend void protobuf_AssignDesc_StateData_2eproto();
@@ -21043,6 +21058,76 @@ SignPackRep::mutable_id() {
 // -------------------------------------------------------------------
 
 // SignPackReq
+
+// optional string fname = 5;
+inline bool SignPackReq::has_fname() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void SignPackReq::set_has_fname() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void SignPackReq::clear_has_fname() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void SignPackReq::clear_fname() {
+  if (fname_ != &::google::protobuf::internal::kEmptyString) {
+    fname_->clear();
+  }
+  clear_has_fname();
+}
+inline const ::std::string& SignPackReq::fname() const {
+  return *fname_;
+}
+inline void SignPackReq::set_fname(const ::std::string& value) {
+  set_has_fname();
+  if (fname_ == &::google::protobuf::internal::kEmptyString) {
+    fname_ = new ::std::string;
+  }
+  fname_->assign(value);
+}
+inline void SignPackReq::set_fname(const char* value) {
+  set_has_fname();
+  if (fname_ == &::google::protobuf::internal::kEmptyString) {
+    fname_ = new ::std::string;
+  }
+  fname_->assign(value);
+}
+inline void SignPackReq::set_fname(const char* value, size_t size) {
+  set_has_fname();
+  if (fname_ == &::google::protobuf::internal::kEmptyString) {
+    fname_ = new ::std::string;
+  }
+  fname_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* SignPackReq::mutable_fname() {
+  set_has_fname();
+  if (fname_ == &::google::protobuf::internal::kEmptyString) {
+    fname_ = new ::std::string;
+  }
+  return fname_;
+}
+inline ::std::string* SignPackReq::release_fname() {
+  clear_has_fname();
+  if (fname_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = fname_;
+    fname_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void SignPackReq::set_allocated_fname(::std::string* fname) {
+  if (fname_ != &::google::protobuf::internal::kEmptyString) {
+    delete fname_;
+  }
+  if (fname) {
+    set_has_fname();
+    fname_ = fname;
+  } else {
+    clear_has_fname();
+    fname_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
 
 // repeated .fantasybit.KeyValue sig = 10;
 inline int SignPackReq::sig_size() const {

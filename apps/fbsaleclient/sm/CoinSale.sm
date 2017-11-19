@@ -8,62 +8,65 @@
 %map StartMap
 %%
 // State    Transition  End State       Action(s)
+Default {
+}
+
 Init
 {
-            Buy				[ !ctxt.HasName() ]
-                            NoName				{ NewNameDialog(); }
+            Buy             [ !ctxt.HasName() ]
+                            NoName { NewNameDialog(); }
 
-            Buy				[ !ctxt.IsSecretVerified() ]
+            Buy             [ !ctxt.IsSecretVerified() ]
                             WaitingShowAddress	{ }
 
-            Buy				WaitingForFunds		{ }
+            Buy             WaitingForFunds		{ }
 }
 
 NoName
 {
-            Import			WaitingImportConfirm {}
+            Import          WaitingImportConfirm {}
 
-            Claim			WaitingNameConfirm {}
+            Claim           WaitingNameConfirm {}
 
-            Select			[ !ctxt.IsSecretVerified() ]
+            Select          [ !ctxt.IsSecretVerified() ]
                             WaitingShowAddress	{ }
 
-            Select			WaitingForFunds		{ }
+            Select          WaitingForFunds		{ }
 
 }
 
 WaitingImportConfirm
 {
-            NameConfimed 	WaitingForFunds { SetNameIsNew(); }
+            NameConfimed        WaitingForFunds                 { SetNameIsNew(); }
 }
 
 WaitingNameConfirm
 {
-            NameConfimed 	[ !ctxt.SecretDisplayed() ]
-                            nil				 	{ DisplaySecretDialog(); }
+            NameConfimed        [ !ctxt.SecretDisplayed() ]
+                                nil                             { DisplaySecretDialog(); }
 
-            SecretOk		WaitingShowAddress     {}
+            SecretOk            WaitingShowAddress     {}
 }
 
-WaitingShowAddress  Entry	{ DisplayHiddenFundingAddress(); }
+WaitingShowAddress              Entry                           { DisplayHiddenFundingAddress(); }
 {
-            ShowAddress		[ !ctxt.IsSecretVerified() ]
-                                         VerifySecret 		{}
+            ShowAddress         [ !ctxt.IsSecretVerified() ]
+                                VerifySecret {}
 
-            ShowAddress		WaitingForFunds 	{}
+            ShowAddress		WaitingForFunds {}
 
 }
 
-WaitingForFunds 			Entry		{ DisplayFundingAddress(); StartCheckFundsTimer(); }
+WaitingForFunds 		Entry                       { DisplayFundingAddress();
+                                                              StartCheckFundsTimer(); }
 {
+            Funded              [ !ctxt.hasUTXO() ]
+                                nil {}
 
-            Funded 			[ !ctxt.hasUTXO() ]
-                            nil  		{ }
+            Funded 		[ !ctxt.isConfirmed() ]
+                                WaitingConfirm                  { SignSendServer(); }
 
-            Funded 			[ !ctxt.isConfirmed() ]
-                            WaitingConfirm 		{ SignSendServer(); }
-
-            Funded 			WaitingExedos 		{ SignSendExedos(); StopCheckFundsTimer(); }
+            Funded 		WaitingExedos           	{ SignSendExedos(); StopCheckFundsTimer(); }
 }
 
 

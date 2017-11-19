@@ -715,6 +715,7 @@ message SignPackReq {
         optional SignPackReq req = 950;
     }
 
+    optional string fname = 5;
     repeated KeyValue sig = 10;
 }
 
