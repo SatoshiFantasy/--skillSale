@@ -2,7 +2,7 @@
 #define RESTFULLSERVICE_H
 
 #include <RestfullClient.h>
-
+#include <fbutils.h>
 /**
  * @brief The RestfullClient class : This is NOT a thread safe class.
  */
@@ -14,7 +14,7 @@ public:
     static long getBtcAddressBalance(const std::string &addr,
                  QThread * ownerThread = QThread::currentThread()) {
 
-        QString url = QString("https://blockchain.info");
+        QString url = QString(fantasybit::BLOCKCHAINAPI.data());
         RestfullClient client(QUrl(url),ownerThread);
         QMap<QString,QString>  headers;
         QMap<QString,QVariant> params;
@@ -29,7 +29,7 @@ public:
     static QByteArray getBtcAddressUnspent(const std::string &addr,
                  QThread * ownerThread = QThread::currentThread()) {
 
-        QString url = QString("https://blockchain.info");
+        QString url = QString(fantasybit::BLOCKCHAINAPI.data());
         RestfullClient client(QUrl(url),ownerThread);
         QMap<QString,QString>  headers;
         QMap<QString,QVariant> params;

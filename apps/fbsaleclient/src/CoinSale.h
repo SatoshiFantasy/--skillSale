@@ -155,6 +155,7 @@ public:
     void DisplayFundingAddress() {
         setbitcoinAddress(pb::toBtcAddress(agent.pubKey()).data());
         setcurrDialog("fund");
+        qDebug() << m_bitcoinAddress;
     }
 
     void DisplaySecretDialog() {}

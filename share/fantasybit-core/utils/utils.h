@@ -15,6 +15,7 @@
 #include <openssl/ripemd.h>
 #include <sstream>
 #include <iomanip>
+#include <fbutils.h>
 
 namespace pb {
 
@@ -300,7 +301,7 @@ namespace pb {
         unsigned char *hash2 = hash2data;//new unsigned char[25];
 
         RIPEMD160(ret.data, sizeof(ret.data), (unsigned char*)&hash2[1]);
-        hash2[0] = 0;
+        hash2[0] = fantasybit::BTC_NETWORK;
         hashc(hash2, 21, ret.data);
         pb::sha256  ret2x;
         hashc(ret.data,sizeof(ret.data),ret2x.data);

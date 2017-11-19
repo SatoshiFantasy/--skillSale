@@ -77,6 +77,7 @@ namespace fantasybit {
     static std::string FBSALE_HOST = PB_WS_LITE_AGENT;
     static int FBSALE_AGENT_PORT = 9222;
 
+    static std::string BLOCKCHAINAPI = "https://testnet/blockchain.info";
     //forwards
     struct FantasyName;
 
