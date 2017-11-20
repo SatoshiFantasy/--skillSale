@@ -77,7 +77,12 @@ namespace fantasybit {
     static std::string FBSALE_HOST = PB_WS_LITE_AGENT;
     static int FBSALE_AGENT_PORT = 9222;
 
-    static std::string BLOCKCHAINAPI = "https://testnet/blockchain.info";
+    static std::string BLOCKCHAINAPI = "https://testnet.blockchain.info";
+
+    static unsigned char BTC_NETWORK = 0x6f; //0
+    static std::string FUNDING_ADDRESS = //"mpDr2HtBxfvjngf3wt8d76TTRoAMtybYtC";
+                                         "2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF";
+
     //forwards
     struct FantasyName;
 

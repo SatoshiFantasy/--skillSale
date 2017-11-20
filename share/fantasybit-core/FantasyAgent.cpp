@@ -103,6 +103,7 @@ std::string FantasyAgent::getMnemonic(std::string fname) {
     return ret + " not found";
 }
 
+/*
 bool FantasyAgent::testBtc(WalletD secret) {
 //    long a =RestfullService::getBtcAddressBalance ("13yhCtK9q1qKmx79pNBqqsGSrtJBKYzsXJ");
 //    qDebug() << "13yhCtK9q1qKmx79pNBqqsGSrtJBKYzsXJ" << a;
@@ -129,6 +130,19 @@ bool FantasyAgent::testBtc(WalletD secret) {
 
 //    std::string fordebug = "";
     std::string btcaddress = btc1;//"1D7JJrwsTnCBT8r9ctLqEbVMP3BGDdh9Wq";
+    std::string fundaddress = "17AWWXT4f12i7gyHs7t6cFtMDsfJfLb2Ky";
+
+
+    */
+bool FantasyAgent::testBtc(WalletD secret) {
+
+    auto pk = Commissioner::str2pk (secret.public_key ());
+    std::string btc1 = pb::toBtcAddress (pk);
+    qDebug() << secret.public_key ().data () << btc1.data ();
+
+    if ( btc1 != "1D7JJrwsTnCBT8r9ctLqEbVMP3BGDdh9Wq") return false;
+
+        std::string btcaddress = btc1;//"1D7JJrwsTnCBT8r9ctLqEbVMP3BGDdh9Wq";
     std::string fundaddress = "17AWWXT4f12i7gyHs7t6cFtMDsfJfLb2Ky";
     auto json = RestfullService::getBtcAddressUnspent (btcaddress);
 
@@ -181,9 +195,6 @@ bool FantasyAgent::testBtc(WalletD secret) {
         fordebugscript.back () += script.toStdString() + "\n";
 //        qDebug() << " in_script.back() " << in_script.back().data();
     }
-
-
-
 
 
 //    raw_transaction += in_script.back();
@@ -412,6 +423,292 @@ bool FantasyAgent::testBtc(WalletD secret) {
     */
 
 
+
+}
+
+//std::string FantasyAgent::createTestTx(const std::string &fudingAddr) {}
+
+uint64_t FantasyAgent::createInputsfromUTXO(const std::string &btcaddress,
+                                        std::vector<std::string> &in_script,
+                                        std::vector<std::string> &raw_transaction) {
+    auto json = RestfullService::getBtcAddressUnspent (btcaddress);
+
+    QJsonParseError * error = NULL;
+    QJsonDocument doc = QJsonDocument::fromJson(json,error);
+
+    if (error != NULL || doc.isEmpty()){
+
+        qDebug() << " error parsing json";
+        if ( error != NULL ) qDebug() << error->errorString();
+        return 0;
+    }
+    qDebug() << json;
+
+    qDebug() << doc.isNull() << doc.isEmpty() << doc.isArray() << doc.isObject();
+    QJsonObject jo = doc.object();
+    QJsonArray utxos = jo.value("unspent_outputs").toArray();
+
+
+    std::vector<std::string> fordebug;
+    std::vector<std::string> fordebugscript;
+//    std::vector<std::string> raw_transaction;
+//    std::vector<std::string> in_script;
+    int numinputs = 0;
+    uint64_t inputsatoshis = 0;
+    for(QJsonValueRef ut : utxos) {
+        QJsonObject vo = ut.toObject();
+        QString tx_hash = vo.value("tx_hash").toString();
+    //        QString tx_hash_big_endian = vo.value("tx_hash_big_endian").toString();
+        QString script = vo.value("script").toString();
+        uint64_t in_value = vo.value("value").toInt();
+        uint32_t tx_output_n = vo.value("tx_output_n").toInt();
+
+        inputsatoshis += in_value;
+
+        qDebug() << tx_hash << script <<  in_value << tx_output_n ;
+        qDebug() << "";
+        numinputs++;
+
+        raw_transaction.push_back (tx_hash.toStdString());
+        fordebug.push_back (tx_hash.toStdString() + "\n");
+        auto reversetxoun = pb::toReverseHexFromDecimal (tx_output_n);
+        raw_transaction.back () += reversetxoun;
+        fordebug.back () += reversetxoun + "\n";
+        auto ssize = ( unsigned char )( script.size( ) / 2 );
+        auto sstr = pb::to_hex ( &ssize, sizeof( unsigned char ) );
+        in_script.push_back( sstr + script.toStdString());
+        fordebugscript.push_back (sstr + "\n");
+        fordebugscript.back () += script.toStdString() + "\n";
+    }
+
+    return inputsatoshis;
+}
+
+std::string FantasyAgent::createTxFromInputs(uint64_t inputsatoshis,
+                                             const std::string &fundaddress,
+                                      std::vector<std::string> &in_script,
+                                      std::vector<std::string> &raw_transaction) {
+    std::string raw_transaction_out{""};
+    std::vector<std::string> fordebug = raw_transaction;
+    std::vector<std::string> fordebugscript = in_script;
+
+    int numinputs = in_script.size();
+
+    auto pk = m_priv.get_public_key().serialize();
+    std::string fordebugout = "";
+    uint64_t satoshifee = 100000;
+    int numoutputs = 2;
+    {
+        auto size = ( unsigned char )numoutputs;
+        auto sstr = pb::to_hex ( &size, sizeof( unsigned char ) );
+        fordebugout += sstr + "\n";
+        raw_transaction_out += sstr;
+    }
+    auto amstr = pb::toReverseHexFromDecimal(uint64_t(inputsatoshis - satoshifee));
+    raw_transaction_out += amstr;
+    fordebugout += amstr + "\n";
+
+    //OP_DUP OP_HASH160 <PubkeyHash> OP_EQUALVERIFY OP_CHECKSIG
+    std::string OP_DUP = "76";
+    std::string OP_HASH160 = "a9";
+    std::string OP_EQUALVERIFY = "88";
+    std::string OP_CHECKSIG = "ac";
+    std::string OP_RETURN = "6a";
+    std::string OP_EQUAL = "87";
+
+    bool usep2sh = fundaddress.at(0) == '2';
+
+    if ( !usep2sh ) {
+        std::string p2pkh  = OP_DUP + OP_HASH160;
+        std::string pubkeyHash = pb::fromBtcAddress (fundaddress);
+        {
+            auto size = ( unsigned char )( pubkeyHash.size( ) / 2 );
+            auto sstr = pb::to_hex ( &size, sizeof( unsigned char ) );
+            p2pkh += sstr;
+        }
+        p2pkh += pubkeyHash;
+        p2pkh += OP_EQUALVERIFY + OP_CHECKSIG;
+
+        //    qDebug() << "sigscript:" << sigscript.data ();
+        qDebug() << "p2pkh:" << p2pkh.data ();
+
+        {
+            auto size = ( unsigned char )( p2pkh.size( ) / 2 );
+            auto sstr = pb::to_hex ( &size, sizeof( unsigned char ) );
+            raw_transaction_out += sstr;
+            fordebugout += sstr + "\n";
+        }
+        fordebugout += p2pkh + "\n";
+        raw_transaction_out += p2pkh;
+    }
+    if ( usep2sh ) {
+        std::string p2sh  = OP_HASH160;
+        std::string scriptHash = pb::fromBtcAddress (fundaddress);
+        {
+            auto size = ( unsigned char )( scriptHash.size( ) / 2 );
+            auto sstr = pb::to_hex ( &size, sizeof( unsigned char ) );
+            p2sh += sstr;
+        }
+        p2sh += scriptHash;
+        p2sh += OP_EQUAL ;
+
+        //    qDebug() << "sigscript:" << sigscript.data ();
+        qDebug() << "p2psh:" << p2sh.data ();
+
+        {
+            auto size = ( unsigned char )( p2sh.size( ) / 2 );
+            auto sstr = pb::to_hex ( &size, sizeof( unsigned char ) );
+            raw_transaction_out += sstr;
+            fordebugout += sstr + "\n";
+        }
+        fordebugout += p2sh + "\n";
+        raw_transaction_out += p2sh;
+    }
+
+
+
+
+    if ( numoutputs == 2) {
+        //OP_RETURN
+        std::string opret_out = OP_RETURN;
+        std::string debug_opret_out = OP_RETURN + "\n";
+        std::string hexname = pb::to_hex(client2->alias());
+        {
+            auto size = ( unsigned char )(hexname.size ()/2);
+            auto holdsize = pb::to_hex ( &size, sizeof( unsigned char ) );
+            opret_out  += holdsize;
+            debug_opret_out += holdsize + "\n";
+        }
+        opret_out += hexname;
+        debug_opret_out += hexname + "\n";
+        {
+            auto size = ( unsigned char )(opret_out.size() /2);
+            auto holdsize = pb::to_hex ( &size, sizeof( unsigned char ) );
+            opret_out  = holdsize + opret_out;
+            debug_opret_out = holdsize + "\n" + debug_opret_out;
+        }
+        raw_transaction_out += "0000000000000000";
+        raw_transaction_out += opret_out;
+        fordebugout += "0000000000000000\n" + debug_opret_out;
+    }
+
+    std::string locktime = "00000000";
+    fordebugout += locktime + "\n";
+    raw_transaction_out += locktime;
+//    raw_transaction_out += sighash_all;
+//    qDebug() << "raw_transaction_out:" << raw_transaction_out.data ();
+
+
+    std::string sighash_all = "01000000";
+//    fordebugout += sighash_all + "\n";
+
+    std::string  raw_transaction_pre = "01000000"; // i.e. version
+    std::string fordebug_pre =  raw_transaction_pre + "\n";
+    {
+        auto size = ( unsigned char )numinputs;
+        auto holdsize = pb::to_hex ( &size, sizeof( unsigned char ) );
+        fordebug_pre += holdsize + "\n";
+        raw_transaction_pre += holdsize;
+    }
+    //raw_transaction = raw_transaction;
+    std::vector<std::string> to_sign;
+    std::vector<std::string> to_sign_debug;
+
+    for ( int i=0; i< numinputs; i++) {
+        to_sign.push_back(raw_transaction_pre);
+        to_sign_debug.push_back (fordebug_pre);
+        for ( int j=0; j<numinputs; j++) {
+            if ( j == i) {
+                to_sign.back () += raw_transaction.at(i);
+                to_sign_debug.back() += fordebug.at(i);
+                to_sign.back() += in_script[i];
+                to_sign_debug.back () += fordebugscript[i];
+            }
+            else {
+                to_sign.back () += raw_transaction.at(j);
+                to_sign_debug.back() += fordebug.at(j);
+                to_sign.back() += "00";
+                to_sign_debug.back () += "00\n";
+            }
+            to_sign_debug.back () +=  "ffffffff\n";
+            to_sign.back() += "ffffffff";
+        }
+    }
+
+
+//    fordebug += fordebugout;
+//    qDebug() << fordebug.data();
+
+     auto pvk = m_priv;//str2priv(secret.private_key ());
+
+    //    auto sha = pb::hashit( "testit");
+    //    auto sig = pvk.sign(sha);
+
+
+    std::vector<std::string> sigouts;
+    std::vector<std::string> debug_sigouts;
+    for ( int i=0; i< to_sign.size(); i++) {
+        to_sign.at(i) += raw_transaction_out;
+        to_sign.at(i) += sighash_all;
+        to_sign_debug.at(i) +=  fordebugout + sighash_all;
+
+        qDebug() << i << "to_sign.at()";
+        qDebug() << to_sign_debug.at(i).data();
+
+        auto dblhash = pb::hashit(pb::hashfromhex(to_sign.at(i)));
+        auto sig = pvk.sign(dblhash);
+        auto dersig = pb::serialize_der (sig);
+        dersig = pb::to_hex(dersig);
+        auto debugdersig = dersig + "\n";
+//        qDebug() << " dersig" << dersig.data ();
+
+        dersig += "01";
+        debugdersig += "01\n";
+        auto size = ( unsigned char )( dersig.size( ) / 2 );
+        auto sstr = pb::to_hex ( &size, sizeof( unsigned char ) );
+        dersig = sstr + dersig;
+        debugdersig = sstr + "\n" + debugdersig;
+
+//        qDebug() << " size " << size << "dersig.size(  " << dersig.size( ) << " sstr " << sstr.data();
+
+        dersig += "21";
+        debugdersig += "21\n";
+        sstr = pb::to_hex(pk.begin (),33);
+        dersig.append (sstr);
+        debugdersig.append (sstr + "\n");
+        sigouts.push_back (dersig);//sig.data,64));
+        debug_sigouts.push_back (debugdersig);
+    }
+
+//    qDebug() << sigouts[0].data ();
+
+    std::string final_tx = raw_transaction_pre;
+    std::string final_debug_tx = fordebug_pre;
+    for ( int i=0; i< numinputs; i++) {
+        final_tx += raw_transaction.at(i);
+        final_debug_tx += fordebug.at(i);
+
+        auto ssize = ( unsigned char )( sigouts.at(i).size( ) / 2 );
+        auto sstr = pb::to_hex ( &ssize, sizeof( unsigned char ) );
+//        qDebug() << " ssize " << ssize << "sigouts.at(i).size(  " << sigouts.at(i).size( ) << " sstr " << sstr.data();
+        final_debug_tx += sstr + "\n" + debug_sigouts.at(i);
+        final_tx += sstr + sigouts.at(i);
+        final_tx += "ffffffff";
+        final_debug_tx += "ffffffff\n";
+    }
+
+    final_tx += raw_transaction_out;
+    final_debug_tx += fordebugout;
+    qDebug() << "final tx" << final_tx.data ();
+    qDebug() << "final_debug_tx";
+    qDebug() << final_debug_tx.data ();
+
+
+//    std::string testtx = "0100000001eccf7e3034189b851985d871f91384b8ee357cd47c3024736e5676eb2debb3f2010000001976a914010966776006953d5567439e5e39f86a0d273bee88acffffffff01605af405000000001976a914097072524438d003d23a2f23edb65aae1bb3e46988ac0000000001000000";
+    auto testh = pb::hashit(pb::hashfromhex(final_tx));
+    qDebug() << " test hash " << testh.str();
+
+    return final_tx;
 
 }
 

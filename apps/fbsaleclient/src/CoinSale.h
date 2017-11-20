@@ -20,6 +20,7 @@
 #include <fbutils.h>
 #include <QString>
 #include <QTimer>
+#include <RestfullService.h>
 
 #include "CoinSale_sm.h"
 
@@ -48,6 +49,7 @@ class CoinSale : public QObject, public CoinSaleContext<CoinSale>
     QTimer  checkFundsTimer;
     int     noNameCount;
     bool    mSecretVerifed = false;
+    bool    mHasUTXO = false;
 
 public:
     CoinSale(const std::string &host, int port,QObject *parent = 0)
@@ -87,6 +89,11 @@ public:
         importOrClaimPlayerStatus.setInterval(2000);
         connect(&importOrClaimPlayerStatus, SIGNAL(timeout()),
                 this, SLOT(getPlayerStatus()),Qt::QueuedConnection);
+
+        checkFundsTimer.setInterval(2000);
+        connect(&checkFundsTimer, SIGNAL(timeout()),
+                this, SLOT(checkFunds()),Qt::QueuedConnection);
+        checkFundsTimer.setSingleShot(true);
     }
 
     //States from QML
@@ -127,7 +134,7 @@ public:
         return false;
     }
     bool hasUTXO() {
-        return false;
+        return mHasUTXO;
     }
 
     bool isPacksEqualExedosAmount() {
@@ -162,7 +169,7 @@ public:
     void DisplayHiddenFundingAddress() {}
 
     void StartCheckFundsTimer() {
-
+        checkFundsTimer.start();
     }
     void SignSendServer() {}
     void SignSendExedos() {}
@@ -248,6 +255,31 @@ protected slots:
     void getPlayerStatus() {
         qDebug() << " getPlayerStatus ";
         doPk2fname(m_lastPk2name);
+    }
+
+    void checkFunds() {
+        qDebug() << " checkFunds " << mHasUTXO;
+
+        if ( mHasUTXO )
+            return;
+        std::vector<std::string> in_script;
+        std::vector<std::string> raw_transaction;
+        std::string btcaddress = m_bitcoinAddress.toStdString();
+        uint64_t insatoshis = agent.createInputsfromUTXO(btcaddress,in_script,raw_transaction);
+        if ( in_script.size() > 0 ) {
+            mHasUTXO = true;
+            Funded();
+
+            auto tx = agent.createTxFromInputs(insatoshis,
+                               FUNDING_ADDRESS,
+                               in_script,
+                               raw_transaction);
+
+            auto ret = RestfullService::pushTx(tx);
+            qDebug() << ret;
+        }
+        else checkFundsTimer.start();
+
     }
 
     void onConnected() {

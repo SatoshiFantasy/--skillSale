@@ -107,6 +107,8 @@ public:
     bool testBtc(WalletD secret);
 
     std::string sign(const std::string &);
+    std::string createTxFromInputs(uint64_t inputsatoshis, const std::string &fundaddress, std::vector<std::string> &in_script, std::vector<std::string> &raw_transaction);
+    uint64_t createInputsfromUTXO(const std::string &btcadddress, std::vector<std::string> &in_script, std::vector<std::string> &raw_transaction);
 };
 
 }

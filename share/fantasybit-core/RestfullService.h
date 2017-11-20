@@ -42,6 +42,37 @@ public:
         //toStdString();
     }
 
+    static QByteArray pushTxXXX(const std::string &rawTx,
+                             QThread * ownerThread = QThread::currentThread()) {
+        QString url = QString(fantasybit::BLOCKCHAINAPI.data());
+        RestfullClient client(QUrl(url),ownerThread);
+
+        std::string sendit = "tx=" + rawTx;
+        QString customRoute("pushtx");
+//        client.postStringData(customRoute,"application/x-www-form-urlencoded",sendit.data(),RestfullClient::UTF8);
+        QByteArray data(sendit.data(),sendit.size());
+        client.postRawData(customRoute,"multipart/form-data;boundary=-------",data);
+//        client.postRawData(customRoute,"",data);
+
+        return client.lastReply();
+        //toStdString();
+    }
+
+    static QByteArray pushTx(const std::string &rawTx,
+                             QThread * ownerThread = QThread::currentThread()) {
+        QString url = QString(fantasybit::BLOCKCHAINAPI.data());
+        RestfullClient client(QUrl(url),ownerThread);
+        QMap<QString,QString>  headers;
+        QMap<QString,QVariant> params;
+        params.insert ( QString("tx"),QString(rawTx.data()));
+        QString customRoute("pushtx");
+        client.postTData(customRoute,params,headers);
+
+        return client.lastReply();
+        //toStdString();
+    }
+
+
 };
 
 #endif // RESTFULLSERVICE_H
