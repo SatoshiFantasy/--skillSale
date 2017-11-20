@@ -284,7 +284,7 @@ public:
             else {
                 url+=QString("&%1=%2").arg(paramName).arg(parameters.value(paramName).toString());
             }
-            postBodyContent += QString("&%1=%2").arg(paramName).arg(parameters.value(paramName).toString());
+//            postBodyContent += QString("&%1=%2").arg(paramName).arg(parameters.value(paramName).toString());
         }
         request.setUrl(url);
         //add headers
