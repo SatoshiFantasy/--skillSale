@@ -38,11 +38,11 @@ HEADERS += $$PWD/src/runguard.h \
 
 FANTASYBITLIB += fantasybit-core
 !contains(DEFINES, PRODFOOTBALL){
-    FBCOREPATH = STAGING-$${FANTASYBITLIB}
+    FANTASYBITLIB = STAGING-$${FANTASYBITLIB}
 }
 
 FBCOREPATH = $$OUT_PWD/../../share/$$FANTASYBITLIB
-
+message(FBCOREPATH $$FBCOREPATH)
 
 win32:CONFIG(release, debug|release): LIBS += -L$$FBCOREPATH/release/ -l$$FANTASYBITLIB
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$FBCOREPATH/debug/ -l$$FANTASYBITLIB
@@ -53,7 +53,7 @@ win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$FBCOREPATH/release
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$FBCOREPATH/debug/lib$${FANTASYBITLIB}.a
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$FBCOREPATH/release/$${FANTASYBITLIB}.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$FBCOREPATH/debug/$${FANTASYBITLIB}.lib
-else:macx: PRE_TARGETDEPS += $$FBCOREPATH6/lib$${FANTASYBITLIB}.a
+else:macx: PRE_TARGETDEPS += $$FBCOREPATH/lib$${FANTASYBITLIB}.a
 
 message (PRE_TARGETDEPS $$PRE_TARGETDEPS)
 

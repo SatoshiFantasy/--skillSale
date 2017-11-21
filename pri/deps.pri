@@ -40,26 +40,26 @@ osx {
 
 unix:macx {
     LIBS += $$DIRPREFIX/osx/lib/libleveldb.a
-    INCLUDEPATH += $DIRPREFIX/osx/include/
+    INCLUDEPATH += $$DIRPREFIX/osx/include/
 }
 
-##############Ï
+##############
 ##     OSX
 ##############
 
 macx{
     message(OSX BUILD)
-    INCLUDEPATH += $DIRPREFIX/osx/include/
-    DEPENDPATH += $DIRPREFIX/osx/include/
+    INCLUDEPATH += $$DIRPREFIX/osx/include/
+    DEPENDPATH += $$DIRPREFIX/osx/include/
 
-    LIBS += $DIRPREFIX/osx/lib/libprotobuf.a
-    PRE_TARGETDEPS += $DIRPREFIX/osx/lib/libprotobuf.a
+    LIBS += $$DIRPREFIX/osx/lib/libprotobuf.a
+    PRE_TARGETDEPS += $$DIRPREFIX/osx/lib/libprotobuf.a
 
-    LIBS += $DIRPREFIX/osx/lib/libssl.a
-    PRE_TARGETDEPS += $DIRPREFIX/osx/lib/libssl.a
+    LIBS += $$DIRPREFIX/osx/lib/libssl.a
+    PRE_TARGETDEPS += $$DIRPREFIX/osx/lib/libssl.a
 
-    LIBS+=$DIRPREFIX/osx/lib/libcrypto.a
-    PRE_TARGETDEPS+=$DIRPREFIX/osx/lib/libcrypto.a
+    LIBS+=$$DIRPREFIX/osx/lib/libcrypto.a
+    PRE_TARGETDEPS+=$$DIRPREFIX/osx/lib/libcrypto.a
 
     DEFINES += GOOGLE_NAMESPACE=google
 
