@@ -431,6 +431,14 @@ bool FantasyAgent::testBtc(WalletD secret) {
 uint64_t FantasyAgent::createInputsfromUTXO(const std::string &btcaddress,
                                         std::vector<std::string> &in_script,
                                         std::vector<std::string> &raw_transaction) {
+
+//    std::string OP_DUP = "76";
+//    std::string OP_HASH160 = "a9";
+//    std::string OP_EQUALVERIFY = "88";
+//    std::string OP_CHECKSIG = "ac";
+//    std::string OP_RETURN = "6a";
+//    std::string OP_EQUAL = "87";
+
     auto json = RestfullService::getBtcAddressUnspent (btcaddress);
 
     QJsonParseError * error = NULL;
@@ -476,11 +484,49 @@ uint64_t FantasyAgent::createInputsfromUTXO(const std::string &btcaddress,
         fordebug.back () += reversetxoun + "\n";
         auto ssize = ( unsigned char )( script.size( ) / 2 );
         auto sstr = pb::to_hex ( &ssize, sizeof( unsigned char ) );
-        in_script.push_back( sstr + script.toStdString());
-        fordebugscript.push_back (sstr + "\n");
-        fordebugscript.back () += script.toStdString() + "\n";
-    }
 
+        if ( btcaddress[0] != P2SH_ADDRESS ) {
+            in_script.push_back( sstr + script.toStdString());
+            fordebugscript.push_back (sstr + "\n");
+            fordebugscript.back () += script.toStdString() + "\n";
+        }
+        else{
+            qDebug() << " error - can only handle P2Pk";
+//          pb::toRedeemScript(pubKey());
+            std::string rdeemscript;
+            rdeemscript = pb::to_hex(pubKey().begin(),33);
+            {
+            auto ssize = ( unsigned char )( rdeemscript.size( ) / 2 );
+            auto sstr = pb::to_hex ( &ssize, sizeof( unsigned char ));
+            }
+            in_script.push_back(sstr + rdeemscript);
+
+            /*
+            std::string p2sh  = OP_HASH160;
+            std::string scriptHash = pb::fromBtcAddress (btcaddress);
+            {
+                auto size = ( unsigned char )( scriptHash.size( ) / 2 );
+                auto sstr = pb::to_hex ( &size, sizeof( unsigned char ) );
+                p2sh += sstr;
+            }
+            p2sh += scriptHash;
+            p2sh += OP_EQUAL ;
+
+            qDebug() << "in p2psh:" << p2sh.data ();
+
+            {
+                auto size = ( unsigned char )( p2sh.size( ) / 2 );
+                auto sstr = pb::to_hex ( &size, sizeof( unsigned char ) );
+                rdeemscript = sstr;
+                fordebugscript.push_back(sstr + "\n");
+            }
+            fordebugscript.back() += p2sh + "\n";
+            rdeemscript += p2sh;
+            in_script.push_back(rdeemscript);
+            */
+        }
+
+    }
     return inputsatoshis;
 }
 
@@ -496,7 +542,7 @@ std::string FantasyAgent::createTxFromInputs(uint64_t inputsatoshis,
 
     auto pk = m_priv.get_public_key().serialize();
     std::string fordebugout = "";
-    uint64_t satoshifee = 100000;
+    uint64_t satoshifee = 25000;
     int numoutputs = 2;
     {
         auto size = ( unsigned char )numoutputs;
@@ -504,7 +550,17 @@ std::string FantasyAgent::createTxFromInputs(uint64_t inputsatoshis,
         fordebugout += sstr + "\n";
         raw_transaction_out += sstr;
     }
-    auto amstr = pb::toReverseHexFromDecimal(uint64_t(inputsatoshis - satoshifee));
+
+    int64_t thamount = inputsatoshis - satoshifee;
+    while ( thamount <= 0 ) {
+        satoshifee /= 10;
+        thamount =  inputsatoshis - satoshifee;
+    }
+
+
+    uint64_t amount = thamount;
+
+    auto amstr = pb::toReverseHexFromDecimal(amount);
     raw_transaction_out += amstr;
     fordebugout += amstr + "\n";
 
@@ -516,7 +572,8 @@ std::string FantasyAgent::createTxFromInputs(uint64_t inputsatoshis,
     std::string OP_RETURN = "6a";
     std::string OP_EQUAL = "87";
 
-    bool usep2sh = fundaddress.at(0) == '2';
+    bool usep2sh = fundaddress.at(0) == P2SH_ADDRESS;
+//    usep2sh = true;
 
     if ( !usep2sh ) {
         std::string p2pkh  = OP_DUP + OP_HASH160;
@@ -530,7 +587,7 @@ std::string FantasyAgent::createTxFromInputs(uint64_t inputsatoshis,
         p2pkh += OP_EQUALVERIFY + OP_CHECKSIG;
 
         //    qDebug() << "sigscript:" << sigscript.data ();
-        qDebug() << "p2pkh:" << p2pkh.data ();
+        qDebug() << "out p2pkh:" << p2pkh.data ();
 
         {
             auto size = ( unsigned char )( p2pkh.size( ) / 2 );
@@ -542,6 +599,7 @@ std::string FantasyAgent::createTxFromInputs(uint64_t inputsatoshis,
         raw_transaction_out += p2pkh;
     }
     if ( usep2sh ) {
+
         std::string p2sh  = OP_HASH160;
         std::string scriptHash = pb::fromBtcAddress (fundaddress);
         {

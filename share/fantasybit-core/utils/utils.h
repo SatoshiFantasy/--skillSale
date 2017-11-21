@@ -315,6 +315,19 @@ namespace pb {
         return EncodeBase58(hash2,hash2+25);
     }
 
+//    static std::string toRedeemScript(const public_key_data &in ) {
+//        pb::sha256 ret;
+//        hashc(in.key_data, 33, ret.data);
+//        qDebug() << ret.str ().data ();
+//        unsigned char hash2data[20];
+//        unsigned char *hash2 = hash2data;//new unsigned char[25];
+
+//        RIPEMD160(ret.data, sizeof(ret.data), (unsigned char*)&hash2[0]);
+//        std::string   temp =  to_hex(hash2,20);
+//        return temp;
+
+//    }
+
     static std::string fromBtcAddress(const std::string &in ) {
         std::vector<unsigned char> out;
         DecodeBase58 (in,out);
