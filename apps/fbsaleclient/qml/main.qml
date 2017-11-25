@@ -16,6 +16,7 @@ ApplicationWindow {
         Testjay {}
 
         Page1 {
+            id: page1
         }
 
         Page3 {
@@ -23,6 +24,48 @@ ApplicationWindow {
         }
 
 
+    }
+
+    Label {
+        rotation: -45
+        text: "Demo Testing"
+        color: "#40000000"
+        anchors.centerIn: parent
+        font.pointSize: 20
+        font.bold:  true
+        visible: CoinSale.isTestNet
+//        font.pixelSize: ProtoScreen.font( ProtoScreen.XXLARGE)
+//        anchors.fill: parent
+    }
+
+//    Flickable{
+//        id: f1
+//        ScrollBar.vertical: ScrollBar { }
+//        height: parent.height * .15
+//        width: parent.width * .60
+//        contentHeight: logarea.contentHeight
+//        TextArea {
+//            anchors.horizontalCenter: parent.horizontalCenter
+//            anchors.fill: parent
+//            readOnly: true
+//            id: logarea
+//            text: "..."
+//        }
+//        anchors.bottom: parent.bottom
+//        anchors.horizontalCenter: parent.horizontalCenter
+//    }
+
+    Label {
+        anchors.horizontalCenter: parent.horizontalCenter
+        id: logarea2
+        text: "..."
+        anchors.bottom: logarea.top
+    }
+    Label {
+        anchors.horizontalCenter: parent.horizontalCenter
+        id: logarea
+        text: "..."
+        anchors.bottom: parent.bottom
     }
 
     BusyIndicator {
@@ -62,6 +105,25 @@ ApplicationWindow {
                    break;
 
            }
+        }
+
+        onNameCheckGet: {
+            console.log( "namehcek " + name + status)
+            if(status === "true" ) {
+                page1.nameStatsText = "name Check Pass... sending claim name tx to blockchain for: " + name;
+                CoinSale.signPlayer(name);
+            }
+            else {
+                page1.nameStatsText = name + " not Available - try new name or import"
+            }
+        }
+
+        onCurrStatusChanged: {
+            logarea.text = logarea2.text
+            logarea2.text = currStatus
+//            logarea.text = currStatus;
+//            logarea.append(currStatus + "\n")
+//            logarea.text = currStatus + "\n" + logarea.text;
         }
     }
 }
