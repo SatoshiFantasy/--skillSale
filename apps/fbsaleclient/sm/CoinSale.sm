@@ -37,7 +37,9 @@ NoName
 
 WaitingImportConfirm
 {
+
             NameConfimed        WaitingForFunds                 { SetNameIsNew(); }
+            NameNotConfimed     NoName  {}
 }
 
 WaitingNameConfirm
@@ -46,6 +48,8 @@ WaitingNameConfirm
                                 nil                             { DisplaySecretDialog(); }
 
             SecretOk            WaitingShowAddress     {}
+            
+            NameNotConfimed     NoName  {}
 }
 
 WaitingShowAddress              Entry                           { DisplayHiddenFundingAddress(); }

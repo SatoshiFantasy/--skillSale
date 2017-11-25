@@ -39,6 +39,8 @@ class CoinSale : public QObject, public CoinSaleContext<CoinSale>
 
     QML_READONLY_CSTREF_PROPERTY(QString,bitcoinAddress)
 
+    QML_READONLY_CSTREF_PROPERTY(bool, isTestNet)
+
     QWebSocket m_webSocket;
     std::string m_lastPk2name;
     std::string m_lastCheckName;
@@ -51,6 +53,9 @@ class CoinSale : public QObject, public CoinSaleContext<CoinSale>
     int     noNameCount;
     bool    mSecretVerifed = false;
     bool    mHasUTXO = false;
+    
+    std::unordered_map<std::string, bool> mSecretDisplayed;
+    std::unordered_map<std::string, bool> mSecretVerified;
 
 public:
     CoinSale(const std::string &host, int port,QObject *parent = 0)
@@ -58,7 +63,8 @@ public:
                                       m_totalAvailable{0},
                                       m_busySend(true),
                                       m_currDialog(""),
-                                      m_currStatus("starting App")
+                                      m_currStatus("starting App"),
+                                      m_isTestNet(IS_TEST_NET)
     {
         connect(&m_webSocket, SIGNAL(connected()), this, SLOT(onConnected()));
         connect (&m_webSocket,SIGNAL(aboutToClose()),this,SLOT(handleAboutToClose()));
@@ -130,6 +136,8 @@ public:
     }
 
     Q_INVOKABLE void signPlayer(QString fname) {
+        mSecretDisplayed[fname.toStdString()] = false;
+        mSecretVerified[fname.toStdString()] = false;
         Claim();
         qDebug() << "signPlayer ";
 
@@ -175,7 +183,10 @@ public:
         return false;
     }
     bool SecretDisplayed() {
-        return false;
+        if ( HasName() )
+            return mSecretDisplayed[m_currName.toStdString()];
+        else
+            return false;
     }
     bool isConfirmed() {
         return false;
@@ -197,13 +208,14 @@ public:
         return false;
     }
 
-    bool  mNameIsnew = true;
-
     void NewNameDialog() {
         setcurrDialog("name");
     }
     void SetNameIsNew() {
-        mNameIsnew = true;
+        if ( HasName() ) {
+            mSecretDisplayed[m_currName.toStdString()] = true;
+            mSecretVerified[m_currName.toStdString()] = true;
+        }
     }
 
     void DisplayFundingAddress() {
@@ -234,6 +246,8 @@ public:
     void StartCheckPacksTimer() {}
     void RequestNewPacks() {}
     void SetVerifySecret(bool) {}
+    
+    void NameNotConfirmed() {}
 
 
 
@@ -420,8 +434,8 @@ protected slots:
                             importOrClaimPlayerStatus.stop();
                             noNameCount = 0;
                             setbusySend(false);
+                            NameNotConfirmed();
                         }
-                        break;
                     }
                     else {
                         if ( name ==  m_lastCheckName ) {
@@ -440,14 +454,21 @@ protected slots:
 
                             importOrClaimPlayerStatus.stop();
                             noNameCount = 0;
+                            setbusySend(false);
 
                             if ( agent.finishImportMnemonic(m_lastPk2name,name) ) {
-                                if ( agent.UseName(name) )
+                                if ( agent.UseName(name) ) {
                                     setcurrName(name.data());
+                                    NameConfimed();
+                                }
+                                else 
+                                    NameNotConfirmed();
                             }
+                            else 
+                                NameNotConfirmed();
+
+                            
                             m_lastPk2name = "";
-                            setbusySend(false);
-                            NameConfimed();
                         }
                         else {
                             importOrClaimPlayerStatus.stop();
@@ -456,6 +477,7 @@ protected slots:
                             m_lastCheckName = "";
                             m_lastPk2name = "";
                             setbusySend(false);
+                            NameNotConfirmed();
                         }
                     }
                 }

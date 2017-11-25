@@ -26,6 +26,17 @@ ApplicationWindow {
 
     }
 
+    Label {
+        rotation: -45
+        text: "Demo Testing"
+        color: "#40000000"
+        anchors.centerIn: parent
+        font.pointSize: 20
+        font.bold:  true
+        visible: CoinSale.isTestNet
+//        font.pixelSize: ProtoScreen.font( ProtoScreen.XXLARGE)
+//        anchors.fill: parent
+    }
 
 //    Flickable{
 //        id: f1
