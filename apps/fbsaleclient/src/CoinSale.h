@@ -33,7 +33,7 @@ class CoinSale : public QObject, public CoinSaleContext<CoinSale>
     QML_READONLY_CSTREF_PROPERTY(int,totalAvailable)
     QML_READONLY_CSTREF_PROPERTY(bool,busySend)
     QML_READONLY_CSTREF_PROPERTY(QString,currDialog)
-
+    QML_READONLY_CSTREF_PROPERTY(QString,currStatus)
 
     QML_READONLY_CSTREF_PROPERTY(QString,currName)
 
@@ -41,6 +41,7 @@ class CoinSale : public QObject, public CoinSaleContext<CoinSale>
 
     QWebSocket m_webSocket;
     std::string m_lastPk2name;
+    std::string m_lastCheckName;
     fantasybit::FantasyAgent agent;
     int errCount;
     QUrl theServer;
@@ -56,7 +57,8 @@ public:
                                     : QObject(parent),
                                       m_totalAvailable{0},
                                       m_busySend(true),
-                                      m_currDialog("")
+                                      m_currDialog(""),
+                                      m_currStatus("starting App")
     {
         connect(&m_webSocket, SIGNAL(connected()), this, SLOT(onConnected()));
         connect (&m_webSocket,SIGNAL(aboutToClose()),this,SLOT(handleAboutToClose()));
@@ -71,11 +73,14 @@ public:
                  this, SLOT(handleSocketState(QAbstractSocket::SocketState)));
 
         connect (this, &CoinSale::currNameChanged, this, &CoinSale::OnNewName, Qt::QueuedConnection);
+        connect (this, &CoinSale::nameAvail, this, &CoinSale::onNameAvail, Qt::QueuedConnection);
+        connect (this, &CoinSale::currStatusChanged, this, &CoinSale::OnCurrSatusChanged);
         QString wss("ws://%1:%2");
         QString lserver = wss.arg(host.data()).arg(port);
 
     #ifndef NODEBUG
-        qDebug() << " connecting to lserver" << lserver;
+        setcurrStatus("try connecting to lserver: " + lserver);
+        qDebug() << m_currStatus;
     #endif
 
         theServer = QUrl(lserver);
@@ -94,6 +99,7 @@ public:
         connect(&checkFundsTimer, SIGNAL(timeout()),
                 this, SLOT(checkFunds()),Qt::QueuedConnection);
         checkFundsTimer.setSingleShot(true);
+
     }
 
     //States from QML
@@ -113,6 +119,47 @@ public:
         mSecretVerifed = true;
         Import();
         importOrClaimPlayerStatus.start();
+    }
+
+    Q_INVOKABLE void checkname(QString fname) {
+//        qDebug() << "checkname ";
+        m_lastCheckName = fname.toStdString();
+        setcurrStatus(QString("checking name(%1) - Hash(%2)").arg(fname).arg(FantasyName::name_hash(m_lastCheckName)));
+        setbusySend(true);
+        fantasyNameCheck(m_lastCheckName);
+    }
+
+    Q_INVOKABLE void signPlayer(QString fname) {
+        Claim();
+        qDebug() << "signPlayer ";
+
+        setbusySend(true);
+
+        agent.signPlayer(fname.toStdString());
+        NameTrans nt{};
+        nt.set_public_key(agent.pubKeyStr());
+        nt.set_fantasy_name(fname.toStdString());
+
+        Transaction trans{};
+        trans.set_version(2);
+        trans.set_type(TransType::NAME);
+        trans.MutableExtension(NameTrans::name_trans)->CopyFrom(nt);
+        SignedTransaction sn = agent.makeSigned(trans);
+
+        DoPostTx(sn);
+        m_lastPk2name = agent.pubKeyStr();
+        noNameCount = 0;
+        importOrClaimPlayerStatus.start();
+
+    }
+
+
+    void DoPostTx(const SignedTransaction &st) {
+#ifndef NO_DOPOSTTX
+        auto txstr = st.SerializeAsString();
+        RestfullClient rest(QUrl(PAPIURL.data()));
+        rest.postRawData("tx","octet-stream",txstr.data(),((size_t)txstr.size()));
+#endif
     }
 
     bool HasName() {
@@ -165,7 +212,9 @@ public:
         qDebug() << m_bitcoinAddress;
     }
 
-    void DisplaySecretDialog() {}
+    void DisplaySecretDialog() {
+        setcurrStatus("to Disaply Secret");
+    }
     void DisplayHiddenFundingAddress() {}
 
     void StartCheckFundsTimer() {
@@ -236,13 +285,42 @@ public:
         m_webSocket.sendBinaryMessage(qbuf);
     }
 
+    void fantasyNameCheck(const std::string &checkname) {
+        WsReq req;
+        req.set_ctype(CHECKNAME);
+//        req.SetExtension(CheckNameReq::req,CheckNameReq::default_instance());
+//        req.MutableExtension(CheckNameReq::req)->set_fantasy_name(checkname);
+        CheckNameReq cnr;
+        cnr.set_fantasy_name(checkname);
+        req.SetAllocatedExtension(CheckNameReq::req,&cnr);
+        QByteArray qbuf;
+        qbuf.resize(req.ByteSize());
+        req.SerializeToArray(qbuf.data(), qbuf.size());
+        req.ReleaseExtension(CheckNameReq::req);
+        m_webSocket.sendBinaryMessage(qbuf);
+    }
+
 signals:
     void usingFantasyName(const QString &name);
     void error(QString);
     void importSuccess(const QString name, bool passfail);
-
+    void nameCheckGet( const QString & name, const QString & status );
+    void nameAvail( const QString name, bool );
 
 protected slots:
+    void OnCurrSatusChanged(QString in) {
+        qDebug() << in;
+    }
+
+    void onNameAvail(QString name,bool avail) {
+        if ( m_lastCheckName.data() == name ) {
+            setbusySend(false);
+            if ( !avail )
+                m_lastCheckName == "";
+            emit nameCheckGet(name,avail ? "true" : "false");
+        }
+    }
+
     void OnNewName(QString name) {
         WsReq req;
         req.set_ctype(SUBSCRIBEFNAME);
@@ -286,6 +364,7 @@ protected slots:
         errCount = 0;
         QHostAddress hInfo = m_webSocket.peerAddress ();
         qDebug() << "connected to " <<  hInfo.toString () << " on Port " << m_webSocket.peerPort ();
+        setcurrStatus("Connected to FB Sale Server" + hInfo.toString ());
         connect(&m_webSocket, SIGNAL(binaryMessageReceived(QByteArray)),
                 this, SLOT ( onBinaryMessageRecived(QByteArray) ));
 
@@ -307,6 +386,7 @@ protected slots:
            // qDebug() << "LightGateway::onBinaryMessageRecived " << rep.ShortDebugString().data();
         #endif
 
+        setcurrStatus("onBinaryMessageRecived");
         switch ( rep.ctype()) {
             case SIGNPACK: {
                 qDebug() << "SIGNPACK";
@@ -344,22 +424,49 @@ protected slots:
                         break;
                     }
                     else {
-                        importOrClaimPlayerStatus.stop();
-                        noNameCount = 0;
+                        if ( name ==  m_lastCheckName ) {
+                            importOrClaimPlayerStatus.stop();
+                            noNameCount = 0;
 
-                        if ( agent.finishImportMnemonic(m_lastPk2name,name) ) {
                             if ( agent.UseName(name) )
                                 setcurrName(name.data());
-                        }
 
-                        m_lastPk2name = "";
-                        setbusySend(false);
-                        NameConfimed();
+                            m_lastCheckName = "";
+                            m_lastPk2name = "";
+                            setbusySend(false);
+                            NameConfimed();
+                        }
+                        else if ( m_lastCheckName == "" ) {
+
+                            importOrClaimPlayerStatus.stop();
+                            noNameCount = 0;
+
+                            if ( agent.finishImportMnemonic(m_lastPk2name,name) ) {
+                                if ( agent.UseName(name) )
+                                    setcurrName(name.data());
+                            }
+                            m_lastPk2name = "";
+                            setbusySend(false);
+                            NameConfimed();
+                        }
+                        else {
+                            importOrClaimPlayerStatus.stop();
+                            noNameCount = 0;
+                            emit nameCheckGet(m_lastCheckName.data(), "false");
+                            m_lastCheckName = "";
+                            m_lastPk2name = "";
+                            setbusySend(false);
+                        }
                     }
                 }
                 break;
             }
 
+            case CHECKNAME: {
+                const CheckNameRep &cnr = rep.GetExtension(CheckNameRep::rep);
+                if (  cnr.req().fantasy_name() != "")
+                    emit nameAvail(cnr.req().fantasy_name().data(),cnr.isavail() == "yes");
+            }
             default:
                 break;
         }
@@ -404,21 +511,29 @@ protected slots:
 //    }
     void handleAboutToClose() {
         qDebug() << "handleAboutToClose" << errCount;
+        setcurrStatus("handleAboutToClose");
     }
 
     void handleClosed() {
         qDebug() << "handleClosed" << errCount;
-        if ( errCount < 100 )
+        if ( errCount < 100 ) {
+            setcurrStatus(QString("socket closed retry %1 of 100").arg(errCount));
             m_webSocket.open(theServer);
+        }
+        else
+            setcurrStatus(QString("socket closed forever - plese restart App - unable to connect %1").arg(theServer.toString()));
     }
 
     void handleSocketError(QAbstractSocket::SocketError wse) {
         qDebug() << "handleSocketError" << wse;
+        setcurrStatus(QString("socket error %1").arg(wse));
+
         errCount++;
     }
 
     void handleSocketState(QAbstractSocket::SocketState ss) {
         qDebug() << "handleSocketState" << ss;
+        setcurrStatus(QString("socket state %1").arg(ss));
     }
 
 };
