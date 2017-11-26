@@ -24,6 +24,7 @@
 #include <RestFullService.h>
 #include <fbutils.h>
 #include <QDebug>
+#include <bitcoinapi.h>
 
 using namespace fantasybit;
 
@@ -439,23 +440,8 @@ uint64_t FantasyAgent::createInputsfromUTXO(const std::string &btcaddress,
 //    std::string OP_RETURN = "6a";
 //    std::string OP_EQUAL = "87";
 
-    auto json = RestfullService::getBtcAddressUnspent (btcaddress);
-
-    QJsonParseError * error = NULL;
-    QJsonDocument doc = QJsonDocument::fromJson(json,error);
-
-    if (error != NULL || doc.isEmpty()){
-
-        qDebug() << " error parsing json";
-        if ( error != NULL ) qDebug() << error->errorString();
-        return 0;
-    }
-    qDebug() << json;
-
-    qDebug() << doc.isNull() << doc.isEmpty() << doc.isArray() << doc.isObject();
-    QJsonObject jo = doc.object();
-    QJsonArray utxos = jo.value("unspent_outputs").toArray();
-
+    BitcoinApi ba;
+    auto vec = ba.getUtxo(btcaddress);
 
     std::vector<std::string> fordebug;
     std::vector<std::string> fordebugscript;
@@ -463,32 +449,26 @@ uint64_t FantasyAgent::createInputsfromUTXO(const std::string &btcaddress,
 //    std::vector<std::string> in_script;
     int numinputs = 0;
     uint64_t inputsatoshis = 0;
-    for(QJsonValueRef ut : utxos) {
-        QJsonObject vo = ut.toObject();
-        QString tx_hash = vo.value("tx_hash").toString();
-    //        QString tx_hash_big_endian = vo.value("tx_hash_big_endian").toString();
-        QString script = vo.value("script").toString();
-        uint64_t in_value = vo.value("value").toInt();
-        uint32_t tx_output_n = vo.value("tx_output_n").toInt();
 
-        inputsatoshis += in_value;
+    for ( auto v : vec ) {
+        inputsatoshis += v.in_value;
 
-        qDebug() << tx_hash << script <<  in_value << tx_output_n ;
+        qDebug() << v.tx_hash << v.script <<  v.in_value << v.tx_output_n ;
         qDebug() << "";
         numinputs++;
 
-        raw_transaction.push_back (tx_hash.toStdString());
-        fordebug.push_back (tx_hash.toStdString() + "\n");
-        auto reversetxoun = pb::toReverseHexFromDecimal (tx_output_n);
+        raw_transaction.push_back (v.tx_hash.toStdString());
+        fordebug.push_back (v.tx_hash.toStdString() + "\n");
+        auto reversetxoun = pb::toReverseHexFromDecimal (v.tx_output_n);
         raw_transaction.back () += reversetxoun;
         fordebug.back () += reversetxoun + "\n";
-        auto ssize = ( unsigned char )( script.size( ) / 2 );
+        auto ssize = ( unsigned char )( v.script.size( ) / 2 );
         auto sstr = pb::to_hex ( &ssize, sizeof( unsigned char ) );
 
         if ( btcaddress[0] != P2SH_ADDRESS ) {
-            in_script.push_back( sstr + script.toStdString());
+            in_script.push_back( sstr + v.script.toStdString());
             fordebugscript.push_back (sstr + "\n");
-            fordebugscript.back () += script.toStdString() + "\n";
+            fordebugscript.back () += v.script.toStdString() + "\n";
         }
         else{
             qDebug() << " error - can only handle P2Pk";

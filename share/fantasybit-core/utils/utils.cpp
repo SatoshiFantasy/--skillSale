@@ -76,6 +76,12 @@ std::string sha256::str() const {
     return to_hex( (unsigned char*)begin(), 32 );
 }
 
+std::string sha256::reversestr() const {
+    sha256 copy;
+    std::reverse_copy((unsigned char*)begin(), (unsigned char*)begin()+32,(unsigned char*)copy.begin());
+    return copy.str();
+}
+
 std::string to_hex( const std::string &in ) {
     return to_hex( (unsigned char*)in.data (), in.size ());
 }

@@ -100,6 +100,8 @@ namespace pb {
         operator std::string()const;
 
         std::string str()const;
+
+        std::string reversestr()const;
 //        sha256::operator string()const { return  str(); }
         sha256(const sha256 &other) {
             memcpy(begin(),other.begin(),32);

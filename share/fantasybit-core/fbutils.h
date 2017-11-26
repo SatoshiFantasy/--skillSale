@@ -79,6 +79,7 @@ namespace fantasybit {
 
 #ifndef USE_BTC_MAINNET
     static std::string BLOCKCHAINAPI = "https://testnet.blockchain.info";
+    static std::string CHAINSOAPI = "https://chain.so/api/v2/%1/BTCTEST";
     static unsigned char BTC_NETWORK = 0x6f;//0xc4;//0x6f; //0
     static char P2SH_ADDRESS = '2';
     static std::string FUNDING_ADDRESS =

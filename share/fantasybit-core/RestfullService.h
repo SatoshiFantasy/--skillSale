@@ -26,7 +26,13 @@ public:
         //toStdString();
     }
 
+
     static QByteArray getBtcAddressUnspent(const std::string &addr,
+                 QThread * ownerThread = QThread::currentThread()) {
+        return getBlockchainBtcAddressUnspent(addr,ownerThread);
+    }
+
+    static QByteArray getBlockchainBtcAddressUnspent(const std::string &addr,
                  QThread * ownerThread = QThread::currentThread()) {
 
         QString url = QString(fantasybit::BLOCKCHAINAPI.data());
@@ -35,6 +41,21 @@ public:
         QMap<QString,QVariant> params;
         params.insert ( QString("active"),QString(addr.data()));
         QString customRoute("unspent");
+        //customRoute = customRoute.arg(route).arg(blockNum);
+        client.getData(customRoute,params,headers);
+
+        return client.lastReply();
+        //toStdString();
+    }
+
+    static QByteArray getChainsoBtcAddressUnspent(const std::string &addr,
+                 QThread * ownerThread = QThread::currentThread()) {
+
+        QString url = QString(fantasybit::CHAINSOAPI.data()).arg("get_tx_unspent");
+        RestfullClient client(QUrl(url),ownerThread);
+        QMap<QString,QString>  headers;
+        QMap<QString,QVariant> params;
+        QString customRoute = addr.data();
         //customRoute = customRoute.arg(route).arg(blockNum);
         client.getData(customRoute,params,headers);
 
@@ -58,7 +79,22 @@ public:
         //toStdString();
     }
 
-    static QByteArray pushTx(const std::string &rawTx,
+    static QByteArray pushChainsoBitcoinTx(const std::string &rawTx,
+                             QThread * ownerThread = QThread::currentThread()) {
+        QString url = QString(fantasybit::CHAINSOAPI.data()).arg("send_tx");
+        RestfullClient client(QUrl(url),ownerThread);
+        QMap<QString,QString>  headers;
+        QMap<QString,QVariant> params;
+        params.insert ( QString("tx_hex"),QString(rawTx.data()));
+        QString customRoute("");
+        client.postTData(customRoute,params,headers);
+
+        return client.lastReply();
+        //toStdString();
+    }
+
+
+    static QByteArray pushBitcoinTx(const std::string &rawTx,
                              QThread * ownerThread = QThread::currentThread()) {
         QString url = QString(fantasybit::BLOCKCHAINAPI.data());
         RestfullClient client(QUrl(url),ownerThread);

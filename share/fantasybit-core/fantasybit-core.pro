@@ -32,7 +32,8 @@ SOURCES += \
     Commissioner.cpp \
     ldbwriter.cpp \
     RestfullClient.cpp \
-    RestfullService.cpp
+    RestfullService.cpp \
+    bitcoinapi.cpp
 
 HEADERS += city.hpp \
     DataPersist.h \
@@ -54,6 +55,7 @@ HEADERS += city.hpp \
     Commissioner.h \
     ldbwriter.h \
     RestfullClient.h \
-    RestfullService.h
+    RestfullService.h \
+    bitcoinapi.h
 
 

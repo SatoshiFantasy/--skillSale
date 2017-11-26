@@ -419,8 +419,12 @@ protected slots:
                                in_script,
                                raw_transaction);
 
-            auto ret = RestfullService::pushTx(tx);
+            auto ret = RestfullService::pushBitcoinTx(tx);
             qDebug() << ret;
+            if ( ret == "Service Unavailable") {
+                auto ret2 = RestfullService::pushChainsoBitcoinTx(tx);
+                qDebug() << ret2;
+            }
         }
         else checkFundsTimer.start();
 
