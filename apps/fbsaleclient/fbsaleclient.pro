@@ -37,12 +37,12 @@ HEADERS += $$PWD/src/runguard.h \
 
 
 FANTASYBITLIB += fantasybit-core
+FBCOREPATH = $$OUT_PWD/../../share/$$FANTASYBITLIB
+message(FBCOREPATH $$FBCOREPATH)
+
 !contains(DEFINES, PRODFOOTBALL){
     FANTASYBITLIB = STAGING-$${FANTASYBITLIB}
 }
-
-FBCOREPATH = $$OUT_PWD/../../share/$$FANTASYBITLIB
-message(FBCOREPATH $$FBCOREPATH)
 
 win32:CONFIG(release, debug|release): LIBS += -L$$FBCOREPATH/release/ -l$$FANTASYBITLIB
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$FBCOREPATH/debug/ -l$$FANTASYBITLIB

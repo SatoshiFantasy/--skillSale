@@ -43,6 +43,8 @@ class CoinSale : public QObject, public CoinSaleContext<CoinSale>
 
     QML_READONLY_CSTREF_PROPERTY(QString,secretShow)
 
+    QML_READONLY_CSTREF_PROPERTY(bool,secretIsVerified)
+
 
     QWebSocket m_webSocket;
     std::string m_lastPk2name;
@@ -68,7 +70,8 @@ public:
                                       m_currDialog(""),
                                       m_currStatus("starting App"),
                                       m_isTestNet(IS_TEST_NET),
-                                      m_secretShow("")
+                                      m_secretShow(""),
+                                      m_secretIsVerified(false)
     {
         connect(&m_webSocket, SIGNAL(connected()), this, SLOT(onConnected()));
         connect (&m_webSocket,SIGNAL(aboutToClose()),this,SLOT(handleAboutToClose()));
@@ -116,6 +119,18 @@ public:
     Q_INVOKABLE void buy() {
         qDebug() << "buy ";
         Buy();
+    }
+
+    Q_INVOKABLE void forgot() {
+        Forgot();
+    }
+
+    Q_INVOKABLE void secretOk() {
+        SecretOk();
+    }
+
+    Q_INVOKABLE void showAddress() {
+           ShowAddress();
     }
 
     Q_INVOKABLE void doimport(QString secret) {
@@ -172,7 +187,6 @@ public:
         return secretr;
     }
 
-
     void DoPostTx(const SignedTransaction &st) {
 #ifndef NO_DOPOSTTX
         auto txstr = st.SerializeAsString();
@@ -190,9 +204,12 @@ public:
     bool isEqualFundedAmount() {
         return false;
     }
-    bool DoVerifySecret() {
-        return false;
+
+    bool DoVerifySecret(const QString &secret) {
+        //agent.verifyseret ()
+        return ( agent.fromMnemonic(secret.toStdString ()).get_secret().str() == agent.getSecret());
     }
+
     bool SecretDisplayed() {
         if ( HasName() )
             return mSecretDisplayed[m_currName.toStdString()];
@@ -237,11 +254,17 @@ public:
 
     void DisplaySecretDialog() {
         setsecretShow(getSecret());
-        setcurrStatus("to Disaply Secret");
+        setcurrStatus("to Display Secret");
         setcurrDialog("secret");
 
     }
-    void DisplayHiddenFundingAddress() {}
+    void DisplayHiddenFundingAddress() {
+
+        setcurrStatus("DisplayHiddenFundingAddress");
+        setcurrDialog("fund");
+
+
+    }
 
     void StartCheckFundsTimer() {
         checkFundsTimer.start();
@@ -249,9 +272,21 @@ public:
     void SignSendServer() {}
     void SignSendExedos() {}
     void StopCheckFundsTimer() {}
-    void VerifySecretDialog() {}
-    void SecretIsVerified() {}
-    void VerifyError() {}
+    void VerifySecretDialog() {
+        setcurrDialog("secretverify");
+    }
+    void SecretIsVerified() {
+        mSecretVerified[m_currName.toStdString()] = true;
+        setsecretIsVerified (true);
+    }
+
+    void verify(QString &secret) {
+        Verify(secret);
+    }
+
+    void VerifyError() {
+        setcurrStatus ("Verify Error");
+    }
     void DisplayAddressBalance() {}
     void StartCheckExedosTimer() {}
     void StopCheckExedosTimer() {}

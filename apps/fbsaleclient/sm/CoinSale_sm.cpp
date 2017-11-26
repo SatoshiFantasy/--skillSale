@@ -39,6 +39,11 @@ namespace fantasybit
         Default(context);
     }
 
+    void CoinSaleState::Forgot(CoinSaleContext<CoinSale>& context)
+    {
+        Default(context);
+    }
+
     void CoinSaleState::Funded(CoinSaleContext<CoinSale>& context)
     {
         Default(context);
@@ -79,7 +84,7 @@ namespace fantasybit
         Default(context);
     }
 
-    void CoinSaleState::Verify(CoinSaleContext<CoinSale>& context)
+    void CoinSaleState::Verify(CoinSaleContext<CoinSale>& context, const QString & secret)
     {
         Default(context);
     }
@@ -332,11 +337,31 @@ namespace fantasybit
         ctxt.VerifySecretDialog();
     }
 
-    void StartMap_VerifySecret::Verify(CoinSaleContext<CoinSale>& context)
+    void StartMap_VerifySecret::Forgot(CoinSaleContext<CoinSale>& context)
     {
         CoinSale& ctxt = context.getOwner();
 
-        if ( ctxt.DoVerifySecret() )
+        context.getState().Exit(context);
+        context.clearState();
+        try
+        {
+            ctxt.DisplaySecretDialog();
+            context.setState(StartMap::WaitingNameConfirm);
+        }
+        catch (...)
+        {
+            context.setState(StartMap::WaitingNameConfirm);
+            throw;
+        }
+        context.getState().Entry(context);
+
+    }
+
+    void StartMap_VerifySecret::Verify(CoinSaleContext<CoinSale>& context, const QString & secret)
+    {
+        CoinSale& ctxt = context.getOwner();
+
+        if ( ctxt.DoVerifySecret(secret) )
         {
             context.getState().Exit(context);
             context.clearState();

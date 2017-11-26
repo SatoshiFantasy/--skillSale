@@ -10,6 +10,7 @@ Item {
     }
 
     property bool isimport: false
+    property bool isverify: false
     property var secretOut: []
 
     implicitHeight: rec1.height + button1.height
@@ -39,20 +40,44 @@ Item {
             }
         }
 
-        Button {
-            id: button1
+        RowLayout {
             anchors.top: rec1.bottom
             anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("Import")
-            onClicked: {
-                var words = secretOut.join(" ")  ;
-                console.log(words)
-                if ( words !== "" )
-                    CoinSale.doimport(words);
+
+            Button {
+                id: button1
+                text: isimport ? "Import" : ( isverify ? "Verify" : "OK")
+                onClicked: {
+                    if ( isimport || isverify ) {
+                        var words = secretOut.join(" ")  ;
+                        console.log(words)
+                        if ( words !== "" ) {
+                            if ( isimport) {
+                                CoinSale.doimport(words);
+                            }
+                            else {
+                                CoinSale.verify(words);
+                            }
+                        }
+                    }
+                    else
+                        CoinSale.secretOk();
+                }
+//                visible: isimport
             }
-            visible: isimport
+
+            Button {
+                id: forgotbut
+                text: "Recover"
+                enabled: isverify
+                visible: isverify
+                onClicked: {
+                    CoinSale.forgot()
+                }
+            }
         }
     }
+
     Component {
         id: secretDelegate
 

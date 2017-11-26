@@ -8,6 +8,7 @@ ApplicationWindow {
     height: 480
     title: qsTr("Hello World")
 
+    property var wantverify: secretpage.isverify
     SwipeView {
         id: swipeView
         anchors.fill: parent
@@ -19,7 +20,11 @@ ApplicationWindow {
             id: page1
         }
 
-        SecretPage {}
+        SecretPage {
+            id: secretpage
+            isverify: false
+
+        }
 
         Page3 {
 
@@ -105,8 +110,14 @@ ApplicationWindow {
                    tabBar.currentIndex = 3
                    break;
                case "secret":
+                   wantverify = false;
                    tabBar.currentIndex = 2
                    break;
+               case "secretverify":
+                   wantverify = true;
+                   tabBar.currentIndex = 2
+                   break;
+
                default:
                    tabBar.currentIndex = 0
                    break;

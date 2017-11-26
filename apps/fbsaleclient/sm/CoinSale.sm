@@ -48,7 +48,7 @@ WaitingNameConfirm
                                 nil                             { DisplaySecretDialog(); }
 
             SecretOk            WaitingShowAddress     {}
-            
+
             NameNotConfimed     NoName  {}
 }
 
@@ -76,10 +76,12 @@ WaitingForFunds 		Entry                       { DisplayFundingAddress();
 
 VerifySecret				Entry		{ VerifySecretDialog(); }
 {
-            Verify 			[ ctxt.DoVerifySecret() ]
-                            WaitingForFunds 			{ SecretIsVerified(); }
+            Verify (secret: const QString &)			[ ctxt.DoVerifySecret(secret) ]
+                                                                        WaitingForFunds 			{ SecretIsVerified(); }
 
-            Verify 			nil 						{ VerifyError(); }
+            Verify (secret: const QString &)			nil                                     { VerifyError(); }
+
+            Forgot                 WaitingNameConfirm                                       { DisplaySecretDialog(); }
 }
 
 WaitingConfirm

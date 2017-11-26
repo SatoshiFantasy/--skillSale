@@ -21,12 +21,27 @@ Item {
             height : 320
             value : inputField.text
             level : "H"
+            visible: CoinSale.secretIsVerified
         }
-        TextInput {
+        Button {
+            anchors.top : parent.top
+            anchors.topMargin : 30
+            anchors.horizontalCenter : parent.horizontalCenter
+            width : 320
+            height : 320
+            text: inputField.text
+            visible: !CoinSale.secretIsVerified
+            enabled: !CoinSale.secretIsVerified
+            onClicked: {
+                CoinSale.showAddress();
+            }
+        }
+
+        Label {
             id : inputField
             anchors.bottom : parent.bottom
             anchors.bottomMargin : 30
             anchors.horizontalCenter : parent.horizontalCenter
-            text : CoinSale.bitcoinAddress
+            text : CoinSale.secretIsVerified ? CoinSale.bitcoinAddress : "verify secret to reveal funding bitcoin address"
         }
 }
