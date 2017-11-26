@@ -121,6 +121,10 @@ public:
         Buy();
     }
 
+    Q_INVOKABLE void verify(QString secret) {
+        Verify(secret);
+    }
+
     Q_INVOKABLE void forgot() {
         Forgot();
     }
@@ -243,6 +247,7 @@ public:
         if ( HasName() ) {
             mSecretDisplayed[m_currName.toStdString()] = true;
             mSecretVerified[m_currName.toStdString()] = true;
+            setsecretIsVerified (true);
         }
     }
 
@@ -273,6 +278,7 @@ public:
     void SignSendExedos() {}
     void StopCheckFundsTimer() {}
     void VerifySecretDialog() {
+        setcurrStatus ("secretverify");
         setcurrDialog("secretverify");
     }
     void SecretIsVerified() {
@@ -280,9 +286,6 @@ public:
         setsecretIsVerified (true);
     }
 
-    void verify(QString &secret) {
-        Verify(secret);
-    }
 
     void VerifyError() {
         setcurrStatus ("Verify Error");

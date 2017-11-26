@@ -13,6 +13,17 @@ Item {
     property bool isverify: false
     property var secretOut: []
 
+    onIsverifyChanged: {
+        console.log("verify" + isverify)
+//        grid.forceLayout()
+    }
+
+    onIsimportChanged: {
+        console.log("import" + isimport)
+
+        grid.update()
+    }
+
     implicitHeight: rec1.height + button1.height
     implicitWidth: rec1.width
     ColumnLayout {
@@ -78,6 +89,7 @@ Item {
         }
     }
 
+
     Component {
         id: secretDelegate
 
@@ -105,9 +117,9 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: lb.right
                     width: parent.width - lb.width
-                    text: (secretpage.isimport || secretWordsIn.length < 12) ? "" : secretWordsIn[index]
+                    text: (secretpage.isimport || secretpage.isverify || secretWordsIn.length < 12) ? "" : secretWordsIn[index]
                     font.bold: true
-                    readOnly: !secretpage.isimport
+                    readOnly: !secretpage.isimport && !secretpage.isverify
                     onEditingFinished: {
                         console.log("editing finished" + text)
                         secretOut[index] = text

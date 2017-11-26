@@ -8,7 +8,7 @@ ApplicationWindow {
     height: 480
     title: qsTr("Hello World")
 
-    property var wantverify: secretpage.isverify
+    property alias wantverify: secretpage.isverify
     SwipeView {
         id: swipeView
         anchors.fill: parent
