@@ -1,6 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
-import QtQuick.Layouts 1.0
+import QtQuick.Layouts 1.3
 
 ApplicationWindow {
     visible: true
@@ -19,10 +19,11 @@ ApplicationWindow {
             id: page1
         }
 
+        SecretPage {}
+
         Page3 {
 
         }
-
 
     }
 
@@ -84,6 +85,9 @@ ApplicationWindow {
             text: qsTr("Wallet")
         }
         TabButton {
+            text: qsTr("WalletS")
+        }
+        TabButton {
             text: qsTr("Fund")
         }
     }
@@ -98,6 +102,9 @@ ApplicationWindow {
                    tabBar.currentIndex = 1
                    break;
                case "fund":
+                   tabBar.currentIndex = 3
+                   break;
+               case "secret":
                    tabBar.currentIndex = 2
                    break;
                default:

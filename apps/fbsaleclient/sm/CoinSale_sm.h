@@ -50,6 +50,7 @@ namespace fantasybit
         virtual void Funded(CoinSaleContext<CoinSale>& context);
         virtual void Import(CoinSaleContext<CoinSale>& context);
         virtual void NameConfimed(CoinSaleContext<CoinSale>& context);
+        virtual void NameNotConfimed(CoinSaleContext<CoinSale>& context);
         virtual void PacksConfirmed(CoinSaleContext<CoinSale>& context);
         virtual void SecretOk(CoinSaleContext<CoinSale>& context);
         virtual void Select(CoinSaleContext<CoinSale>& context);
@@ -121,6 +122,7 @@ namespace fantasybit
         {};
 
         virtual void NameConfimed(CoinSaleContext<CoinSale>& context);
+        virtual void NameNotConfimed(CoinSaleContext<CoinSale>& context);
     };
 
     class StartMap_WaitingNameConfirm :
@@ -132,6 +134,7 @@ namespace fantasybit
         {};
 
         virtual void NameConfimed(CoinSaleContext<CoinSale>& context);
+        virtual void NameNotConfimed(CoinSaleContext<CoinSale>& context);
         virtual void SecretOk(CoinSaleContext<CoinSale>& context);
     };
 
@@ -271,6 +274,11 @@ class CoinSaleContext :
         inline void NameConfimed()
         {
             getState().NameConfimed(*this);
+        };
+
+        inline void NameNotConfimed()
+        {
+            getState().NameNotConfimed(*this);
         };
 
         inline void PacksConfirmed()

@@ -54,6 +54,11 @@ namespace fantasybit
         Default(context);
     }
 
+    void CoinSaleState::NameNotConfimed(CoinSaleContext<CoinSale>& context)
+    {
+        Default(context);
+    }
+
     void CoinSaleState::PacksConfirmed(CoinSaleContext<CoinSale>& context)
     {
         Default(context);
@@ -183,6 +188,15 @@ namespace fantasybit
 
     }
 
+    void StartMap_WaitingImportConfirm::NameNotConfimed(CoinSaleContext<CoinSale>& context)
+    {
+
+        context.getState().Exit(context);
+        context.setState(StartMap::NoName);
+        context.getState().Entry(context);
+
+    }
+
     void StartMap_WaitingNameConfirm::NameConfimed(CoinSaleContext<CoinSale>& context)
     {
         CoinSale& ctxt = context.getOwner();
@@ -207,6 +221,15 @@ namespace fantasybit
         {
              StartMap_Default::NameConfimed(context);
         }
+
+    }
+
+    void StartMap_WaitingNameConfirm::NameNotConfimed(CoinSaleContext<CoinSale>& context)
+    {
+
+        context.getState().Exit(context);
+        context.setState(StartMap::NoName);
+        context.getState().Entry(context);
 
     }
 

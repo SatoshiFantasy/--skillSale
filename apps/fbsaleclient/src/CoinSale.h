@@ -41,6 +41,9 @@ class CoinSale : public QObject, public CoinSaleContext<CoinSale>
 
     QML_READONLY_CSTREF_PROPERTY(bool, isTestNet)
 
+    QML_READONLY_CSTREF_PROPERTY(QString,secretShow)
+
+
     QWebSocket m_webSocket;
     std::string m_lastPk2name;
     std::string m_lastCheckName;
@@ -53,7 +56,7 @@ class CoinSale : public QObject, public CoinSaleContext<CoinSale>
     int     noNameCount;
     bool    mSecretVerifed = false;
     bool    mHasUTXO = false;
-    
+
     std::unordered_map<std::string, bool> mSecretDisplayed;
     std::unordered_map<std::string, bool> mSecretVerified;
 
@@ -64,7 +67,8 @@ public:
                                       m_busySend(true),
                                       m_currDialog(""),
                                       m_currStatus("starting App"),
-                                      m_isTestNet(IS_TEST_NET)
+                                      m_isTestNet(IS_TEST_NET),
+                                      m_secretShow("")
     {
         connect(&m_webSocket, SIGNAL(connected()), this, SLOT(onConnected()));
         connect (&m_webSocket,SIGNAL(aboutToClose()),this,SLOT(handleAboutToClose()));
@@ -161,6 +165,13 @@ public:
 
     }
 
+    Q_INVOKABLE QString getSecret() {
+        qDebug() << " in get secret";
+        QString secretr =  agent.getMnemonic(m_currName.toStdString ()).data ();
+        qDebug() << secretr;
+        return secretr;
+    }
+
 
     void DoPostTx(const SignedTransaction &st) {
 #ifndef NO_DOPOSTTX
@@ -225,7 +236,10 @@ public:
     }
 
     void DisplaySecretDialog() {
+        setsecretShow(getSecret());
         setcurrStatus("to Disaply Secret");
+        setcurrDialog("secret");
+
     }
     void DisplayHiddenFundingAddress() {}
 
@@ -246,7 +260,7 @@ public:
     void StartCheckPacksTimer() {}
     void RequestNewPacks() {}
     void SetVerifySecret(bool) {}
-    
+
     void NameNotConfirmed() {}
 
 
@@ -461,13 +475,13 @@ protected slots:
                                     setcurrName(name.data());
                                     NameConfimed();
                                 }
-                                else 
+                                else
                                     NameNotConfirmed();
                             }
-                            else 
+                            else
                                 NameNotConfirmed();
 
-                            
+
                             m_lastPk2name = "";
                         }
                         else {

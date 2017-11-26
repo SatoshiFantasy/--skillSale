@@ -12,13 +12,14 @@ import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
 
 Item {
-    property alias textField1: textField1
+//    property alias textField1: textField1
     property alias button1: button1
     property alias nameStatsText: nameStatusL.text
 
     ColumnLayout {
+        id: col1
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: 20
+        anchors.topMargin: 5
         anchors.top: parent.top
         RowLayout {
             anchors.horizontalCenter: parent.horizontalCenter
@@ -38,18 +39,21 @@ Item {
         }
         RowLayout {
             anchors.horizontalCenter: parent.horizontalCenter
+            height: 50
 
-            TextField {
-                id: textField1
-                placeholderText: qsTr("Enter 12 word Secret")
-            }
+//            TextField {
+//                id: textField1
+//                placeholderText: qsTr("Enter 12 word Secret")
+//            }
 
             Button {
+                height: 50
                 id: button1
-                text: qsTr("Import")
+                text: "Import name using secrert"
                 onClicked: {
-                    if ( textField1.text !== '')
-                        CoinSale.doimport(textField1.text)
+                    insec.visible = true;
+//                    if ( textField1.text !== '')
+//                        CoinSale.doimport(textField1.text)
                 }
             }
         }
@@ -58,6 +62,18 @@ Item {
             Label {
                 id: nameStatusL
                 text: "..."
+            }
+        }
+        Rectangle {
+            Layout.alignment: Qt.AlignCenter
+            border.color: "black"
+            width: parent.width
+            height: insec.implicitHeight
+            SecretPage {
+                anchors.fill: parent
+                id: insec
+                isimport: true
+                visible: false
             }
         }
     }
