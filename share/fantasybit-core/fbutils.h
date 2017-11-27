@@ -37,9 +37,9 @@ namespace fantasybit {
     static std::string PB_WS_CHAT = "localhost";
     static std::string PB_WS_TX = "localhost";
 #else
-    static std::string PB_WS_LITE_AGENT = "app.trading.football";
-    static std::string PB_WS_CHAT = "app.trading.football";
-    static std::string PB_WS_TX = "app.trading.football";
+    static std::string PB_WS_LITE_AGENT = "stagingapi.trading.football";
+    static std::string PB_WS_CHAT = "stagingapi.trading.football";
+    static std::string PB_WS_TX = "stagingapi.trading.football";
 #endif
     static int PB_WS_LITE_AGENT_PORT = 9111;
 

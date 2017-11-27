@@ -112,4 +112,9 @@ WaitingPacks
             PacksConfirmed	Init 	{ SetVerifySecret(ctxt.isNameNew()); }
 }
 
+Default
+{
+            Forgot                 nil          { DisplaySecretDialog(); }
+}
+
 %%

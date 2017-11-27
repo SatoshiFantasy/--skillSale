@@ -23,6 +23,7 @@
 #include <RestfullService.h>
 
 #include "CoinSale_sm.h"
+#include <mnemonic.h>
 
 namespace fantasybit {
 
@@ -33,7 +34,7 @@ class CoinSale : public QObject, public CoinSaleContext<CoinSale>
     QML_READONLY_CSTREF_PROPERTY(int,totalAvailable)
     QML_READONLY_CSTREF_PROPERTY(bool,busySend)
     QML_READONLY_CSTREF_PROPERTY(QString,currDialog)
-    QML_READONLY_CSTREF_PROPERTY(QString,currStatus)
+    QML_WRITABLE_CSTREF_PROPERTY(QString,currStatus)
 
     QML_READONLY_CSTREF_PROPERTY(QString,currName)
 
@@ -71,7 +72,8 @@ public:
                                       m_currStatus("starting App"),
                                       m_isTestNet(IS_TEST_NET),
                                       m_secretShow(""),
-                                      m_secretIsVerified(false)
+                                      m_secretIsVerified(false),
+                                      noNameCount(0)
     {
         connect(&m_webSocket, SIGNAL(connected()), this, SLOT(onConnected()));
         connect (&m_webSocket,SIGNAL(aboutToClose()),this,SLOT(handleAboutToClose()));
@@ -92,7 +94,7 @@ public:
         QString lserver = wss.arg(host.data()).arg(port);
 
     #ifndef NODEBUG
-        setcurrStatus("try connecting to lserver: " + lserver);
+        set_currStatus("try connecting to lserver: " + lserver);
         qDebug() << m_currStatus;
     #endif
 
@@ -122,6 +124,7 @@ public:
     }
 
     Q_INVOKABLE void verify(QString secret) {
+        set_currStatus("verifying");
         Verify(secret);
     }
 
@@ -140,20 +143,23 @@ public:
     Q_INVOKABLE void doimport(QString secret) {
         qDebug() << "import ";
         auto pk = agent.startImportMnemonic(secret.toStdString());
-        if ( pk == "" )
+        if ( pk == "" ) {
+            set_currStatus("import failed");
             return;//error
+        }
 
         setbusySend(true);
         m_lastPk2name = pk;
-        mSecretVerifed = true;
+//        mSecretVerifed = true;
         Import();
+        noNameCount = 0;
         importOrClaimPlayerStatus.start();
     }
 
     Q_INVOKABLE void checkname(QString fname) {
 //        qDebug() << "checkname ";
         m_lastCheckName = fname.toStdString();
-        setcurrStatus(QString("checking name(%1) - Hash(%2)").arg(fname).arg(FantasyName::name_hash(m_lastCheckName)));
+        set_currStatus(QString("checking name(%1) - Hash(%2)").arg(fname).arg(FantasyName::name_hash(m_lastCheckName)));
         setbusySend(true);
         fantasyNameCheck(m_lastCheckName);
     }
@@ -211,7 +217,15 @@ public:
 
     bool DoVerifySecret(const QString &secret) {
         //agent.verifyseret ()
-        return ( agent.fromMnemonic(secret.toStdString ()).get_secret().str() == agent.getSecret());
+        try {
+            bool ret =  ( agent.fromMnemonic(secret.toStdString ()).get_secret().str() == agent.getSecret());
+            set_currStatus("Verify " + ret ? " success " : " fail");
+            return ret;
+        }
+        catch (MnemonicException e) {
+            set_currStatus(e.what());
+            return false;
+        }
     }
 
     bool SecretDisplayed() {
@@ -247,6 +261,7 @@ public:
         if ( HasName() ) {
             mSecretDisplayed[m_currName.toStdString()] = true;
             mSecretVerified[m_currName.toStdString()] = true;
+            setsecretShow(getSecret());
             setsecretIsVerified (true);
         }
     }
@@ -259,13 +274,13 @@ public:
 
     void DisplaySecretDialog() {
         setsecretShow(getSecret());
-        setcurrStatus("to Display Secret");
+        set_currStatus("to Display Secret");
         setcurrDialog("secret");
 
     }
     void DisplayHiddenFundingAddress() {
 
-        setcurrStatus("DisplayHiddenFundingAddress");
+        set_currStatus("DisplayHiddenFundingAddress");
         setcurrDialog("fund");
 
 
@@ -278,7 +293,7 @@ public:
     void SignSendExedos() {}
     void StopCheckFundsTimer() {}
     void VerifySecretDialog() {
-        setcurrStatus ("secretverify");
+        set_currStatus ("secretverify");
         setcurrDialog("secretverify");
     }
     void SecretIsVerified() {
@@ -288,7 +303,7 @@ public:
 
 
     void VerifyError() {
-        setcurrStatus ("Verify Error");
+        set_currStatus ("Verify Error");
     }
     void DisplayAddressBalance() {}
     void StartCheckExedosTimer() {}
@@ -434,7 +449,7 @@ protected slots:
         errCount = 0;
         QHostAddress hInfo = m_webSocket.peerAddress ();
         qDebug() << "connected to " <<  hInfo.toString () << " on Port " << m_webSocket.peerPort ();
-        setcurrStatus("Connected to FB Sale Server" + hInfo.toString ());
+        set_currStatus("Connected to FB Sale Server" + hInfo.toString ());
         connect(&m_webSocket, SIGNAL(binaryMessageReceived(QByteArray)),
                 this, SLOT ( onBinaryMessageRecived(QByteArray) ));
 
@@ -456,7 +471,7 @@ protected slots:
            // qDebug() << "LightGateway::onBinaryMessageRecived " << rep.ShortDebugString().data();
         #endif
 
-        setcurrStatus("onBinaryMessageRecived");
+        set_currStatus("onBinaryMessageRecived");
         switch ( rep.ctype()) {
             case SIGNPACK: {
                 qDebug() << "SIGNPACK";
@@ -486,10 +501,13 @@ protected slots:
                 if ( m_lastPk2name == pk2.req().pk()) {
                     if ( name == "" ) {
                         noNameCount++;
-                        if ( noNameCount > 50) {
+                        if ( noNameCount > ((m_lastCheckName == "") ? 2 : 25) ) {
                             importOrClaimPlayerStatus.stop();
                             noNameCount = 0;
+                            m_lastCheckName = "";
+                            m_lastPk2name = "";
                             setbusySend(false);
+                            set_currStatus("timeout name");
                             NameNotConfirmed();
                         }
                     }
@@ -589,29 +607,29 @@ protected slots:
 //    }
     void handleAboutToClose() {
         qDebug() << "handleAboutToClose" << errCount;
-        setcurrStatus("handleAboutToClose");
+        set_currStatus("handleAboutToClose");
     }
 
     void handleClosed() {
         qDebug() << "handleClosed" << errCount;
         if ( errCount < 100 ) {
-            setcurrStatus(QString("socket closed retry %1 of 100").arg(errCount));
+            set_currStatus(QString("socket closed retry %1 of 100").arg(errCount));
             m_webSocket.open(theServer);
         }
         else
-            setcurrStatus(QString("socket closed forever - plese restart App - unable to connect %1").arg(theServer.toString()));
+            set_currStatus(QString("socket closed forever - plese restart App - unable to connect %1").arg(theServer.toString()));
     }
 
     void handleSocketError(QAbstractSocket::SocketError wse) {
         qDebug() << "handleSocketError" << wse;
-        setcurrStatus(QString("socket error %1").arg(wse));
+        set_currStatus(QString("socket error %1").arg(wse));
 
         errCount++;
     }
 
     void handleSocketState(QAbstractSocket::SocketState ss) {
         qDebug() << "handleSocketState" << ss;
-        setcurrStatus(QString("socket state %1").arg(ss));
+        set_currStatus(QString("socket state %1").arg(ss));
     }
 
 };

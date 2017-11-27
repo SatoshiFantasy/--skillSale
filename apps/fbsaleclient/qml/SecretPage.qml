@@ -5,23 +5,45 @@ import QtQuick.Layouts 1.3
 Item {
 
     id: secretpage
+
+    TextEdit {
+        id: cliphelper
+        visible: false
+    }
+
     property var secretWordsIn: {
         return CoinSale.secretShow.split(" ");
     }
 
     property bool isimport: false
     property bool isverify: false
+    property bool isdisplay: !isimport && (!isverify || CoinSale.secretIsVerified)
     property var secretOut: []
+    property bool didcopy: false
 
-    onIsverifyChanged: {
-        console.log("verify" + isverify)
-//        grid.forceLayout()
-    }
+//    onIsverifyChanged: {
+//        console.log("verify " + isverify)
+////        grid.forceLayout()
+//    }
 
-    onIsimportChanged: {
-        console.log("import" + isimport)
+//    onIsimportChanged: {
+//        console.log("import " + isimport)
 
-        grid.update()
+//        grid.update()
+//    }
+
+    onIsdisplayChanged: {
+        console.log("onIsdisplayChanged " + isdisplay)
+
+        if ( !isdisplay ) {
+            secretWordsIn = ""
+            grid.update()
+        }
+        else {
+            if ( CoinSale.secretShow !== "" ) {
+                secretWordsIn = CoinSale.secretShow.split(" ");
+            }
+        }
     }
 
     implicitHeight: rec1.height + button1.height
@@ -49,6 +71,36 @@ Item {
                 model: 12
                 delegate: secretDelegate
             }
+
+            MouseArea {
+//                enabled:!(isimport || isverify )
+                anchors.fill: parent
+                onClicked: {
+                    if ( isdisplay ) {
+                        console.log("copying ")
+                        cliphelper.text = CoinSale.secretShow
+                        cliphelper.selectAll()
+                        cliphelper.copy()
+                        cliphelper.text = ""
+                        rec1.ToolTip.visible = true
+                        didcopy = true
+                    }
+                    else {
+                        cliphelper.paste()
+                        console.log("pste " + cliphelper.text)
+                        secretWordsIn = cliphelper.text.trim().split(" ")
+                        cliphelper.text = ""
+                        rec1.ToolTip.visible = true
+                        grid.update
+                    }
+                }
+
+                acceptedButtons: !isdisplay ? Qt.RightButton : Qt.LeftButton
+            }
+
+            ToolTip.timeout: 5000
+            ToolTip.text: isdisplay ? "Secret Copied to Clipboard" : "Secret Pasted from Clipboard"
+
         }
 
         RowLayout {
@@ -59,9 +111,9 @@ Item {
                 id: button1
                 text: isimport ? "Import" : ( isverify ? "Verify" : "OK")
                 onClicked: {
-                    if ( isimport || isverify ) {
+                    if ( !isdisplay ) {
                         var words = secretOut.join(" ")  ;
-                        console.log(words)
+                        console.log("clicked: " + words)
                         if ( words !== "" ) {
                             if ( isimport) {
                                 CoinSale.doimport(words);
@@ -70,9 +122,18 @@ Item {
                                 CoinSale.verify(words);
                             }
                         }
+                        else CoinSale.set_currStatus("bad import")
                     }
-                    else
+                    else {
+                        if ( didcopy ) {
+                            cliphelper.text = "secret cleared from clipboard"
+                            cliphelper.selectAll()
+                            cliphelper.copy()
+                            cliphelper.text = ""
+                        }
+
                         CoinSale.secretOk();
+                    }
                 }
 //                visible: isimport
             }
@@ -117,11 +178,16 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: lb.right
                     width: parent.width - lb.width
-                    text: (secretpage.isimport || secretpage.isverify || secretWordsIn.length < 12) ? "" : secretWordsIn[index]
+                    text: secretWordsIn.length < index ? "" : secretWordsIn[index]//(secretpage.isimport || secretpage.isverify || secretWordsIn.length < 12) ? "" : secretWordsIn[index]
                     font.bold: true
-                    readOnly: !secretpage.isimport && !secretpage.isverify
-                    onEditingFinished: {
-                        console.log("editing finished" + text)
+                    readOnly: secretpage.isdisplay
+//                    onEditingFinished: {
+//                        console.log("editing finished" + text)
+//                        secretOut[index] = text
+//                    }
+
+                    onTextChanged: {
+                        console.log("text changed " + text)
                         secretOut[index] = text
                     }
                 }

@@ -1027,7 +1027,8 @@ std::string FantasyAgent::startImportMnemonic(std::string mn) {
 
         return secret.public_key();
     }
-    catch (MnemonicException) {
+    catch (MnemonicException e) {
+        qDebug() << e.what();
         return "";
     }
 }
