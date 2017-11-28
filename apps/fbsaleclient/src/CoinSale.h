@@ -24,6 +24,7 @@
 
 #include "CoinSale_sm.h"
 #include <mnemonic.h>
+#include <bitcoinapi.h>
 
 namespace fantasybit {
 
@@ -62,6 +63,10 @@ class CoinSale : public QObject, public CoinSaleContext<CoinSale>
 
     std::unordered_map<std::string, bool> mSecretDisplayed;
     std::unordered_map<std::string, bool> mSecretVerified;
+
+    std::vector<utxoData> mUtxOs;
+    std::string mTx, mTxId;
+
 
 public:
     CoinSale(const std::string &host, int port,QObject *parent = 0)
@@ -235,7 +240,7 @@ public:
             return false;
     }
     bool isConfirmed() {
-        return false;
+        return mTxId != "";
     }
     bool hasUTXO() {
         return mHasUTXO;
@@ -289,9 +294,19 @@ public:
     void StartCheckFundsTimer() {
         checkFundsTimer.start();
     }
-    void SignSendServer() {}
-    void SignSendExedos() {}
-    void StopCheckFundsTimer() {}
+    void SignSendServer() {
+        mTxId = BitcoinApi::sendrawTx(mTx);
+    }
+
+    void SignSendExedos() {
+        set_currStatus(std::string("send txid to server" + mTxId).data());
+
+    }
+
+    void StopCheckFundsTimer() {
+
+    }
+
     void VerifySecretDialog() {
         set_currStatus ("secretverify");
         setcurrDialog("secretverify");
@@ -305,7 +320,9 @@ public:
     void VerifyError() {
         set_currStatus ("Verify Error");
     }
-    void DisplayAddressBalance() {}
+    void DisplayAddressBalance() {
+        setcurrDialog("balance");
+    }
     void StartCheckExedosTimer() {}
     void StopCheckExedosTimer() {}
     void DisplayAddressPacksBalance() {}
@@ -419,30 +436,34 @@ protected slots:
     void checkFunds() {
         qDebug() << " checkFunds " << mHasUTXO;
 
-        if ( mHasUTXO )
-            return;
-        std::vector<std::string> in_script;
-        std::vector<std::string> raw_transaction;
-        std::string btcaddress = m_bitcoinAddress.toStdString();
-        uint64_t insatoshis = agent.createInputsfromUTXO(btcaddress,in_script,raw_transaction);
-        if ( in_script.size() > 0 ) {
-            mHasUTXO = true;
-            Funded();
+        if ( !mHasUTXO )  {
+            std::string btcaddress = m_bitcoinAddress.toStdString();
+            mUtxOs = BitcoinApi::getUtxo(btcaddress);
+            if ( mUtxOs.size() != 0 ) {
+                std::vector<std::string> in_script;
+                std::vector<std::string> raw_transaction;
+                uint64_t insatoshis =
+                        agent.createInputsfromUTXO(mUtxOs,
+                                                   in_script,
+                                                   raw_transaction);
 
-            auto tx = agent.createTxFromInputs(insatoshis,
+                if ( in_script.size() > 0 ) {
+                    mHasUTXO = true;
+                    mTx = agent.createTxFromInputs(insatoshis,
                                FUNDING_ADDRESS,
                                in_script,
                                raw_transaction);
-
-            auto ret = RestfullService::pushBitcoinTx(tx);
-            qDebug() << ret;
-            if ( ret == "Service Unavailable") {
-                auto ret2 = RestfullService::pushChainsoBitcoinTx(tx);
-                qDebug() << ret2;
+                    Funded();
+                }
             }
         }
-        else checkFundsTimer.start();
+        else if ( mTxId == "")
+            SignSendServer();
 
+        if ( mTxId != "")
+            Funded();
+        else
+            checkFundsTimer.start();
     }
 
     void onConnected() {

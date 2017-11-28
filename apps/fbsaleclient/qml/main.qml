@@ -117,7 +117,9 @@ ApplicationWindow {
                    wantverify = true;
                    tabBar.currentIndex = 2
                    break;
-
+               case "balance":
+                   tabBar.currentIndex = 0
+                   break;
                default:
                    tabBar.currentIndex = 0
                    break;

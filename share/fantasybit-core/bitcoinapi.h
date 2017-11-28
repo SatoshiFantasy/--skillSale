@@ -5,6 +5,7 @@
 #include <vector>
 #include <RestfullService.h>
 #include <utils.h>
+#include <QByteArray>
 
 namespace fantasybit {
 
@@ -19,7 +20,7 @@ class BitcoinApi {
 public:
     BitcoinApi();
 
-    std::vector<utxoData> getUtxo(const std::string &btcaddress) {
+    static std::vector<utxoData> getUtxo(const std::string &btcaddress) {
         std::vector<utxoData> ret;
 
         auto json = RestfullService::getBlockchainBtcAddressUnspent (btcaddress);
@@ -55,8 +56,9 @@ public:
         QJsonDocument doc = QJsonDocument::fromJson(json2,error);
         if (error != NULL || doc.isEmpty()){
                 qDebug() << " error parsing json";
-            if ( error != NULL ) qDebug() << error->errorString();
-                return ret;
+            if ( error != NULL )
+                qDebug() << error->errorString();
+            return ret;
         }
 
         qDebug() << json2;
@@ -86,7 +88,40 @@ public:
             qDebug() << " error getChainsoBtcAddressUnspent ";
         }
 
+        return ret;
+
     }
+
+    static std::string sendrawTx(const std::string &rawin) {
+        auto json = RestfullService::pushBitcoinTx(rawin);
+        if ( json == "Service Unavailable") {
+            auto json2 = RestfullService::pushChainsoBitcoinTx(rawin);
+
+            QJsonParseError * error = NULL;
+            QJsonDocument doc = QJsonDocument::fromJson(json2,error);
+            if (error != NULL || doc.isEmpty()){
+                    qDebug() << " error parsing json";
+                if ( error != NULL )
+                    qDebug() << error->errorString();
+
+               return "";
+            }
+
+            qDebug() << json2;
+            qDebug() << doc.isNull() << doc.isEmpty() << doc.isArray() << doc.isObject();
+            QJsonObject jo = doc.object();
+            if (jo.value("status") == "success") {
+                QJsonValue data = jo.value("data");
+                QJsonObject jo2 = data.toObject();
+                auto txidin = jo2.value("txid").toString();
+
+                return txidin.toStdString();
+            }
+            else
+                return "";
+        }
+    }
+
 };
 
 }

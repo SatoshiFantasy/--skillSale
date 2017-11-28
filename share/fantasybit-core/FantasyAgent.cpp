@@ -24,7 +24,7 @@
 #include <RestFullService.h>
 #include <fbutils.h>
 #include <QDebug>
-#include <bitcoinapi.h>
+
 
 using namespace fantasybit;
 
@@ -429,7 +429,7 @@ bool FantasyAgent::testBtc(WalletD secret) {
 
 //std::string FantasyAgent::createTestTx(const std::string &fudingAddr) {}
 
-uint64_t FantasyAgent::createInputsfromUTXO(const std::string &btcaddress,
+uint64_t FantasyAgent::createInputsfromUTXO(const std::vector<utxoData>&vec,
                                         std::vector<std::string> &in_script,
                                         std::vector<std::string> &raw_transaction) {
 
@@ -440,8 +440,7 @@ uint64_t FantasyAgent::createInputsfromUTXO(const std::string &btcaddress,
 //    std::string OP_RETURN = "6a";
 //    std::string OP_EQUAL = "87";
 
-    BitcoinApi ba;
-    auto vec = ba.getUtxo(btcaddress);
+
 
     std::vector<std::string> fordebug;
     std::vector<std::string> fordebugscript;
@@ -465,7 +464,8 @@ uint64_t FantasyAgent::createInputsfromUTXO(const std::string &btcaddress,
         auto ssize = ( unsigned char )( v.script.size( ) / 2 );
         auto sstr = pb::to_hex ( &ssize, sizeof( unsigned char ) );
 
-        if ( btcaddress[0] != P2SH_ADDRESS ) {
+//        if ( btcaddress[0] != P2SH_ADDRESS )
+        if (true) {
             in_script.push_back( sstr + v.script.toStdString());
             fordebugscript.push_back (sstr + "\n");
             fordebugscript.back () += v.script.toStdString() + "\n";

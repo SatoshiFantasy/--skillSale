@@ -15,6 +15,7 @@
 #include "ProtoData.pb.h"
 #include "FantasyName.h"
 #include <utils/utils.h>
+#include <bitcoinapi.h>
 
 using namespace std;
 
@@ -108,7 +109,7 @@ public:
 
     std::string sign(const std::string &);
     std::string createTxFromInputs(uint64_t inputsatoshis, const std::string &fundaddress, std::vector<std::string> &in_script, std::vector<std::string> &raw_transaction);
-    uint64_t createInputsfromUTXO(const std::string &btcadddress, std::vector<std::string> &in_script, std::vector<std::string> &raw_transaction);
+    uint64_t createInputsfromUTXO(const std::vector<utxoData> &, std::vector<std::string> &in_script, std::vector<std::string> &raw_transaction);
 };
 
 }
