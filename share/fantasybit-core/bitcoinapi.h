@@ -16,6 +16,11 @@ struct utxoData {
     uint32_t tx_output_n;
 };
 
+struct txData {
+    QString tx_hash;
+    uint64_t out_value;
+};
+
 class BitcoinApi {
 public:
     BitcoinApi();
@@ -52,20 +57,8 @@ public:
         }
 
         auto json2 = RestfullService::getChainsoBtcAddressUnspent (btcaddress);
-        QJsonParseError * error = NULL;
-        QJsonDocument doc = QJsonDocument::fromJson(json2,error);
-        if (error != NULL || doc.isEmpty()){
-                qDebug() << " error parsing json";
-            if ( error != NULL )
-                qDebug() << error->errorString();
-            return ret;
-        }
-
-        qDebug() << json2;
-        qDebug() << doc.isNull() << doc.isEmpty() << doc.isArray() << doc.isObject();
-        QJsonObject jo = doc.object();
-        if (jo.value("status") == "success") {
-            QJsonValue data = jo.value("data");
+        QJsonValue data = getChainData(json2);
+        if ( !data.isNull() ) {
             QJsonObject jo2 = data.toObject();
             QJsonArray utxos = jo2.value("txs").toArray();
             for(QJsonValueRef ut : utxos) {
@@ -122,6 +115,66 @@ public:
         }
     }
 
+    static std::vector<txData> getSpentTx( const std::string &from,
+                                 const std::string &to) {
+
+        std::vector<txData> ret;
+        auto json2 = RestfullService::getChainsoBtcAddress (from);
+        QJsonValue data = getChainData(json2);
+        if ( data.isNull() )
+            return ret;
+
+        QJsonObject jo2 = data.toObject();
+        QJsonArray txs = jo2.value("txs").toArray();
+        for(QJsonValueRef ut : txs) {
+            QJsonObject vo = ut.toObject();
+            if ( !vo.contains("outgoing") )
+                continue;
+
+            QJsonObject out = vo.value("outgoing").toObject();
+            QJsonArray outs = out.value("outputs").toArray();
+            txData txd;
+            txd.out_value = 0;
+            txd.tx_hash = vo.value("txid").toString();
+            auto strval = out.value("value").toString();
+            txd.out_value += strval.remove('.').toULongLong();
+
+            for(QJsonValueRef o : outs) {
+                QJsonObject oo = o.toObject();
+                auto outadd = oo.value("address").toString();
+                if ( outadd == to.data())
+                    continue;
+
+                strval = oo.value("value").toString();
+                txd.out_value -= strval.remove('.').toULongLong();
+            }
+            if ( txd.out_value > 0 )
+                ret.push_back(txd);
+        }
+
+        return ret;
+    }
+
+    static QJsonValue getChainData(const QByteArray &json2) {
+        QJsonParseError * error = NULL;
+        QJsonDocument doc = QJsonDocument::fromJson(json2,error);
+        if (error != NULL || doc.isEmpty()){
+                qDebug() << " error parsing json";
+            if ( error != NULL )
+                qDebug() << error->errorString();
+            return NULL;
+        }
+
+        qDebug() << json2;
+        qDebug() << doc.isNull() << doc.isEmpty() << doc.isArray() << doc.isObject();
+        QJsonObject jo = doc.object();
+        if (jo.value("status") != "success")
+            return NULL;
+
+        return jo.value("data");
+
+
+    }
 };
 
 }

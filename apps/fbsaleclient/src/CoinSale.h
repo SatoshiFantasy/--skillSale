@@ -272,9 +272,14 @@ public:
     }
 
     void DisplayFundingAddress() {
-        setbitcoinAddress(pb::toBtcAddress(agent.pubKey()).data());
+        auto btcaddress = pb::toBtcAddress(agent.pubKey());
+        setbitcoinAddress(btcaddress.data());
         setcurrDialog("fund");
         qDebug() << m_bitcoinAddress;
+        auto vec = BitcoinApi::getSpentTx(btcaddress,FUNDING_ADDRESS);
+        for( auto v : vec ) {
+            qDebug() << v.tx_hash << v.out_value;
+        }
     }
 
     void DisplaySecretDialog() {

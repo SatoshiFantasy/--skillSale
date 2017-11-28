@@ -63,6 +63,21 @@ public:
         //toStdString();
     }
 
+    static QByteArray getChainsoBtcAddress(const std::string &addr,
+                 QThread * ownerThread = QThread::currentThread()) {
+        //https://chain.so/api/v2/address/BTCTEST/mnBZiPHayJMSCc5Vj32Tn65tn1CcuCPWkv
+        QString url = QString(fantasybit::CHAINSOAPI.data()).arg("address");
+        RestfullClient client(QUrl(url),ownerThread);
+        QMap<QString,QString>  headers;
+        QMap<QString,QVariant> params;
+        QString customRoute = addr.data();
+        //customRoute = customRoute.arg(route).arg(blockNum);
+        client.getData(customRoute,params,headers);
+
+        return client.lastReply();
+        //toStdString();
+    }
+
     static QByteArray pushTxXXX(const std::string &rawTx,
                              QThread * ownerThread = QThread::currentThread()) {
         QString url = QString(fantasybit::BLOCKCHAINAPI.data());
