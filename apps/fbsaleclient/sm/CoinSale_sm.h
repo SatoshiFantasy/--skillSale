@@ -88,6 +88,7 @@ namespace fantasybit
         : CoinSaleState(name, stateId)
         {};
 
+        virtual void Forgot(CoinSaleContext<CoinSale>& context);
     };
 
     class StartMap_Init :

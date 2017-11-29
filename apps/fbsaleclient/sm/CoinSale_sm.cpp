@@ -6,7 +6,7 @@
 //
 
 #include "CoinSale.h"
-#include "CoinSale_sm.h"
+#include "/nwork/--skillSale/apps/fbsaleclient/sm/CoinSale_sm.h"
 
 using namespace statemap;
 
@@ -95,6 +95,26 @@ namespace fantasybit
             TransitionUndefinedException(
                 context.getState().getName(),
                 context.getTransition()));
+
+    }
+
+    void StartMap_Default::Forgot(CoinSaleContext<CoinSale>& context)
+    {
+        CoinSale& ctxt = context.getOwner();
+
+        CoinSaleState& endState = context.getState();
+
+        context.clearState();
+        try
+        {
+            ctxt.DisplaySecretDialog();
+            context.setState(endState);
+        }
+        catch (...)
+        {
+            context.setState(endState);
+            throw;
+        }
 
     }
 
