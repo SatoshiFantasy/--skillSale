@@ -116,7 +116,7 @@ public:
     }
 
     static std::vector<txData> getSpentTx( const std::string &from,
-                                 const std::string &to) {
+                                           const std::string &to) {
 
         std::vector<txData> ret;
         auto json2 = RestfullService::getChainsoBtcAddress (from);

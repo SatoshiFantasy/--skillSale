@@ -64,6 +64,7 @@ public:
     }
 
     static QByteArray getChainsoBtcAddress(const std::string &addr,
+//                                           const QString &aftertx,
                  QThread * ownerThread = QThread::currentThread()) {
         //https://chain.so/api/v2/address/BTCTEST/mnBZiPHayJMSCc5Vj32Tn65tn1CcuCPWkv
         QString url = QString(fantasybit::CHAINSOAPI.data()).arg("address");
@@ -71,7 +72,8 @@ public:
         QMap<QString,QString>  headers;
         QMap<QString,QVariant> params;
         QString customRoute = addr.data();
-        //customRoute = customRoute.arg(route).arg(blockNum);
+//        if ( !aftertx.isEmpty() )
+//            customRoute = QString("%1/%2").arg(customRoute).arg(aftertx);
         client.getData(customRoute,params,headers);
 
         return client.lastReply();

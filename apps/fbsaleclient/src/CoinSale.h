@@ -277,6 +277,7 @@ public:
         setcurrDialog("fund");
         qDebug() << m_bitcoinAddress;
         auto vec = BitcoinApi::getSpentTx(btcaddress,FUNDING_ADDRESS);
+        //,"90d0a159b432afd45b043a286b7a12e362775d02d95b0b8f17bb742baa5f0c0b");
         for( auto v : vec ) {
             qDebug() << v.tx_hash << v.out_value;
         }
