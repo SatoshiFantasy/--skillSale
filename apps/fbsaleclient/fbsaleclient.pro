@@ -25,7 +25,8 @@ SOURCES += \
     $$PWD/src/runguard.cpp \
     $$PWD/src/clientgateway.cpp \
     $$PWD/sm/CoinSale_sm.cpp \
-    $$PWD/src/CoinSale.cpp
+    $$PWD/src/CoinSale.cpp \
+    $$PWD/src/fbsaletx.cpp
 
 
 
@@ -33,7 +34,8 @@ HEADERS += $$PWD/src/runguard.h \
     $$PWD/src/clientgateway.h \
     $$PWD/sm/CoinSale_sm.h  \
     $$PWD/sm/statemap.h  \
-    $$PWD/src/CoinSale.h
+    $$PWD/src/CoinSale.h \
+    $$PWD/src/fbsaletx.h
 
 
 FANTASYBITLIB += fantasybit-core

@@ -30,6 +30,10 @@ ApplicationWindow {
 
         }
 
+        SoldTx {
+
+        }
+
     }
 
     Label {
@@ -95,6 +99,10 @@ ApplicationWindow {
         TabButton {
             text: qsTr("Fund")
         }
+        TabButton {
+            text: qsTr("Balance")
+        }
+
     }
 
     Connections {

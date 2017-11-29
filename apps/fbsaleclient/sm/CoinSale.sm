@@ -17,9 +17,9 @@ Init
                             NoName { NewNameDialog(); }
 
             Buy             [ !ctxt.IsSecretVerified() ]
-                            WaitingShowAddress	{ }
+                            WaitingShowAddress	{}
 
-            Buy             WaitingForFunds		{ }
+            Buy             WaitingForFunds     {}
 }
 
 NoName
@@ -38,7 +38,8 @@ NoName
 WaitingImportConfirm
 {
 
-            NameConfimed        WaitingForFunds                 { SetNameIsNew(); }
+            NameConfimed        WaitingForFunds                 { SetNameIsVerified();
+                                                                  }
             NameNotConfimed     NoName  {}
 }
 

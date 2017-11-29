@@ -7,7 +7,7 @@
 #define COINSALE_H
 
 #include <QQmlConstRefPropertyHelpers.h>
-//#include <QQmlPtrPropertyHelpers.h>
+#include <QQmlPtrPropertyHelpers.h>
 //#include <QQmlAutoPropertyHelpers.h>
 //#include <QQmlEnumClassHelper.h>
 
@@ -25,12 +25,15 @@
 #include "CoinSale_sm.h"
 #include <mnemonic.h>
 #include <bitcoinapi.h>
+#include <fbsaletx.h>
 
 namespace fantasybit {
 
 class CoinSale : public QObject, public CoinSaleContext<CoinSale>
 {
     Q_OBJECT
+
+    FBSaleTXModel mFBSaleTXModel;
 
     QML_READONLY_CSTREF_PROPERTY(int,totalAvailable)
     QML_READONLY_CSTREF_PROPERTY(bool,busySend)
@@ -46,6 +49,9 @@ class CoinSale : public QObject, public CoinSaleContext<CoinSale>
     QML_READONLY_CSTREF_PROPERTY(QString,secretShow)
 
     QML_READONLY_CSTREF_PROPERTY(bool,secretIsVerified)
+
+    QML_READONLY_PTR_PROPERTY(FBSaleTXModel, pFBSaleTXModel)
+
 
 
     QWebSocket m_webSocket;
@@ -68,9 +74,13 @@ class CoinSale : public QObject, public CoinSaleContext<CoinSale>
     std::string mTx, mTxId;
 
 
+
+
 public:
     CoinSale(const std::string &host, int port,QObject *parent = 0)
                                     : QObject(parent),
+                                      mFBSaleTXModel{this,QByteArray(),{"txid"}},
+                                      m_pFBSaleTXModel(&mFBSaleTXModel),
                                       m_totalAvailable{0},
                                       m_busySend(true),
                                       m_currDialog(""),
@@ -115,7 +125,7 @@ public:
         connect(&importOrClaimPlayerStatus, SIGNAL(timeout()),
                 this, SLOT(getPlayerStatus()),Qt::QueuedConnection);
 
-        checkFundsTimer.setInterval(2000);
+        checkFundsTimer.setInterval(4000);
         connect(&checkFundsTimer, SIGNAL(timeout()),
                 this, SLOT(checkFunds()),Qt::QueuedConnection);
         checkFundsTimer.setSingleShot(true);
@@ -279,7 +289,11 @@ public:
         auto vec = BitcoinApi::getSpentTx(btcaddress,FUNDING_ADDRESS);
         //,"90d0a159b432afd45b043a286b7a12e362775d02d95b0b8f17bb742baa5f0c0b");
         for( auto v : vec ) {
+            FBSaleTXItem *fbi = new FBSaleTXItem();
+            fbi->set_txid(v.tx_hash);
+            fbi->set_btc(v.out_value);
             qDebug() << v.tx_hash << v.out_value;
+            mFBSaleTXModel.append(fbi);
         }
     }
 

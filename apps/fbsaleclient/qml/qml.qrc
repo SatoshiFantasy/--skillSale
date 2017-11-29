@@ -7,5 +7,6 @@
         <file>QRCode.qml</file>
         <file>Page3.qml</file>
         <file>SecretPage.qml</file>
+        <file>SoldTx.qml</file>
     </qresource>
 </RCC>
