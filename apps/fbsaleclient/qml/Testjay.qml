@@ -54,7 +54,7 @@ Item {
 
                     Label {
                         id: price
-                        text: qsTr(".00001177")
+                        text: qsTr(".00001")
                         font.bold: true
                         font.pointSize: 14
                     }
@@ -75,7 +75,7 @@ Item {
 
                     Label {
                         id: available
-                        text: qsTr("2,500,000")
+                        text: Number(CoinSale.totalAvailable).toLocaleString(Qt.locale("en-US"),'f',0)
                         font.pointSize: 12
                         verticalAlignment: Text.AlignVCenter
                     }

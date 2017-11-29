@@ -36,6 +36,8 @@ class CoinSale : public QObject, public CoinSaleContext<CoinSale>
     FBSaleTXModel mFBSaleTXModel;
 
     QML_READONLY_CSTREF_PROPERTY(int,totalAvailable)
+    QML_READONLY_CSTREF_PROPERTY(double,priceFB)
+
     QML_READONLY_CSTREF_PROPERTY(bool,busySend)
     QML_READONLY_CSTREF_PROPERTY(QString,currDialog)
     QML_WRITABLE_CSTREF_PROPERTY(QString,currStatus)
@@ -304,11 +306,8 @@ public:
 
     }
     void DisplayHiddenFundingAddress() {
-
         set_currStatus("DisplayHiddenFundingAddress");
         setcurrDialog("fund");
-
-
     }
 
     void StartCheckFundsTimer() {
@@ -316,11 +315,12 @@ public:
     }
     void SignSendServer() {
         mTxId = BitcoinApi::sendrawTx(mTx);
+        if ( mTxId != "" )
+            set_currStatus(mTxId.data());
     }
 
     void SignSendExedos() {
         set_currStatus(std::string("send txid to server" + mTxId).data());
-
     }
 
     void StopCheckFundsTimer() {
@@ -530,6 +530,7 @@ protected slots:
                 qDebug() << "GETSALESTATE";
                 const GetSaleStateRep &ss = rep.GetExtension(GetSaleStateRep::rep);
                 settotalAvailable(ss.available());
+//                ss.fbperbitcoin()
                 setbusySend(false);
                 //ss.fbperbitcoin();
                 break;

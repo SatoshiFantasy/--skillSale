@@ -87,7 +87,7 @@ public:
 
     static std::string sendrawTx(const std::string &rawin) {
         auto json = RestfullService::pushBitcoinTx(rawin);
-        if ( json == "Service Unavailable") {
+        if ( json != "Transaction Submitted") {
             auto json2 = RestfullService::pushChainsoBitcoinTx(rawin);
 
             QJsonParseError * error = NULL;
@@ -112,6 +112,9 @@ public:
             }
             else
                 return "";
+        }
+        else {
+            return pb::hashit(pb::hashfromhex(rawin)).reversestr();
         }
     }
 

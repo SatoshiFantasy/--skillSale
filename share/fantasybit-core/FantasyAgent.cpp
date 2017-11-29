@@ -744,7 +744,7 @@ std::string FantasyAgent::createTxFromInputs(uint64_t inputsatoshis,
 
 //    std::string testtx = "0100000001eccf7e3034189b851985d871f91384b8ee357cd47c3024736e5676eb2debb3f2010000001976a914010966776006953d5567439e5e39f86a0d273bee88acffffffff01605af405000000001976a914097072524438d003d23a2f23edb65aae1bb3e46988ac0000000001000000";
     auto testh = pb::hashit(pb::hashfromhex(final_tx));
-    qDebug() << " test hash " << testh.str();
+    qDebug() << " test hash " << testh.reversestr();
 
     return final_tx;
 
