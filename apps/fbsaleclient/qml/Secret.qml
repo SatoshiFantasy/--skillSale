@@ -15,8 +15,8 @@ Item {
         return CoinSale.secretShow.split(" ");
     }
 
-    property bool isimport: false
-    property bool isverify: false
+    property bool isimport: window.doimport
+    property bool isverify: window.doverify
     property bool isdisplay: !isimport && (!isverify || CoinSale.secretIsVerified)
     property var secretOut: []
     property bool didcopy: false

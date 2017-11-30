@@ -5,6 +5,7 @@
 #include <CoinSale.h>
 #include <QCommandLineParser>
 #include <QQmlContext>
+#include <QQuickStyle>
 
 using namespace fantasybit;
 
@@ -15,6 +16,8 @@ int main(int argc, char *argv[])
         qCritical() << "fbsaleclient is running";
         return 0;
     }
+
+    QQuickStyle::setStyle("Material");
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
@@ -67,7 +70,7 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty("CoinSale", &cs);
 
-    engine.load(QUrl(QLatin1String("qrc:/main.qml")));
+    engine.load(QUrl(QLatin1String("qrc:/salemain.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
 

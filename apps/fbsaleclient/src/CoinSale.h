@@ -39,7 +39,7 @@ class CoinSale : public QObject, public CoinSaleContext<CoinSale>
     QML_READONLY_CSTREF_PROPERTY(double,priceFB)
 
     QML_READONLY_CSTREF_PROPERTY(bool,busySend)
-    QML_READONLY_CSTREF_PROPERTY(QString,currDialog)
+    QML_WRITABLE_CSTREF_PROPERTY(QString,currDialog)
     QML_WRITABLE_CSTREF_PROPERTY(QString,currStatus)
 
     QML_READONLY_CSTREF_PROPERTY(QString,currName)
@@ -272,7 +272,7 @@ public:
     }
 
     void NewNameDialog() {
-        setcurrDialog("name");
+        set_currDialog("name");
     }
     void SetNameIsNew() {
         if ( HasName() ) {
@@ -286,7 +286,7 @@ public:
     void DisplayFundingAddress() {
         auto btcaddress = pb::toBtcAddress(agent.pubKey());
         setbitcoinAddress(btcaddress.data());
-        setcurrDialog("fund");
+        set_currDialog("fund");
         qDebug() << m_bitcoinAddress;
         auto vec = BitcoinApi::getSpentTx(btcaddress,FUNDING_ADDRESS);
         //,"90d0a159b432afd45b043a286b7a12e362775d02d95b0b8f17bb742baa5f0c0b");
@@ -302,12 +302,12 @@ public:
     void DisplaySecretDialog() {
         setsecretShow(getSecret());
         set_currStatus("to Display Secret");
-        setcurrDialog("secret");
+        set_currDialog("secret");
 
     }
     void DisplayHiddenFundingAddress() {
         set_currStatus("DisplayHiddenFundingAddress");
-        setcurrDialog("fund");
+        set_currDialog("fund");
     }
 
     void StartCheckFundsTimer() {
@@ -329,7 +329,7 @@ public:
 
     void VerifySecretDialog() {
         set_currStatus ("secretverify");
-        setcurrDialog("secretverify");
+        set_currDialog("secretverify");
     }
     void SecretIsVerified() {
         mSecretVerified[m_currName.toStdString()] = true;
@@ -341,7 +341,7 @@ public:
         set_currStatus ("Verify Error");
     }
     void DisplayAddressBalance() {
-        setcurrDialog("balance");
+        set_currDialog("balance");
     }
     void StartCheckExedosTimer() {}
     void StopCheckExedosTimer() {}

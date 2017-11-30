@@ -8,5 +8,12 @@
         <file>Page3.qml</file>
         <file>SecretPage.qml</file>
         <file>SoldTx.qml</file>
+        <file>salemain.qml</file>
+        <file>Account.qml</file>
+        <file>Balance.qml</file>
+        <file>Buy.qml</file>
+        <file>Secret.qml</file>
+        <file>Bitcoin.qml</file>
+        <file>BuyButton.qml</file>
     </qresource>
 </RCC>

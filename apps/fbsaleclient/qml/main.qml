@@ -1,12 +1,19 @@
-import QtQuick 2.7
-import QtQuick.Controls 2.0
-import QtQuick.Layouts 1.3
+//import QtQuick 2.2
+//import QtQuick.Controls 2.1
+//import QtQuick.Layouts 1.3
+import QtQuick 2.4
+import QtQuick.Layouts 1.0
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles.Flat 1.0 as Flat
+import QtQuick.Extras 1.4
+import QtQuick.Extras.Private 1.0
+
 
 ApplicationWindow {
     visible: true
-    width: 640
-    height: 480
-    title: qsTr("Hello World")
+//    width: 640
+//    height: 480
+    title: "Fantasybit Skill Sale App"
 
     property alias wantverify: secretpage.isverify
     SwipeView {

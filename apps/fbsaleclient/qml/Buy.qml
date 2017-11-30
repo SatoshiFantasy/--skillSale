@@ -8,6 +8,8 @@ Item {
     property alias image1: image1
     property alias price: price
 
+    Material.theme: Material.Light
+
 
     ColumnLayout {
         id: columnLayout2
