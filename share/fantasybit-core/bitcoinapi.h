@@ -165,14 +165,14 @@ public:
                 qDebug() << " error parsing json";
             if ( error != NULL )
                 qDebug() << error->errorString();
-            return NULL;
+            return QJsonValue();
         }
 
         qDebug() << json2;
         qDebug() << doc.isNull() << doc.isEmpty() << doc.isArray() << doc.isObject();
         QJsonObject jo = doc.object();
         if (jo.value("status") != "success")
-            return NULL;
+            return QJsonValue();
 
         return jo.value("data");
 
