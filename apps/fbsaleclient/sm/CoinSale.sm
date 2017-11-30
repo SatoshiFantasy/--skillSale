@@ -8,8 +8,6 @@
 %map StartMap
 %%
 // State    Transition  End State       Action(s)
-Default {
-}
 
 Init
 {
@@ -116,6 +114,19 @@ WaitingPacks
 Default
 {
             Forgot                 nil          { DisplaySecretDialog(); }
+            Buy   nil {}
+            Import   nil {}
+            Claim   nil {}
+            Select   nil {}
+            NameConfimed   nil {}
+            SecretOk   nil {}
+            ShowAddress   nil {}
+            NameNotConfimed   nil {}
+            Funded   nil {}
+            Verify   nil {}
+            ExedosReceived   nil {}
+            PacksConfirmed   nil {}
+
 }
 
 %%

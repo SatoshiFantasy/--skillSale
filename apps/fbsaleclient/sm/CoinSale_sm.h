@@ -56,6 +56,7 @@ namespace fantasybit
         virtual void SecretOk(CoinSaleContext<CoinSale>& context);
         virtual void Select(CoinSaleContext<CoinSale>& context);
         virtual void ShowAddress(CoinSaleContext<CoinSale>& context);
+        virtual void Verify(CoinSaleContext<CoinSale>& context);
         virtual void Verify(CoinSaleContext<CoinSale>& context, const QString & secret);
 
     protected:
@@ -89,6 +90,18 @@ namespace fantasybit
         {};
 
         virtual void Forgot(CoinSaleContext<CoinSale>& context);
+        virtual void Buy(CoinSaleContext<CoinSale>& context);
+        virtual void Import(CoinSaleContext<CoinSale>& context);
+        virtual void Claim(CoinSaleContext<CoinSale>& context);
+        virtual void Select(CoinSaleContext<CoinSale>& context);
+        virtual void NameConfimed(CoinSaleContext<CoinSale>& context);
+        virtual void SecretOk(CoinSaleContext<CoinSale>& context);
+        virtual void ShowAddress(CoinSaleContext<CoinSale>& context);
+        virtual void NameNotConfimed(CoinSaleContext<CoinSale>& context);
+        virtual void Funded(CoinSaleContext<CoinSale>& context);
+        virtual void Verify(CoinSaleContext<CoinSale>& context);
+        virtual void ExedosReceived(CoinSaleContext<CoinSale>& context);
+        virtual void PacksConfirmed(CoinSaleContext<CoinSale>& context);
     };
 
     class StartMap_Init :
@@ -307,6 +320,11 @@ class CoinSaleContext :
         inline void ShowAddress()
         {
             getState().ShowAddress(*this);
+        };
+
+        inline void Verify()
+        {
+            getState().Verify(*this);
         };
 
         inline void Verify(const QString & secret)

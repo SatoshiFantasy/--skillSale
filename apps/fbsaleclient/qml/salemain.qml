@@ -276,7 +276,7 @@ ApplicationWindow {
            }
 
            if ( nexti > -1 ) {
-               console.log(" nexti " + nexti)
+               console.log(" nexti " + currDialog + nexti)
                tabBar.setCurrentIndex(nexti);
            }
         }

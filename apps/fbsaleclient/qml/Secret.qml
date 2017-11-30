@@ -11,8 +11,14 @@ Item {
         visible: false
     }
 
+    TextEdit {
+        id: pasthelper
+        visible: false
+    }
+
+
     property var secretWordsIn: {
-        return CoinSale.secretShow.split(" ");
+        return !isdisplay ? [] : CoinSale.secretShow.split(" ");
     }
 
     property bool isimport: window.doimport
@@ -20,6 +26,8 @@ Item {
     property bool isdisplay: !isimport && (!isverify || CoinSale.secretIsVerified)
     property var secretOut: []
     property bool didcopy: false
+
+    property bool didpaste: false
 
 //    onIsverifyChanged: {
 //        console.log("verify " + isverify)
@@ -31,12 +39,12 @@ Item {
 
 //        grid.update()
 //    }
-
-    onIsdisplayChanged: {
-        console.log("onIsdisplayChanged " + isdisplay)
+/*
+    Component.onCompleted:  {
+        console.log("secret onCompleted " + isdisplay)
 
         if ( !isdisplay ) {
-            secretWordsIn = ""
+            secretWordsIn = []
             grid.update()
         }
         else {
@@ -44,6 +52,22 @@ Item {
                 secretWordsIn = CoinSale.secretShow.split(" ");
             }
         }
+    }
+*/
+    onIsdisplayChanged: {
+        console.log("onIsdisplayChanged " + isdisplay)
+
+        grid.update()
+
+//        if ( !isdisplay ) {
+//            secretWordsIn = []
+//            grid.update()
+//        }
+//        else {
+//            if ( CoinSale.secretShow !== "" ) {
+//                secretWordsIn = CoinSale.secretShow.split(" ");
+//            }
+//        }
     }
 
     implicitHeight: rec1.height + button1.height
@@ -72,34 +96,67 @@ Item {
                 delegate: secretDelegate
             }
 
+            ToolTip {
+                id: tt
+                parent: rec1
+            }
+
             MouseArea {
 //                enabled:!(isimport || isverify )
+                id: ma
                 anchors.fill: parent
                 onClicked: {
                     if ( isdisplay ) {
                         console.log("copying ")
                         cliphelper.text = CoinSale.secretShow
+                        console.log("copying 2")
+
                         cliphelper.selectAll()
-                        cliphelper.copy()
-                        cliphelper.text = ""
-                        rec1.ToolTip.visible = true
+                        cliphelper.cut()
+                        console.log("copying3 ")
+
+//                        cliphelper.
+//                        cliphelper.text = ""
+//                        rec1.ToolTip.visible = true
+                        console.log("copying4 ")
+                        rec1.ToolTip.show("Secret Copied to Clipboard" ,5000)
+//                        tt.visible = true;
+
                         didcopy = true
                     }
                     else {
+                        cliphelper.text = ""
                         cliphelper.paste()
                         console.log("pste " + cliphelper.text)
-                        secretWordsIn = cliphelper.text.trim().split(" ")
-                        cliphelper.text = ""
-                        rec1.ToolTip.visible = true
-                        grid.update
+                        secretWordsIn = Qt.binding(function() {
+                            return cliphelper.text.trim().split(" ");
+                        });
+
+                        console.log("PASTING3 ")
+
+
+//                        cliphelper.text = ""
+//                        rec1.ToolTip.visible = true
+//                        ToolTip.timeout = 5000
+//                        ToolTip.text =  "Secret Pasted from Clipboard"
+//                        ToolTip.visible = true
+//                        didpaste = true
+//                        grid.update
+                          rec1.ToolTip.show("Secret Pasted from Clipboard" ,5000)
+//                        tt.visible = true;
+                        console.log("PASTING4 ")
+//                        ToolTip.show("")
                     }
                 }
 
                 acceptedButtons: !isdisplay ? Qt.RightButton : Qt.LeftButton
+
+//                ToolTip.timeout: 5000
+//                ToolTip.text: isdisplay ? "Secret Copied to Clipboard" : "Secret Pasted from Clipboard"
+//                ToolTip.visible: pressed
+
             }
 
-            ToolTip.timeout: 5000
-            ToolTip.text: isdisplay ? "Secret Copied to Clipboard" : "Secret Pasted from Clipboard"
 
         }
 
@@ -178,7 +235,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: lb.right
                     width: parent.width - lb.width
-                    text: secretWordsIn.length < index ? "" : secretWordsIn[index]//(secretpage.isimport || secretpage.isverify || secretWordsIn.length < 12) ? "" : secretWordsIn[index]
+                    text: (secretWordsIn.length <= index) ? "" : secretWordsIn[index]//(secretpage.isimport || secretpage.isverify || secretWordsIn.length < 12) ? "" : secretWordsIn[index]
                     font.bold: true
                     readOnly: secretpage.isdisplay
 //                    onEditingFinished: {
@@ -187,7 +244,7 @@ Item {
 //                    }
 
                     onTextChanged: {
-                        console.log("text changed " + text)
+                        console.log(index + "text changed " + text)
                         secretOut[index] = text
                     }
                 }

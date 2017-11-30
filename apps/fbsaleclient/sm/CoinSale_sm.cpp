@@ -84,6 +84,11 @@ namespace fantasybit
         Default(context);
     }
 
+    void CoinSaleState::Verify(CoinSaleContext<CoinSale>& context)
+    {
+        Default(context);
+    }
+
     void CoinSaleState::Verify(CoinSaleContext<CoinSale>& context, const QString & secret)
     {
         Default(context);
@@ -115,6 +120,78 @@ namespace fantasybit
             context.setState(endState);
             throw;
         }
+
+    }
+
+    void StartMap_Default::Buy(CoinSaleContext<CoinSale>& context)
+    {
+
+
+    }
+
+    void StartMap_Default::Import(CoinSaleContext<CoinSale>& context)
+    {
+
+
+    }
+
+    void StartMap_Default::Claim(CoinSaleContext<CoinSale>& context)
+    {
+
+
+    }
+
+    void StartMap_Default::Select(CoinSaleContext<CoinSale>& context)
+    {
+
+
+    }
+
+    void StartMap_Default::NameConfimed(CoinSaleContext<CoinSale>& context)
+    {
+
+
+    }
+
+    void StartMap_Default::SecretOk(CoinSaleContext<CoinSale>& context)
+    {
+
+
+    }
+
+    void StartMap_Default::ShowAddress(CoinSaleContext<CoinSale>& context)
+    {
+
+
+    }
+
+    void StartMap_Default::NameNotConfimed(CoinSaleContext<CoinSale>& context)
+    {
+
+
+    }
+
+    void StartMap_Default::Funded(CoinSaleContext<CoinSale>& context)
+    {
+
+
+    }
+
+    void StartMap_Default::Verify(CoinSaleContext<CoinSale>& context)
+    {
+
+
+    }
+
+    void StartMap_Default::ExedosReceived(CoinSaleContext<CoinSale>& context)
+    {
+
+
+    }
+
+    void StartMap_Default::PacksConfirmed(CoinSaleContext<CoinSale>& context)
+    {
+
 
     }
 
@@ -201,7 +278,7 @@ namespace fantasybit
         context.clearState();
         try
         {
-            ctxt.SetNameIsNew();
+            ctxt.SetNameIsVerified();
             context.setState(StartMap::WaitingForFunds);
         }
         catch (...)

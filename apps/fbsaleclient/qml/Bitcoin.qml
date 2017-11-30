@@ -1,20 +1,29 @@
-//import QtQuick 2.7
-
-//Page1Form {
-//    button1.onClicked: {
-//        console.log("Button Pressed. Entered text: " + textField1.text);
-//    }
-//}
-
-
-import QtQuick 2.7
-import QtQuick.Controls 2.0
+import QtQuick 2.6
 import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.0
+import QtQuick.Controls.Material 2.0
+import QtQuick.Controls.Universal 2.0
+import Qt.labs.settings 1.0
 
-Item {
-        anchors.top: parent.top
+Pane {
+        id: bitcoinpaNE
+        Label {
+            id: lbl
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
+            anchors.topMargin: 10
+            width: (parent.width / 3) *2
+            wrapMode: Text.WordWrap
+    //            maximumLineCount: 20
+            horizontalAlignment: Qt.AlignHCenter
+            text: "FUNDING ADDRESS "
+            Component.onCompleted: {
+                console.log(parent.width)
+            }
+        }
+
         QRCode {
-            anchors.top : parent.top
+            anchors.top : lbl.bottom
             anchors.topMargin : 30
             anchors.horizontalCenter : parent.horizontalCenter
             width : 320
@@ -24,7 +33,7 @@ Item {
             visible: CoinSale.secretIsVerified
         }
         Button {
-            anchors.top : parent.top
+            anchors.top : lbl.bottom
             anchors.topMargin : 30
             anchors.horizontalCenter : parent.horizontalCenter
             width : 320

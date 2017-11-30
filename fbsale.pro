@@ -34,3 +34,11 @@ OTHER_FILES += \
 ios {
     IPHONEOS_DEPLOYMENT_TARGET=10.3
 }
+
+## for the store.
+macx {
+    QMAKE_CFLAGS += -gdwarf-2
+    QMAKE_CXXFLAGS += -gdwarf-2
+    ICON = icon.icns
+    CONFIG += x86
+}

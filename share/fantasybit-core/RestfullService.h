@@ -35,6 +35,7 @@ public:
     static QByteArray getBlockchainBtcAddressUnspent(const std::string &addr,
                  QThread * ownerThread = QThread::currentThread()) {
 
+        qDebug() << " getBlockchainBtcAddressUnspent";
         QString url = QString(fantasybit::BLOCKCHAINAPI.data());
         RestfullClient client(QUrl(url),ownerThread);
         QMap<QString,QString>  headers;
@@ -51,6 +52,8 @@ public:
     static QByteArray getChainsoBtcAddressUnspent(const std::string &addr,
                  QThread * ownerThread = QThread::currentThread()) {
 
+        qDebug() << " getChainsoBtcAddressUnspent";
+
         QString url = QString(fantasybit::CHAINSOAPI.data()).arg("get_tx_unspent");
         RestfullClient client(QUrl(url),ownerThread);
         QMap<QString,QString>  headers;
@@ -66,6 +69,8 @@ public:
     static QByteArray getChainsoBtcAddress(const std::string &addr,
 //                                           const QString &aftertx,
                  QThread * ownerThread = QThread::currentThread()) {
+        qDebug() << " getChainsoBtcAddress";
+
         //https://chain.so/api/v2/address/BTCTEST/mnBZiPHayJMSCc5Vj32Tn65tn1CcuCPWkv
         QString url = QString(fantasybit::CHAINSOAPI.data()).arg("address");
         RestfullClient client(QUrl(url),ownerThread);

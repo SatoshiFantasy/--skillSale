@@ -236,7 +236,9 @@ public:
         //agent.verifyseret ()
         try {
             bool ret =  ( agent.fromMnemonic(secret.toStdString ()).get_secret().str() == agent.getSecret());
-            set_currStatus("Verify " + ret ? " success " : " fail");
+            QString qs("Verify %1");
+
+            set_currStatus(qs.arg ( ret ? " success " : " fail"));
             return ret;
         }
         catch (MnemonicException e) {
@@ -274,7 +276,7 @@ public:
     void NewNameDialog() {
         set_currDialog("name");
     }
-    void SetNameIsNew() {
+    void SetNameIsVerified() {
         if ( HasName() ) {
             mSecretDisplayed[m_currName.toStdString()] = true;
             mSecretVerified[m_currName.toStdString()] = true;
