@@ -7,8 +7,8 @@ import Qt.labs.settings 1.0
 
 ApplicationWindow {
     id: window
-    width: 400
-    height: 500
+    width: 500
+    height: 700
     visible: true
     title: "Fantasybit"
     property  bool first: true
@@ -172,6 +172,19 @@ ApplicationWindow {
 
             }
         }
+    }
+
+    Label {
+        anchors.horizontalCenter: parent.horizontalCenter
+        id: logarea2
+        text: "..."
+        anchors.bottom: logarea.top
+    }
+    Label {
+        anchors.horizontalCenter: parent.horizontalCenter
+        id: logarea
+        text: "..."
+        anchors.bottom: parent.bottom
     }
 
     BusyIndicator {
