@@ -6,7 +6,7 @@
 //
 
 #include "CoinSale.h"
-#include "/nwork/--skillSale/apps/fbsaleclient/sm/CoinSale_sm.h"
+#include "CoinSale_sm.h"
 
 using namespace statemap;
 
