@@ -14,13 +14,19 @@ Pane {
         visible: false
     }
 
+    TextEdit {
+        id: pasthelper
+        visible: false
+    }
+
+
     property var secretWordsIn: {
         return !isdisplay ? [] : CoinSale.secretShow.split(" ");
     }
 
-    property bool isimport: window.doimport
-    property bool isverify: window.doverify
-    property bool isdisplay: !isimport && (!isverify || CoinSale.secretIsVerified)
+    property bool isimport: window.doimport && ! CoinSale.secretIsVerified
+    property bool isverify: window.doverify && !CoinSale.secretIsVerified
+    property bool isdisplay: !isimport && !isverify
     property var secretOut: []
     property bool didcopy: false
 
@@ -111,11 +117,11 @@ Pane {
                                 didcopy = true
                             }
                             else {
-                                cliphelper.text = ""
-                                cliphelper.paste()
-                                console.log("pste " + cliphelper.text)
+                                pasthelper.text = ""
+                                pasthelper.paste()
+                                console.log("pste " + pasthelper.text)
                                 secretWordsIn = Qt.binding(function() {
-                                    return cliphelper.text.trim().split(" ");
+                                    return pasthelper.text.trim().split(" ");
                                 });
 
                                 console.log("PASTING3 ")
@@ -128,7 +134,7 @@ Pane {
         //                        ToolTip.visible = true
         //                        didpaste = true
         //                        grid.update
-                                  rec1.ToolTip.show("Secret Pasted from Clipboard" ,5000)
+//                                  ma.ToolTip.show("Secret Pasted from Clipboard" ,5000)
         //                        tt.visible = true;
                                 console.log("PASTING4 ")
         //                        ToolTip.show("")
@@ -150,6 +156,11 @@ Pane {
                     parent: rec1
                 }
 
+                ToolTip {
+                    id: tt2
+                    parent: ma
+                }
+
 
             }
         }
@@ -160,6 +171,8 @@ Pane {
 
             Button {
                 id: button1
+//                enabled: CoinSale.currName === "" ||  isverify
+//                visible: enabled
                 text: isimport ? "Import" : ( isverify ? "Verify" : "OK")
                 onClicked: {
                     if ( !isdisplay ) {

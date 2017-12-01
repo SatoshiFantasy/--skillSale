@@ -10,6 +10,7 @@ Pane {
 //    property alias textField1: textField1
 //    property alias button1: button1
     property alias nameStatsText: nameStatusL.text
+//    property alias tooltip: textField1.ToolTip
 
     Label {
         id: lbl
@@ -40,6 +41,8 @@ Pane {
             TextField {
                 id: claimNametext
                 placeholderText: qsTr("Enter Fantasy Name")
+                text: CoinSale.currName
+                readOnly: CoinSale.currName !== ""
             }
 
             Button {
@@ -48,6 +51,7 @@ Pane {
                 onClicked: {
                     nameCheckBlank(claimNametext.text);
                 }
+                enabled: CoinSale.currName === ""
             }
         }
 
@@ -55,13 +59,18 @@ Pane {
             anchors.horizontalCenter: parent.horizontalCenter
             id: nameStatusL
             text: window.nameStatsText
+            width: parent.width
+            wrapMode: Text.WordWrap
+            font.pointSize: 10
+            color: Material.Grey
+
         }
     }
 
 //        RowLayout {
-     Text {
-//                id: textField1
-                anchors.topMargin: 40
+        Text {
+                id: textField1
+                anchors.topMargin: 10
                 anchors.top: col1.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
                 textFormat: Text.RichText
@@ -71,7 +80,11 @@ Pane {
                 onLinkActivated: {
                     CoinSale.currDialog = "secretimport";
                 }
+
+                visible: CoinSale.currName === ""
         }
+
+
 //            }
 
 //            Button {

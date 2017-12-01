@@ -18,6 +18,11 @@ ApplicationWindow {
     property bool doimport: false
     property bool doverify: false
 
+    ToolTip {
+        id: tt
+        parent: ApplicationWindow.overlay
+    }
+
 
     Material.theme: Material.Light
     Material.accent: "#0080A6"// Material.Amber
@@ -57,6 +62,7 @@ ApplicationWindow {
     StackView {
         id: stackView
         anchors.fill: parent
+
 
         initialItem: Pane {
             id: pane
@@ -174,18 +180,7 @@ ApplicationWindow {
         }
     }
 
-    Label {
-        anchors.horizontalCenter: parent.horizontalCenter
-        id: logarea2
-        text: "..."
-        anchors.bottom: logarea.top
-    }
-    Label {
-        anchors.horizontalCenter: parent.horizontalCenter
-        id: logarea
-        text: "..."
-        anchors.bottom: parent.bottom
-    }
+
 
     BusyIndicator {
         id: busy
@@ -210,12 +205,19 @@ ApplicationWindow {
     property var pages:     [ "Account",  "Secret", "Bitcoin", "Balance"  ]
     property var altpages: [ "Fantasy Name",  "Brain Wallet", "Bitcoin Address", "Transactions and Balances"  ]
 
-    footer: TabBar {
+    footer:
+        Column {
+        width: parent.width
+        spacing: 15
+
+
+        TabBar {
         id: tabBar
         visible: !window.first
         enabled: !window.first
-        height: window.first ? 0 : implicitHeight
-
+        Layout.preferredHeight:  window.first ? 0 : implicitHeight
+        width: parent.width
+        Layout.fillWidth: true
         currentIndex: -1
         Repeater {
             model: window.first ? 0 : pages.length;
@@ -224,6 +226,7 @@ ApplicationWindow {
                 font.pointSize: 10
             }
         }
+
 
 //        TabButton {
 //            text: pages[0]
@@ -240,6 +243,65 @@ ApplicationWindow {
         }
 
    }
+
+
+        ToolBar {
+            Material.foreground: Material.Grey
+            width: parent.width
+            Layout.fillWidth: true;
+            anchors.horizontalCenter: parent.horizontalCenter
+
+        Row {
+//            anchors.fill: parent
+            anchors.centerIn: parent
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            Layout.fillWidth: true;
+
+//            width: parent.width
+            spacing: 5
+            padding: 5
+            Label {
+                anchors.verticalCenter: parent.verticalCenter
+//                anchors.horizontalCenter: parent.horizontalCenter
+                id: logarea3
+                text: "..."
+    //            anchors.bottom: parent.bottom
+    //            horizontalAlignment: Text.AlignLeft
+                font.pointSize: 10
+                Layout.fillWidth: true;
+            }
+
+        Label {
+//            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+
+            id: logarea2
+            text: "..."
+            horizontalAlignment: Text.AlignLeft
+            font.pointSize: 10
+
+            Layout.fillWidth: true;
+
+//            anchors.bottom: logarea.top
+        }
+        Label {
+            anchors.verticalCenter: parent.verticalCenter
+
+//            anchors.horizontalCenter: parent.horizontalCenter
+            id: logarea
+            text: "..."
+//            anchors.bottom: parent.bottom
+//            horizontalAlignment: Text.AlignLeft
+            font.pointSize: 10
+            Layout.fillWidth: true;
+
+        }
+
+        }
+        }
+    }
 
     Connections {
         target: CoinSale
@@ -298,16 +360,21 @@ ApplicationWindow {
             console.log( "namehcek " + name + status)
             if(status === "true" ) {
                 window.nameStatsText = "name Check Pass... sending claim name tx to blockchain for: " + name;
+                window.ToolTip.show(window.nameStatsText ,10000)
                 CoinSale.signPlayer(name);
             }
             else {
                 window.nameStatsText = name + " not Available - try new name or import"
+//                stackView.ToolTip.show(window.nameStatsText ,10000)
+                  window.ToolTip.show(window.nameStatsText ,10000)
+
             }
         }
 
         onCurrStatusChanged: {
-            logarea.text = logarea2.text
-            logarea2.text = currStatus
+            logarea3.text = logarea2.text
+            logarea2.text = logarea.text
+            logarea.text = "... " + currStatus
 //            logarea.text = currStatus;
 //            logarea.append(currStatus + "\n")
 //            logarea.text = currStatus + "\n" + logarea.text;
