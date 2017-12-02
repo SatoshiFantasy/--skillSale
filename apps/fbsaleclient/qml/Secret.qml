@@ -1,7 +1,7 @@
 import QtQuick 2.6
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
-//import QtQuick.Controls.Material 2.0
+import QtQuick.Controls.Material 2.0
 import QtQuick.Controls.Universal 2.0
 import Qt.labs.settings 1.0
 
@@ -151,15 +151,15 @@ Pane {
 
                 }
 
-                ToolTip {
-                    id: tt
-                    parent: rec1
-                }
+//                ToolTip {
+//                    id: tt
+//                    parent: rec1
+//                }
 
-                ToolTip {
-                    id: tt2
-                    parent: ma
-                }
+//                ToolTip {
+//                    id: tt2
+//                    parent: ma
+//                }
 
 
             }
@@ -239,7 +239,7 @@ Pane {
 //                    height: parent.height
                     Layout.preferredWidth: parent.width * .20
                     id: lb
-                    text: (index < 10 ? " " : "") +(index+1) + ": "
+                    text: (index < 9 ? " " : "") +(index+1) + ": "
                     font.pointSize: 16
 
                 }

@@ -18,10 +18,9 @@ ApplicationWindow {
     property bool doimport: false
     property bool doverify: false
 
-    ToolTip {
-        id: tt
-        parent: ApplicationWindow.overlay
-    }
+
+    property var pages:     [ "Account",  "Secret", "Bitcoin", "Balance"  ]
+    property var altpages: [ "Fantasy Name",  "Brain Wallet", "Bitcoin Address", "Transactions and Balances"  ]
 
 
     Material.theme: Material.Light
@@ -34,6 +33,7 @@ ApplicationWindow {
 
 
     header:  ToolBar {
+
 //        Material.background: "blue"
         height: first  ? 0 : implicitHeight
         visible: !first
@@ -48,7 +48,7 @@ ApplicationWindow {
                 id: titleLabel
 //                textFormat: Text.RichText
 //                text: "ƑantayɃit<sup>+Skill</sup> Sale"
-                text: pages[tabBar.currentIndex]
+                text: (!tabBar || tabBar.currentIndex < 0) ? "" : pages[tabBar.currentIndex]
                 font.pixelSize: 16
                 elide: Label.ElideRight
                 horizontalAlignment: Qt.AlignHCenter
@@ -62,6 +62,11 @@ ApplicationWindow {
     StackView {
         id: stackView
         anchors.fill: parent
+
+        ToolTip {
+            id: tt
+            parent: stackView.currentItem
+        }
 
 
         initialItem: Pane {
@@ -202,8 +207,6 @@ ApplicationWindow {
 //        anchors.fill: parent
     }
 
-    property var pages:     [ "Account",  "Secret", "Bitcoin", "Balance"  ]
-    property var altpages: [ "Fantasy Name",  "Brain Wallet", "Bitcoin Address", "Transactions and Balances"  ]
 
     footer:
         Column {
@@ -360,14 +363,18 @@ ApplicationWindow {
             console.log( "namehcek " + name + status)
             if(status === "true" ) {
                 window.nameStatsText = "name Check Pass... sending claim name tx to blockchain for: " + name;
-                window.ToolTip.show(window.nameStatsText ,10000)
+                toobar.ToolTip.show(window.nameStatsText ,5000)
                 CoinSale.signPlayer(name);
             }
-            else {
+            else if ( status === "false"){
                 window.nameStatsText = name + " not Available - try new name or import"
 //                stackView.ToolTip.show(window.nameStatsText ,10000)
-                  window.ToolTip.show(window.nameStatsText ,10000)
+                  toobar.ToolTip.show(window.nameStatsText ,5000)
 
+            }
+            else {
+                window.nameStatsText = name + ": " + status
+                toobar.ToolTip.show(window.nameStatsText ,6000)
             }
         }
 
