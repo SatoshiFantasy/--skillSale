@@ -240,7 +240,7 @@ Pane {
                     Layout.preferredWidth: parent.width * .20
                     id: lb
                     text: (index < 10 ? " " : "") +(index+1) + ": "
-                    font.pointSize: 16
+                    font.pixelSize: 16
 
                 }
                 TextField {
@@ -249,7 +249,7 @@ Pane {
                     anchors.verticalCenter: parent.verticalCenter
 //                    horizontalAlignment: Text.AlightLeft
                     verticalAlignment: Text.AlignBottom
-                    font.pointSize: 16
+                    font.pixelSize: 16
 //                    verticalAlignment: Qt.AlignBottom
 
 //                    height: parent.height

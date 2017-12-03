@@ -92,7 +92,7 @@ ApplicationWindow {
                     text: qsTr("Welcome to Fantasybit Skill Coin Sale ")
                     Layout.columnSpan: 4
                     verticalAlignment: Text.AlignVCenter
-                    font.pointSize: 17
+                    font.pixelSize: 17
                     font.bold: true
                     textFormat: Text.RichText
                     horizontalAlignment: Text.AlignHCenter
@@ -131,14 +131,14 @@ ApplicationWindow {
                                 id: price
                                 text: qsTr(".00001")
                                 font.bold: true
-                                font.pointSize: 14
+                                font.pixelSize: 14
                             }
 
                             Label {
                                 id: btc
                                 text: qsTr("BTC")
                                 font.bold: true
-                                font.pointSize: 14
+                                font.pixelSize: 14
                                 verticalAlignment: Text.AlignVCenter
                             }
                         }
@@ -151,14 +151,14 @@ ApplicationWindow {
                             Label {
                                 id: available
                                 text: Number(CoinSale.totalAvailable).toLocaleString(Qt.locale("en-US"),'f',0)
-                                font.pointSize: 12
+                                font.pixelSize: 12
                                 verticalAlignment: Text.AlignVCenter
                             }
 
                             Label {
                                 id: label2
                                 text: qsTr("available")
-                                font.pointSize: 12
+                                font.pixelSize: 12
                                 Layout.columnSpan: 1
                                 Layout.rowSpan: 1
                                 verticalAlignment: Text.AlignVCenter
@@ -195,7 +195,7 @@ ApplicationWindow {
         text: "Demo Testing"
 //        color: Material.Red.toString()//"#40000000"
         anchors.centerIn: parent
-        font.pointSize: 20
+        font.pixelSize: 20
         font.bold:  true
         visible: CoinSale.isTestNet
 //        font.pixelSize: ProtoScreen.font( ProtoScreen.XXLARGE)
@@ -212,6 +212,7 @@ ApplicationWindow {
 
 
         TabBar {
+        property int prev: -1
         id: tabBar
         visible: !window.first
         enabled: !window.first
@@ -223,22 +224,31 @@ ApplicationWindow {
             model: window.first ? 0 : pages.length;
             TabButton {
                 text: pages[index]
-                font.pointSize: 10
+                font.pixelSize: 10
             }
         }
 
 
 //        TabButton {
 //            text: pages[0]
-//            font.pointSize: 10
+//            font.pixelSize: 10
 //        }
-
 
         onCurrentIndexChanged: {
             console.log("TAb current index changed" + currentIndex);
             if ( !window.first) {
+
+                if ( prev !== currentIndex ) {
+
+                    if( prev+1 == currentIndex)
+                        stackView.push("qrc:/" + pages[currentIndex] + ".qml");
+                    else if ( prev-1 == currentIndex)
+                        stackView.pop();
+
+                    prev = currentIndex
+                }
 //                currTitle = pages[currentIndex];
-                stackView.replace("qrc:/" + pages[currentIndex] + ".qml")
+//                stackView.replace("qrc:/" + pages[currentIndex] + ".qml")
             }
         }
 
@@ -269,7 +279,7 @@ ApplicationWindow {
                 text: "..."
     //            anchors.bottom: parent.bottom
     //            horizontalAlignment: Text.AlignLeft
-                font.pointSize: 10
+                font.pixelSize: 10
                 Layout.fillWidth: true;
             }
 
@@ -280,7 +290,7 @@ ApplicationWindow {
             id: logarea2
             text: "..."
             horizontalAlignment: Text.AlignLeft
-            font.pointSize: 10
+            font.pixelSize: 10
 
             Layout.fillWidth: true;
 
@@ -294,7 +304,7 @@ ApplicationWindow {
             text: "..."
 //            anchors.bottom: parent.bottom
 //            horizontalAlignment: Text.AlignLeft
-            font.pointSize: 10
+            font.pixelSize: 10
             Layout.fillWidth: true;
 
         }

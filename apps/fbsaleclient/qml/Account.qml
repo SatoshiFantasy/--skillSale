@@ -43,6 +43,7 @@ Pane {
                 placeholderText: qsTr("Enter Fantasy Name")
                 text: CoinSale.currName
                 readOnly: CoinSale.currName !== ""
+                Layout.fillWidth: true;
             }
 
             Button {
@@ -61,7 +62,7 @@ Pane {
             text: window.nameStatsText
             width: parent.width
             wrapMode: Text.WordWrap
-            font.pointSize: 10
+            font.pixelSize: 10
             color: Material.Grey
 
         }
@@ -76,7 +77,7 @@ Pane {
                 textFormat: Text.RichText
 //                placeholderText: qsTr("Enter 12 word Secret")
                 text: "Returning users - <a href=\"import\">Import name using secret</a>"
-                font.pointSize: 10
+                font.pixelSize: 10
                 onLinkActivated: {
                     CoinSale.currDialog = "secretimport";
                 }
