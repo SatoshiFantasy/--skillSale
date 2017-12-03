@@ -162,6 +162,7 @@ public:
         auto pk = agent.startImportMnemonic(secret.toStdString());
         if ( pk == "" ) {
             set_currStatus("import failed");
+            emit nameCheckGet("","import failed");
             return;//error
         }
 
@@ -239,6 +240,9 @@ public:
             QString qs("Verify %1");
 
             set_currStatus(qs.arg ( ret ? " success " : " fail"));
+            emit nameCheckGet(m_currName, QString("%1").
+                              arg( (ret ? " verified " : " verify fail")));
+
             return ret;
         }
         catch (MnemonicException e) {
@@ -526,6 +530,8 @@ protected slots:
                     kv->set_value(agent.sign(kv->key()));
                 }
                 doSignReq(spreq);
+                emit nameCheckGet(m_currName, "Signing Packs");
+
                 break;
             }
             case GETSALESTATE: {
@@ -552,6 +558,7 @@ protected slots:
                             m_lastPk2name = "";
                             setbusySend(false);
                             set_currStatus("timeout name");
+                            emit nameCheckGet(m_currName, "Name Not-Confirmed - Timeout");
                             NameNotConfirmed();
                         }
                     }
@@ -566,6 +573,7 @@ protected slots:
                             m_lastCheckName = "";
                             m_lastPk2name = "";
                             setbusySend(false);
+                            emit nameCheckGet(m_currName, "Name Confirmed!");
                             NameConfimed();
                         }
                         else if ( m_lastCheckName == "" ) {
@@ -577,13 +585,19 @@ protected slots:
                             if ( agent.finishImportMnemonic(m_lastPk2name,name) ) {
                                 if ( agent.UseName(name) ) {
                                     setcurrName(name.data());
+                                    emit nameCheckGet(m_currName, "Name Confirmed");
+
                                     NameConfimed();
                                 }
-                                else
+                                else {
+                                    emit nameCheckGet(m_currName, "Name Not Confirmed");
                                     NameNotConfirmed();
+                                }
                             }
-                            else
+                            else {
+                                emit nameCheckGet(m_currName, "Name Not Confirmed");
                                 NameNotConfirmed();
+                            }
 
 
                             m_lastPk2name = "";
