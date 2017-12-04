@@ -106,7 +106,9 @@ public:
 
         connect (this, &CoinSale::currNameChanged, this, &CoinSale::OnNewName, Qt::QueuedConnection);
         connect (this, &CoinSale::nameAvail, this, &CoinSale::onNameAvail, Qt::QueuedConnection);
-        connect (this, &CoinSale::currStatusChanged, this, &CoinSale::OnCurrSatusChanged);
+        connect (this, &CoinSale::currStatusChanged, this, &CoinSale::OnCurrSatusChanged,Qt::QueuedConnection);
+        connect (this, &CoinSale::setToolPop, this, &CoinSale::ToolPop,Qt::QueuedConnection);
+
         QString wss("ws://%1:%2");
         QString lserver = wss.arg(host.data()).arg(port);
 
@@ -139,6 +141,11 @@ public:
         qDebug() << "buy ";
         Buy();
     }
+
+    Q_INVOKABLE void toolPop(QString strin) {
+        emit setToolPop(strin);
+    }
+
 
     Q_INVOKABLE void verify(QString secret) {
         set_currStatus("verifying");
@@ -241,7 +248,7 @@ public:
 
             set_currStatus(qs.arg ( ret ? " success " : " fail"));
             emit nameCheckGet(m_currName, QString("%1").
-                              arg( (ret ? " verified " : " verify fail")));
+                              arg( (ret ? " verified! " : " verify fail")));
 
             return ret;
         }
@@ -430,8 +437,13 @@ signals:
     void importSuccess(const QString name, bool passfail);
     void nameCheckGet( const QString & name, const QString & status );
     void nameAvail( const QString name, bool );
+    void setToolPop(QString &in);
 
 protected slots:
+    void ToolPop(QString &in) {
+        emit nameCheckGet("", in);
+    }
+
     void OnCurrSatusChanged(QString in) {
         qDebug() << in;
     }

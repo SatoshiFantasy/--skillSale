@@ -21,8 +21,10 @@ Pane {
 
 
     property var secretWordsIn: {
-        return !isdisplay ? [] : CoinSale.secretShow.split(" ");
+        return !isdisplay ? pastWordsin : CoinSale.secretShow.split(" ");
     }
+
+    property var pastWordsin: []
 
     property bool isimport: window.doimport && ! CoinSale.secretIsVerified
     property bool isverify: window.doverify && !CoinSale.secretIsVerified
@@ -111,7 +113,9 @@ Pane {
         //                        cliphelper.text = ""
         //                        rec1.ToolTip.visible = true
                                 console.log("copying4 ")
-                                rec1.ToolTip.show("Secret Copied to Clipboard" ,5000)
+//                                rec1.ToolTip.show("Secret Copied to Clipboard" ,5000)
+                                toolPop("Secret Copied to Clipboard");
+
         //                        tt.visible = true;
 
                                 didcopy = true
@@ -120,9 +124,11 @@ Pane {
                                 pasthelper.text = ""
                                 pasthelper.paste()
                                 console.log("pste " + pasthelper.text)
-                                secretWordsIn = Qt.binding(function() {
-                                    return pasthelper.text.trim().split(" ");
-                                });
+                                pastWordsin = pasthelper.text.trim().split(" ")
+
+//                                secretWordsIn = Qt.binding(function() {
+//                                    return pasthelper.text.trim().split(" ");
+//                                });
 
                                 console.log("PASTING3 ")
 
@@ -180,13 +186,28 @@ Pane {
                         console.log("clicked: " + words)
                         if ( words !== "" ) {
                             if ( isimport) {
+                                console.log("try import")
+
+                                toolPop("try import");
+//                                rec1.ToolTip.show("try import" ,500)
                                 CoinSale.doimport(words);
                             }
                             else {
+                                console.log("try verify")
+//                                toobar.ToolTip.show("try verify" ,500)
+                                console.log("try verify 2")
+
                                 CoinSale.verify(words);
+                                console.log("try verify 3")
+
                             }
                         }
-                        else CoinSale.set_currStatus("bad import")
+                        else {
+//                            rec1.ToolTip.show("bad import" ,2000)
+                            toolPop("bad import");
+
+                            CoinSale.set_currStatus("bad import")
+                        }
                     }
                     else {
                         if ( didcopy ) {
@@ -208,7 +229,11 @@ Pane {
                 enabled: isverify
                 visible: isverify
                 onClicked: {
-                    CoinSale.forgot()
+                    toolPop("try recover");
+
+//                    rec1.ToolTip.show("try recover secret" ,500)
+//                    CoinSale.forgot()
+
                 }
             }
         }
@@ -256,7 +281,9 @@ Pane {
 //                    anchors.verticalCenter: parent.verticalCenter
 //                    anchors.left: lb.right
 //                    width: parent.width - lb.width
-                    text: (secretWordsIn.length <= index) ? "" : secretWordsIn[index]//(secretpage.isimport || secretpage.isverify || secretWordsIn.length < 12) ? "" : secretWordsIn[index]
+                    text: (secretWordsIn.length <= index) ? "" :  secretWordsIn[index]
+
+                        //(secretpage.isimport || secretpage.isverify || secretWordsIn.length < 12) ? "" : secretWordsIn[index]
                     font.bold: true
                     readOnly: secretpage.isdisplay
 //                    onEditingFinished: {
