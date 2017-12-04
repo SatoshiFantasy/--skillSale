@@ -113,8 +113,8 @@ Pane {
         //                        cliphelper.text = ""
         //                        rec1.ToolTip.visible = true
                                 console.log("copying4 ")
-//                                rec1.ToolTip.show("Secret Copied to Clipboard" ,5000)
-                                toolPop("Secret Copied to Clipboard");
+                                rec1.ToolTip.show("Secret Copied to Clipboard" ,5000)
+//                                CoinSale.toolPop("Secret Copied to Clipboard");
 
         //                        tt.visible = true;
 
@@ -140,7 +140,8 @@ Pane {
         //                        ToolTip.visible = true
         //                        didpaste = true
         //                        grid.update
-//                                  ma.ToolTip.show("Secret Pasted from Clipboard" ,5000)
+//                                  CoinSale.toolPop("Secret Pasted from Clipboard")
+                                rec1.ToolTip.show("Secret Pasted from Clipboard" ,5000)
         //                        tt.visible = true;
                                 console.log("PASTING4 ")
         //                        ToolTip.show("")
@@ -188,7 +189,9 @@ Pane {
                             if ( isimport) {
                                 console.log("try import")
 
-                                toolPop("try import");
+                                rec1.ToolTip.show("Try Import" ,500)
+
+//                                CoinSale.toolPop("try import");
 //                                rec1.ToolTip.show("try import" ,500)
                                 CoinSale.doimport(words);
                             }
@@ -204,7 +207,8 @@ Pane {
                         }
                         else {
 //                            rec1.ToolTip.show("bad import" ,2000)
-                            toolPop("bad import");
+//                            CoinSale.toolPop("bad import");
+                            rec1.ToolTip.show("Bad Import" ,2000)
 
                             CoinSale.set_currStatus("bad import")
                         }
@@ -229,10 +233,12 @@ Pane {
                 enabled: isverify
                 visible: isverify
                 onClicked: {
-                    toolPop("try recover");
+//                    CoinSale.toolPop("try recover");
+                    rec1.ToolTip.show("Try Recover" ,500)
+
 
 //                    rec1.ToolTip.show("try recover secret" ,500)
-//                    CoinSale.forgot()
+                    CoinSale.forgot()
 
                 }
             }

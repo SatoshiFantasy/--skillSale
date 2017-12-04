@@ -242,13 +242,15 @@ ApplicationWindow {
             if ( !window.first) {
 
                 if ( prev !== currentIndex ) {
-
-                    if( prev+1 == currentIndex)
+                    if( prev+1 == currentIndex) {
+                        prev = currentIndex
                         stackView.push("qrc:/" + pages[currentIndex] + ".qml");
-                    else if ( prev-1 == currentIndex)
+                    }
+                    else if ( prev-1 == currentIndex) {
+                        prev = currentIndex
                         stackView.pop();
-
-                    prev = currentIndex
+                    }
+                    currentIndex = prev;
                 }
 //                currTitle = pages[currentIndex];
 //                stackView.replace("qrc:/" + pages[currentIndex] + ".qml")

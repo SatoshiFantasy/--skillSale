@@ -107,7 +107,7 @@ public:
         connect (this, &CoinSale::currNameChanged, this, &CoinSale::OnNewName, Qt::QueuedConnection);
         connect (this, &CoinSale::nameAvail, this, &CoinSale::onNameAvail, Qt::QueuedConnection);
         connect (this, &CoinSale::currStatusChanged, this, &CoinSale::OnCurrSatusChanged,Qt::QueuedConnection);
-        connect (this, &CoinSale::setToolPop, this, &CoinSale::ToolPop,Qt::QueuedConnection);
+        connect (this, &CoinSale::setToolPop, this, &CoinSale::ToolPopIt,Qt::QueuedConnection);
 
         QString wss("ws://%1:%2");
         QString lserver = wss.arg(host.data()).arg(port);
@@ -253,7 +253,10 @@ public:
             return ret;
         }
         catch (MnemonicException e) {
-            set_currStatus(e.what());
+            std::string err = "fail: ";
+            err += e.what();
+            set_currStatus(err.data ());
+            emit nameCheckGet ("",err.data ());
             return false;
         }
     }
@@ -352,6 +355,7 @@ public:
 
     void VerifyError() {
         set_currStatus ("Verify Error");
+        emit nameCheckGet ("","Verify Error");
     }
     void DisplayAddressBalance() {
         set_currDialog("balance");
@@ -437,10 +441,10 @@ signals:
     void importSuccess(const QString name, bool passfail);
     void nameCheckGet( const QString & name, const QString & status );
     void nameAvail( const QString name, bool );
-    void setToolPop(QString &in);
+    void setToolPop(QString in);
 
 protected slots:
-    void ToolPop(QString &in) {
+    void ToolPopIt(QString in) {
         emit nameCheckGet("", in);
     }
 
@@ -530,7 +534,7 @@ protected slots:
            // qDebug() << "LightGateway::onBinaryMessageRecived " << rep.ShortDebugString().data();
         #endif
 
-        set_currStatus("onBinaryMessageRecived");
+//        set_currStatus("onBinaryMessageRecived");
         switch ( rep.ctype()) {
             case SIGNPACK: {
                 qDebug() << "SIGNPACK";
@@ -542,7 +546,7 @@ protected slots:
                     kv->set_value(agent.sign(kv->key()));
                 }
                 doSignReq(spreq);
-                emit nameCheckGet(m_currName, "Signing Packs");
+//                emit nameCheckGet(m_currName, "Signing Packs");
 
                 break;
             }
