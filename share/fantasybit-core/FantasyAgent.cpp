@@ -1152,8 +1152,14 @@ pair<pb::secp256k1_privkey,string> FantasyAgent::makePrivMnemonic() {
 //    static int init = init_openssl();
     uint8_t buf[32];
 
-    int result = RAND_bytes((unsigned char*)buf, 32);
-    string m_mnemonic = createMnemonic(buf);
+    string m_mnemonic;
+    do {
+        int result = RAND_bytes((unsigned char*)buf, 32);
+        m_mnemonic = createMnemonic(buf);
+    }
+    while ( m_mnemonic.find ("infacnt") != std::string::npos );
+
+
     return make_pair(fromMnemonic(m_mnemonic),m_mnemonic);
 }
 
