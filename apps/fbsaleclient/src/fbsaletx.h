@@ -23,14 +23,14 @@ namespace fantasybit {
 class FBSaleTXItem : public QObject {
     Q_OBJECT
     QML_WRITABLE_CSTREF_PROPERTY (QString, txid)
-    QML_WRITABLE_CSTREF_PROPERTY (quint64, btc)
+    QML_WRITABLE_CSTREF_PROPERTY (qreal, btc)
     QML_WRITABLE_CSTREF_PROPERTY (quint64, fb)
     QML_WRITABLE_CSTREF_PROPERTY (bool, btcconfirmed)
     QML_WRITABLE_CSTREF_PROPERTY (bool, serverconfirmed)
 public:
     FBSaleTXItem() :  QObject(nullptr) {
         m_txid = "";
-        m_btc = 0;
+        m_btc = 0.0;
         m_fb = 0;
         m_btcconfirmed = false;
         m_serverconfirmed = false;
@@ -48,8 +48,15 @@ public:
                                                     (parent,displayRole,uidRole)
     {}
 
-    QML_READONLY_CSTREF_PROPERTY(quint64, totalbtc)
+    QML_READONLY_CSTREF_PROPERTY(qreal, totalbtc)
     QML_READONLY_CSTREF_PROPERTY(quint64, totalfb)
+
+public:
+    void DoAppend(FBSaleTXItem *in) {
+        settotalbtc (m_totalbtc + in->get_btc ());
+        settotalfb (m_totalfb + in->get_fb ());
+        append(in);
+    }
 
 };
 

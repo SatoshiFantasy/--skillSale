@@ -20,15 +20,17 @@ Canvas {
             value: canvas.value,
             foreground : canvas.foreground,
             level : canvas.level,
-            side : Math.min(canvas.width, canvas.height),
-            value : canvas.value
+            side : Math.min(canvas.width, canvas.height)
+//            value : canvas.value
         })
     }
     onHeightChanged : {
+//        console.log(" qr h: " + height)
         requestPaint()
     }
 
     onWidthChanged : {
+//        console.log(" qr w: " + width)
         requestPaint()
     }
 

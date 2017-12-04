@@ -155,7 +155,7 @@ ApplicationWindow {
 
                             Label {
                                 id: available
-                                text: Number(CoinSale.totalAvailable).toLocaleString(Qt.locale("en-US"),'f',0)
+                                text: Number(Math.round(CoinSale.totalAvailable,10)).toLocaleString(Qt.locale("en-US"),'f',0)
                                 font.pixelSize: 12
                                 verticalAlignment: Text.AlignVCenter
                             }

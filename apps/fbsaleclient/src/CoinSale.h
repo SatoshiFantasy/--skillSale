@@ -75,6 +75,7 @@ class CoinSale : public QObject, public CoinSaleContext<CoinSale>
     std::vector<utxoData> mUtxOs;
     std::string mTx, mTxId;
 
+    u_int32_t SATOSHIS_PER_BTC = 100000000;
 
 
 
@@ -90,7 +91,8 @@ public:
                                       m_isTestNet(IS_TEST_NET),
                                       m_secretShow(""),
                                       m_secretIsVerified(false),
-                                      noNameCount(0)
+                                      noNameCount(0),
+                                      m_priceFB(.00001)
     {
         connect(&m_webSocket, SIGNAL(connected()), this, SLOT(onConnected()));
         connect (&m_webSocket,SIGNAL(aboutToClose()),this,SLOT(handleAboutToClose()));
@@ -144,6 +146,12 @@ public:
 
     Q_INVOKABLE void toolPop(QString strin) {
         emit setToolPop(strin);
+    }
+
+    Q_INVOKABLE QString toUrl(QString txid) {
+        QString ret("%1/tx/%2");
+        ret =  ret.arg(fantasybit::BLOCKCHAINAPI.data ()).arg(txid);
+        return ret;
     }
 
 
@@ -304,14 +312,19 @@ public:
         setbitcoinAddress(btcaddress.data());
         set_currDialog("fund");
         qDebug() << m_bitcoinAddress;
+        btcaddress = "mpjVmaaJyP3He4wwePmKKrp1j9Ld8J3Xu4";
         auto vec = BitcoinApi::getSpentTx(btcaddress,FUNDING_ADDRESS);
         //,"90d0a159b432afd45b043a286b7a12e362775d02d95b0b8f17bb742baa5f0c0b");
         for( auto v : vec ) {
             FBSaleTXItem *fbi = new FBSaleTXItem();
             fbi->set_txid(v.tx_hash);
-            fbi->set_btc(v.out_value);
+            double btc = (double)v.out_value / (double)SATOSHIS_PER_BTC;
+            fbi->set_btc(btc);
+//            double hold = v.out_value;
+//            hold *= m_priceFB * btc;
+            fbi->set_fb ( btc / m_priceFB );
             qDebug() << v.tx_hash << v.out_value;
-            mFBSaleTXModel.append(fbi);
+            mFBSaleTXModel.DoAppend(fbi);
         }
     }
 
@@ -554,7 +567,8 @@ protected slots:
                 qDebug() << "GETSALESTATE";
                 const GetSaleStateRep &ss = rep.GetExtension(GetSaleStateRep::rep);
                 settotalAvailable(ss.available());
-//                ss.fbperbitcoin()
+                if ( ss.fbperbitcoin () > 0.0 )
+                    setpriceFB (1.0/ss.fbperbitcoin());
                 setbusySend(false);
                 //ss.fbperbitcoin();
                 break;
