@@ -73,6 +73,15 @@ Pane {
                 delegate: balDelegate
                 spacing: 4
            }
+
+            ProgressBar {
+                width: parent.width
+                indeterminate: true
+                anchors.horizontalCenter: parent.horizontalCenter
+                enabled: CoinSale.waitExedos
+                visible: enabled
+            }
+
         }
 
         Component {

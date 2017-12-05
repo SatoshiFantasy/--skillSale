@@ -26,7 +26,6 @@ namespace fantasybit
     class StartMap_VerifySecret;
     class StartMap_WaitingConfirm;
     class StartMap_WaitingExedos;
-    class StartMap_WaitingPacks;
     class StartMap_Default;
     class CoinSaleState;
     template<typename DERIVED> class CoinSaleContext;
@@ -77,7 +76,6 @@ namespace fantasybit
         static StartMap_VerifySecret VerifySecret;
         static StartMap_WaitingConfirm WaitingConfirm;
         static StartMap_WaitingExedos WaitingExedos;
-        static StartMap_WaitingPacks WaitingPacks;
     };
 
     class StartMap_Default :
@@ -210,21 +208,7 @@ namespace fantasybit
         {};
 
         virtual void Entry(CoinSaleContext<CoinSale>&);
-        virtual void Exit(CoinSaleContext<CoinSale>&);
         virtual void ExedosReceived(CoinSaleContext<CoinSale>& context);
-    };
-
-    class StartMap_WaitingPacks :
-        public StartMap_Default
-    {
-    public:
-        StartMap_WaitingPacks(const char * const name, const int stateId)
-        : StartMap_Default(name, stateId)
-        {};
-
-        virtual void Entry(CoinSaleContext<CoinSale>&);
-        virtual void Exit(CoinSaleContext<CoinSale>&);
-        virtual void PacksConfirmed(CoinSaleContext<CoinSale>& context);
     };
 
     template<typename DERIVED>

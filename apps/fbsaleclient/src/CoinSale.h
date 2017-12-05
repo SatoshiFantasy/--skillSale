@@ -39,6 +39,8 @@ class CoinSale : public QObject, public CoinSaleContext<CoinSale>
     QML_READONLY_CSTREF_PROPERTY(double,priceFB)
 
     QML_READONLY_CSTREF_PROPERTY(bool,busySend)
+    QML_READONLY_CSTREF_PROPERTY(bool,checkFunds)
+    QML_READONLY_CSTREF_PROPERTY(bool,waitExedos)
     QML_WRITABLE_CSTREF_PROPERTY(QString,currDialog)
     QML_WRITABLE_CSTREF_PROPERTY(QString,currStatus)
 
@@ -64,7 +66,7 @@ class CoinSale : public QObject, public CoinSaleContext<CoinSale>
     QUrl theServer;
 
     QTimer  importOrClaimPlayerStatus;
-    QTimer  checkFundsTimer;
+    QTimer  checkFundsTimer, checkExedosTimer;
     int     noNameCount;
     bool    mSecretVerifed = false;
     bool    mHasUTXO = false;
@@ -83,16 +85,18 @@ public:
     CoinSale(const std::string &host, int port,QObject *parent = 0)
                                     : QObject(parent),
                                       mFBSaleTXModel{this,QByteArray(),{"txid"}},
-                                      m_pFBSaleTXModel(&mFBSaleTXModel),
                                       m_totalAvailable{0},
+                                      m_pFBSaleTXModel(&mFBSaleTXModel),
                                       m_busySend(true),
+                                      m_checkFunds(false),
+                                      m_waitExedos(false),
                                       m_currDialog(""),
                                       m_currStatus("starting App"),
                                       m_isTestNet(IS_TEST_NET),
                                       m_secretShow(""),
                                       m_secretIsVerified(false),
                                       noNameCount(0),
-                                      m_priceFB(.00001)
+                                      m_priceFB(0.00001)
     {
         connect(&m_webSocket, SIGNAL(connected()), this, SLOT(onConnected()));
         connect (&m_webSocket,SIGNAL(aboutToClose()),this,SLOT(handleAboutToClose()));
@@ -135,6 +139,12 @@ public:
         connect(&checkFundsTimer, SIGNAL(timeout()),
                 this, SLOT(checkFunds()),Qt::QueuedConnection);
         checkFundsTimer.setSingleShot(true);
+
+        checkExedosTimer.setInterval(10000);
+        connect(&checkExedosTimer, SIGNAL(timeout()),
+                this, SLOT(checkExedos()),Qt::QueuedConnection);
+        checkExedosTimer.setSingleShot(true);
+
 
     }
 
@@ -200,6 +210,7 @@ public:
     Q_INVOKABLE void signPlayer(QString fname) {
         mSecretDisplayed[fname.toStdString()] = false;
         mSecretVerified[fname.toStdString()] = false;
+        setsecretIsVerified (false);
         Claim();
         qDebug() << "signPlayer ";
 
@@ -312,19 +323,24 @@ public:
         setbitcoinAddress(btcaddress.data());
         set_currDialog("fund");
         qDebug() << m_bitcoinAddress;
-        btcaddress = "mpjVmaaJyP3He4wwePmKKrp1j9Ld8J3Xu4";
+//        btcaddress = "mpjVmaaJyP3He4wwePmKKrp1j9Ld8J3Xu4";
         auto vec = BitcoinApi::getSpentTx(btcaddress,FUNDING_ADDRESS);
         //,"90d0a159b432afd45b043a286b7a12e362775d02d95b0b8f17bb742baa5f0c0b");
         for( auto v : vec ) {
-            FBSaleTXItem *fbi = new FBSaleTXItem();
-            fbi->set_txid(v.tx_hash);
-            double btc = (double)v.out_value / (double)SATOSHIS_PER_BTC;
-            fbi->set_btc(btc);
-//            double hold = v.out_value;
-//            hold *= m_priceFB * btc;
-            fbi->set_fb ( btc / m_priceFB );
-            qDebug() << v.tx_hash << v.out_value;
-            mFBSaleTXModel.DoAppend(fbi);
+            if ( !mFBSaleTXModel.txExists (v.tx_hash)) {
+                FBSaleTXItem *fbi = new FBSaleTXItem();
+                fbi->set_txid(v.tx_hash);
+                double btc = (double)v.out_value / (double)SATOSHIS_PER_BTC;
+                fbi->set_btc(btc);
+    //            double hold = v.out_value;
+    //            hold *= m_priceFB * btc;
+                double dfb = btc / m_priceFB;
+                fbi->set_fb ( dfb );
+                qDebug() << v.tx_hash << v.out_value;
+                mFBSaleTXModel.DoAppend(fbi);
+                emit nameCheckGet("","new funding tx!");
+
+            }
         }
     }
 
@@ -340,6 +356,7 @@ public:
     }
 
     void StartCheckFundsTimer() {
+        setcheckFunds (true);
         checkFundsTimer.start();
     }
     void SignSendServer() {
@@ -353,7 +370,7 @@ public:
     }
 
     void StopCheckFundsTimer() {
-
+        setcheckFunds (false);
     }
 
     void VerifySecretDialog() {
@@ -373,8 +390,15 @@ public:
     void DisplayAddressBalance() {
         set_currDialog("balance");
     }
-    void StartCheckExedosTimer() {}
-    void StopCheckExedosTimer() {}
+    void StartCheckExedosTimer() {
+        setwaitExedos (true);
+        checkExedosTimer.start ();
+    }
+    void StopCheckExedosTimer() {
+        setwaitExedos (false);
+        set_currDialog("done");
+    }
+
     void DisplayAddressPacksBalance() {}
     void StopCheckPacksTimer() {}
     void StartCheckPacksTimer() {}
@@ -488,6 +512,37 @@ protected slots:
         doPk2fname(m_lastPk2name);
     }
 
+    void checkExedos() {
+        qDebug() << " checkExedos ";
+        bool isnew = false;
+        std::string btcaddress = m_bitcoinAddress.toStdString ();
+//        btcaddress = "mpjVmaaJyP3He4wwePmKKrp1j9Ld8J3Xu4";
+        auto vec = BitcoinApi::getSpentTx(btcaddress,FUNDING_ADDRESS);
+        //,"90d0a159b432afd45b043a286b7a12e362775d02d95b0b8f17bb742baa5f0c0b");
+        for( auto v : vec ) {
+            if ( !mFBSaleTXModel.txExists (v.tx_hash)) {
+                isnew = true;
+                FBSaleTXItem *fbi = new FBSaleTXItem();
+                fbi->set_txid(v.tx_hash);
+                double btc = (double)v.out_value / (double)SATOSHIS_PER_BTC;
+                fbi->set_btc(btc);
+    //            double hold = v.out_value;
+    //            hold *= m_priceFB * btc;
+                double dfb = btc / m_priceFB;
+                fbi->set_fb ( dfb );
+                qDebug() << v.tx_hash << v.out_value;
+                mFBSaleTXModel.DoAppend(fbi);
+                emit nameCheckGet("","new funding tx!");
+            }
+        }
+
+        if ( isnew )
+             ExedosReceived();
+        else
+            checkExedosTimer.start ();
+
+    }
+
     void checkFunds() {
         qDebug() << " checkFunds " << mHasUTXO;
 
@@ -567,8 +622,6 @@ protected slots:
                 qDebug() << "GETSALESTATE";
                 const GetSaleStateRep &ss = rep.GetExtension(GetSaleStateRep::rep);
                 settotalAvailable(ss.available());
-                if ( ss.fbperbitcoin () > 0.0 )
-                    setpriceFB (1.0/ss.fbperbitcoin());
                 setbusySend(false);
                 //ss.fbperbitcoin();
                 break;

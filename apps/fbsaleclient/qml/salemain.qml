@@ -213,6 +213,33 @@ ApplicationWindow {
         width: parent.width
         spacing: 15
 
+        ProgressBar {
+            Material.foreground: Material.Red
+            id: pbar
+            width: parent.width // (stackView.width / 3 ) * 2
+            anchors.horizontalCenter: parent.horizontalCenter
+            enabled: !window.first
+            visible: enabled
+            value: 0
+            background: Rectangle {
+                implicitWidth: 200
+                implicitHeight: 18
+                color: "#f9d7d7"//#e6e6e6"
+                radius: 3
+            }
+            contentItem: Item {
+                implicitWidth: 200
+                implicitHeight: 12
+
+                Rectangle {
+                    width: pbar.visualPosition * parent.width
+                    height: parent.height
+                    radius: 2
+                    color: "#17a81a"
+                }
+            }
+        }
+
 
         TabBar {
         property int prev: -1
@@ -266,55 +293,56 @@ ApplicationWindow {
             Layout.fillWidth: true;
             anchors.horizontalCenter: parent.horizontalCenter
 
-        Row {
-//            anchors.fill: parent
-            anchors.centerIn: parent
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            Layout.fillWidth: true;
-
-//            width: parent.width
-            spacing: 5
-            padding: 5
-            Label {
+            Row {
+    //            anchors.fill: parent
+                anchors.centerIn: parent
                 anchors.verticalCenter: parent.verticalCenter
-//                anchors.horizontalCenter: parent.horizontalCenter
-                id: logarea3
-                text: "..."
-    //            anchors.bottom: parent.bottom
-    //            horizontalAlignment: Text.AlignLeft
-                font.pixelSize: 10
+                anchors.horizontalCenter: parent.horizontalCenter
+
                 Layout.fillWidth: true;
+
+    //            width: parent.width
+                spacing: 5
+                padding: 5
+//                Label {
+//                    anchors.verticalCenter: parent.verticalCenter
+//    //                anchors.horizontalCenter: parent.horizontalCenter
+//                    id: logarea3
+//                    text: "..."
+//        //            anchors.bottom: parent.bottom
+//        //            horizontalAlignment: Text.AlignLeft
+//                    font.pixelSize: 10
+////                    Layout.fillWidth: true;
+//                }
+
+                Label {
+        //            anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    id: logarea2
+                    text: "..."
+                    horizontalAlignment: Text.AlignLeft
+                    font.pixelSize: 10
+
+                    Layout.fillWidth: true;
+
+        //            anchors.bottom: logarea.top
+                }
+                Label {
+                    anchors.verticalCenter: parent.verticalCenter
+
+        //            anchors.horizontalCenter: parent.horizontalCenter
+                    id: logarea
+                    text: "..."
+        //            anchors.bottom: parent.bottom
+        //            horizontalAlignment: Text.AlignLeft
+                    font.pixelSize: 10
+                    Layout.fillWidth: true;
+
+                }
+
             }
 
-        Label {
-//            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-
-            id: logarea2
-            text: "..."
-            horizontalAlignment: Text.AlignLeft
-            font.pixelSize: 10
-
-            Layout.fillWidth: true;
-
-//            anchors.bottom: logarea.top
-        }
-        Label {
-            anchors.verticalCenter: parent.verticalCenter
-
-//            anchors.horizontalCenter: parent.horizontalCenter
-            id: logarea
-            text: "..."
-//            anchors.bottom: parent.bottom
-//            horizontalAlignment: Text.AlignLeft
-            font.pixelSize: 10
-            Layout.fillWidth: true;
-
-        }
-
-        }
         }
     }
 
@@ -341,10 +369,13 @@ ApplicationWindow {
                    break;
                case "fund":
                    nexti = pagemap["Bitcoin"];
+                   pbar.value = .50;
                    break;
                case "secret":
                    doverify = false;
+                   doimport = false;
                    nexti = pagemap["Secret"];
+                   pbar.value = .25;
                    break;
                case "secretverify":
                    doverify = true;
@@ -357,6 +388,11 @@ ApplicationWindow {
 
                case "balance":
                    nexti = pagemap["Balance"];
+                   pbar.value = .75;
+                   break;
+               case "done":
+                   nexti = pagemap["Balance"];
+                   pbar.value = 1;
                    break;
                default:
                    console.log("unknown currDialog" + currDialog)
@@ -391,7 +427,7 @@ ApplicationWindow {
         }
 
         onCurrStatusChanged: {
-            logarea3.text = logarea2.text
+//            logarea3.text = logarea2.text
             logarea2.text = logarea.text
             logarea.text = "... " + currStatus
 //            logarea.text = currStatus;

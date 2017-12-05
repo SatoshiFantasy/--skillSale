@@ -105,14 +105,22 @@ public:
                              QThread * ownerThread = QThread::currentThread()) {
         QString url = QString(fantasybit::CHAINSOAPI.data()).arg("send_tx");
         RestfullClient client(QUrl(url),ownerThread);
-        QMap<QString,QString>  headers;
-        QMap<QString,QVariant> params;
-        params.insert ( QString("tx_hex"),QString(rawTx.data()));
-        QString customRoute("");
-        client.postTData(customRoute,params,headers);
+//        QMap<QString,QString>  headers;
+//        QMap<QString,QVariant> params;
+//        params.insert ( QString("tx_hex"),QString(rawTx.data()));
+       QString customRoute("");
+//        client.postTData(customRoute,params,headers);
 
-        return client.lastReply();
+//        return client.lastReply();
         //toStdString();
+
+        QJsonDocument doc;
+        QJsonObject obj;
+        obj.insert("tx_hex",QJsonValue(rawTx.data()));
+        doc.setObject(obj);
+        client.postJasonData(customRoute,"application/json",doc);
+        return client.lastReply();
+
     }
 
 

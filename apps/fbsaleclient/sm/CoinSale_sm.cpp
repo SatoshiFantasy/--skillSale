@@ -22,7 +22,6 @@ namespace fantasybit
     StartMap_VerifySecret StartMap::VerifySecret("StartMap::VerifySecret", 6);
     StartMap_WaitingConfirm StartMap::WaitingConfirm("StartMap::WaitingConfirm", 7);
     StartMap_WaitingExedos StartMap::WaitingExedos("StartMap::WaitingExedos", 8);
-    StartMap_WaitingPacks StartMap::WaitingPacks("StartMap::WaitingPacks", 9);
 
     void CoinSaleState::Buy(CoinSaleContext<CoinSale>& context)
     {
@@ -530,105 +529,22 @@ namespace fantasybit
         ctxt.StartCheckExedosTimer();
     }
 
-    void StartMap_WaitingExedos::Exit(CoinSaleContext<CoinSale>& context)
-
-{
-        CoinSale& ctxt = context.getOwner();
-
-        ctxt.StopCheckExedosTimer();
-    }
-
     void StartMap_WaitingExedos::ExedosReceived(CoinSaleContext<CoinSale>& context)
     {
         CoinSale& ctxt = context.getOwner();
 
-        if ( ctxt.isEqualFundedAmount() )
+        CoinSaleState& endState = context.getState();
+
+        context.clearState();
+        try
         {
-            context.getState().Exit(context);
-            context.clearState();
-            try
-            {
-                ctxt.DisplayAddressBalance();
-                context.setState(StartMap::WaitingPacks);
-            }
-            catch (...)
-            {
-                context.setState(StartMap::WaitingPacks);
-                throw;
-            }
-            context.getState().Entry(context);
+            ctxt.StopCheckExedosTimer();
+            context.setState(endState);
         }
-        else
+        catch (...)
         {
-            CoinSaleState& endState = context.getState();
-
-            context.clearState();
-            try
-            {
-                ctxt.DisplayAddressBalance();
-                context.setState(endState);
-            }
-            catch (...)
-            {
-                context.setState(endState);
-                throw;
-            }
-        }
-
-    }
-
-    void StartMap_WaitingPacks::Entry(CoinSaleContext<CoinSale>& context)
-
-{
-        CoinSale& ctxt = context.getOwner();
-
-        ctxt.DisplayAddressPacksBalance();
-        ctxt.StartCheckPacksTimer();
-    }
-
-    void StartMap_WaitingPacks::Exit(CoinSaleContext<CoinSale>& context)
-
-{
-        CoinSale& ctxt = context.getOwner();
-
-        ctxt.StopCheckPacksTimer();
-    }
-
-    void StartMap_WaitingPacks::PacksConfirmed(CoinSaleContext<CoinSale>& context)
-    {
-        CoinSale& ctxt = context.getOwner();
-
-        if ( !ctxt.isPacksEqualExedosAmount())
-        {
-            CoinSaleState& endState = context.getState();
-
-            context.clearState();
-            try
-            {
-                ctxt.RequestNewPacks();
-                context.setState(endState);
-            }
-            catch (...)
-            {
-                context.setState(endState);
-                throw;
-            }
-        }
-        else
-        {
-            context.getState().Exit(context);
-            context.clearState();
-            try
-            {
-                ctxt.SetVerifySecret(ctxt.isNameNew());
-                context.setState(StartMap::Init);
-            }
-            catch (...)
-            {
-                context.setState(StartMap::Init);
-                throw;
-            }
-            context.getState().Entry(context);
+            context.setState(endState);
+            throw;
         }
 
     }

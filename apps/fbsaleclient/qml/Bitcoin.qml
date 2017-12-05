@@ -10,6 +10,11 @@ Pane {
 
         readonly property int pwidth:  (bitcoinpage.availableWidth / 3) * 2
 
+        TextEdit {
+            id: cliphelper
+            visible: false
+        }
+
         Column {
             anchors.fill: parent
             spacing: 40
@@ -93,18 +98,42 @@ Pane {
                         visible: !CoinSale.secretIsVerified
                         enabled: !CoinSale.secretIsVerified
                         onClicked: {
-                            CoinSale.showAddress();
+                            if ( !CoinSale.secretIsVerified )
+                                CoinSale.showAddress();
+                            else
+                                console.log(": clicked address: " + inputField.text )
                         }
                     }
                 /**/
                 }
           }
             Label {
-            id : inputField
-//            anchors.bottom : parent.bottom
-//            anchors.bottomMargin : 30
-            anchors.horizontalCenter : parent.horizontalCenter
-            text : CoinSale.secretIsVerified ? CoinSale.bitcoinAddress : "verify secret to reveal funding bitcoin address"
+                id : inputField
+    //            anchors.bottom : parent.bottom
+    //            anchors.bottomMargin : 30
+                anchors.horizontalCenter : parent.horizontalCenter
+                text : CoinSale.secretIsVerified ? CoinSale.bitcoinAddress : "verify secret to reveal funding bitcoin address"
+            }
+
+            ProgressBar {
+                width: parent.width
+                indeterminate: true
+                anchors.horizontalCenter: parent.horizontalCenter
+                enabled: CoinSale.checkFunds
+                visible: enabled
+            }
+
         }
+
+        MouseArea {
+            enabled: CoinSale.secretIsVerified
+            anchors.fill: parent
+            onClicked: {
+                console.log("clicked MouseArea" + inputField.text );
+                cliphelper.text = inputField.text
+                cliphelper.selectAll()
+                cliphelper.copy()
+                inputField.ToolTip.show("Funding Address Copied" ,5000)
+            }
         }
 }

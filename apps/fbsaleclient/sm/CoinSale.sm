@@ -92,24 +92,10 @@ WaitingConfirm
 
 WaitingExedos
             Entry			{ DisplayAddressBalance(); StartCheckExedosTimer(); }
-            Exit			{ StopCheckExedosTimer(); }
 {
-            ExedosReceived		[ ctxt.isEqualFundedAmount() ]
-                            WaitingPacks	{ DisplayAddressBalance(); }
-
-            ExedosReceived		nil			{ DisplayAddressBalance(); }
-
+            ExedosReceived		nil			{ StopCheckExedosTimer(); }
 }
 
-WaitingPacks
-            Entry			{ DisplayAddressPacksBalance(); StartCheckPacksTimer(); }
-            Exit			{ StopCheckPacksTimer(); }
-{
-            PacksConfirmed	[ !ctxt.isPacksEqualExedosAmount()]
-                            nil				{ RequestNewPacks(); }
-
-            PacksConfirmed	Init 	{ SetVerifySecret(ctxt.isNameNew()); }
-}
 
 Default
 {

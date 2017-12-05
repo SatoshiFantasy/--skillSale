@@ -45,7 +45,9 @@ public:
                                     const QByteArray & displayRole = QByteArray (),
                                     const QByteArray & uidRole     = QByteArray ()) :
                                     QQmlObjectListModel<FBSaleTXItem>
-                                                    (parent,displayRole,uidRole)
+                                                    (parent,displayRole,uidRole),
+                                    m_totalbtc(0.0),
+                                    m_totalfb(0)
     {}
 
     QML_READONLY_CSTREF_PROPERTY(qreal, totalbtc)
@@ -56,6 +58,10 @@ public:
         settotalbtc (m_totalbtc + in->get_btc ());
         settotalfb (m_totalfb + in->get_fb ());
         append(in);
+    }
+
+    bool txExists(const QString &txid) {
+        return ( getByUid(txid) != nullptr );
     }
 
 };
