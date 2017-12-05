@@ -29,7 +29,9 @@ class FantasyAgent
     std::vector<SignedTransaction> pendingTrans{};
     std::vector<WalletD> m_secrets;
     std::unordered_map<std::string,WalletD> m_pending;
+#ifndef SKILL_SALE_ONLY
     string walldfilename;
+#endif
 
 public:
     enum status { AVAIL, NOTAVAILABLE, OWNED };
@@ -104,7 +106,9 @@ public:
 
     bool finishImportMnemonic(const std::string &pk, const std::string &name);
     std::string defaultName();
+#ifndef SKILL_SALE_ONLY
     bool readFromSecret(const std::string &readfrom, bool transfer = false);
+#endif
     bool testBtc(WalletD secret);
 
     std::string sign(const std::string &);

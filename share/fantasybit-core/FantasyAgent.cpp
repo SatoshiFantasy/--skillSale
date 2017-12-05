@@ -12,7 +12,9 @@
 #include <memory>
 #include "FantasyAgent.h"
 #include <Commissioner.h>
+#ifndef SKILL_SALE_ONLY
 #include "DataPersist.h"
+#endif
 //#include "optional.hpp"
 #include "FantasyName.h"
 #include "mnemonic.h"
@@ -30,6 +32,7 @@ using namespace fantasybit;
 
 FantasyAgent::FantasyAgent(string filename ) : client2{nullptr} {
 
+#ifndef SKILL_SALE_ONLY
     if ( filename != "" )
         walldfilename = filename;
     else
@@ -38,8 +41,10 @@ FantasyAgent::FantasyAgent(string filename ) : client2{nullptr} {
     if ( !readFromSecret( GET_ROOT_DIR() +  walldfilename, false) ) {
         qDebug() << " readFromSecret ";
     }
+#endif
 }
 
+#ifndef SKILL_SALE_ONLY
 bool FantasyAgent::readFromSecret(const std::string &readfrom, bool transfer) {
 
     std::vector<WalletD> temp;
@@ -75,17 +80,24 @@ bool FantasyAgent::readFromSecret(const std::string &readfrom, bool transfer) {
     return true;
 
 }
+#endif
 
 std::string FantasyAgent::getMnemonic(std::string fname) {
+
+    string ret = fname;
+
+#ifndef SKILL_SALE_ONLY
     Reader<WalletD> read{ GET_ROOT_DIR() +  walldfilename};
     if ( !read.good() ) {
         qDebug() << "getMnemonic bad read";
         return "bad read";
     }
 
-    string ret = fname;
     WalletD secret{};
     while (read.ReadNext(secret)) {
+#else
+    for ( auto secret : m_secrets ) {
+#endif
 
         if ( secret.fantasy_name() == fname ) {
             if ( !testIt(secret) ) {
@@ -1049,8 +1061,11 @@ bool FantasyAgent::finishImportMnemonic(const std::string &pk,
         }
     }
 
+#ifndef SKILL_SALE_ONLY
     Writer<WalletD> writer{ GET_ROOT_DIR() + walldfilename, ios::app };
     writer(sec);
+#endif
+
     m_secrets.push_back(sec);
 
     m_pending.erase(it);
@@ -1098,12 +1113,16 @@ MyFantasyName FantasyAgent::UseMnemonic(std::string mn, bool store) {
     secret.set_fantasy_name(name);
     m_secrets.push_back(secret);
 
+#ifndef SKILL_SALE_ONLY
+
     if ( store ) {
         Writer<WalletD> writer{ GET_ROOT_DIR() + walldfilename, ios::app };
         secret.set_mnemonic_key(mn);
         writer(secret);
     }
+
     qInfo() << walldfilename.data ()<< "name available saving secret to file " << name.data ();
+#endif
 
     UseName(name);
     return mfn;
@@ -1157,7 +1176,7 @@ pair<pb::secp256k1_privkey,string> FantasyAgent::makePrivMnemonic() {
         int result = RAND_bytes((unsigned char*)buf, 32);
         m_mnemonic = createMnemonic(buf);
     }
-    while ( m_mnemonic.find ("infacnt") != std::string::npos );
+    while ( m_mnemonic.find ("infacnt") != std::string::npos );  //dont use misselled infant
 
 
     return make_pair(fromMnemonic(m_mnemonic),m_mnemonic);
@@ -1203,16 +1222,19 @@ FantasyAgent::status FantasyAgent::signPlayer(std::string name) {
 //            qDebug() << "pubKeyStr |" << pubKeyStr().data() << "|";
 
 
-            Writer<WalletD> writer{ GET_ROOT_DIR() + walldfilename, ios::app };
 //            qDebug() << writer.good() << "file name " << (GET_ROOT_DIR() + secretfilename3).data();
             WalletD secret{};
             secret.set_private_key(getSecret());
             secret.set_mnemonic_key(m_mnemonic);
             secret.set_public_key(pubKeyStr());
             secret.set_fantasy_name(name);
+#ifndef SKILL_SALE_ONLY
+            Writer<WalletD> writer{ GET_ROOT_DIR() + walldfilename, ios::app };
             writer(secret);
 //            qDebug() << "\n"<< secret.DebugString ().data ();
             secret.clear_mnemonic_key();
+#endif
+
             m_secrets.push_back(secret);
 
             //LOG(lg, info) << "name available saving secret to file " << name;

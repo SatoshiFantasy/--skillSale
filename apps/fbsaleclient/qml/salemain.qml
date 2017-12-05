@@ -369,7 +369,8 @@ ApplicationWindow {
                    break;
                case "fund":
                    nexti = pagemap["Bitcoin"];
-                   pbar.value = .50;
+                   if ( CoinSale.secretIsVerified )
+                       pbar.value = .50;
                    break;
                case "secret":
                    doverify = false;

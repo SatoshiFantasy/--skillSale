@@ -3,6 +3,7 @@
 ##############
 
 
+DEFINES += SKILL_SALE_ONLY
 ## Build
 #DEFINES += PRODFOOTBALL
 DEFINES += BUILD_STABLE
