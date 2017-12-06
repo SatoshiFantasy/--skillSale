@@ -549,6 +549,7 @@ protected slots:
         else
             checkExedosTimer.start ();
 
+        saleStateGet();
     }
 
     void checkFunds() {
@@ -582,6 +583,8 @@ protected slots:
             Funded();
         else
             checkFundsTimer.start();
+
+        saleStateGet();
     }
 
     void foreverCheck() {
