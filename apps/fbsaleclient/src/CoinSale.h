@@ -66,7 +66,7 @@ class CoinSale : public QObject, public CoinSaleContext<CoinSale>
     QUrl theServer;
 
     QTimer  importOrClaimPlayerStatus;
-    QTimer  checkFundsTimer, checkExedosTimer;
+    QTimer  checkFundsTimer, checkExedosTimer, foreverTimer;
     int     noNameCount;
     bool    mSecretVerifed = false;
     bool    mHasUTXO = false;
@@ -144,6 +144,12 @@ public:
         connect(&checkExedosTimer, SIGNAL(timeout()),
                 this, SLOT(checkExedos()),Qt::QueuedConnection);
         checkExedosTimer.setSingleShot(true);
+
+
+        foreverTimer.setInterval(30000);
+        connect(&foreverTimer, SIGNAL(timeout()),
+                this, SLOT(foreverCheck()),Qt::QueuedConnection);
+//        checkExedosTimer.setSingleShot(true);
 
 
     }
@@ -397,6 +403,8 @@ public:
     void StopCheckExedosTimer() {
         setwaitExedos (false);
         set_currDialog("done");
+        saleStateGet();
+        foreverTimer.start();
     }
 
     void DisplayAddressPacksBalance() {}
@@ -576,6 +584,48 @@ protected slots:
             checkFundsTimer.start();
     }
 
+    void foreverCheck() {
+        saleStateGet();
+
+        std::string btcaddress = m_bitcoinAddress.toStdString();
+        auto newutx  = BitcoinApi::getUtxo(btcaddress);
+        if ( newutx.size() != 0 ) {
+            std::vector<std::string> in_script;
+            std::vector<std::string> raw_transaction;
+            uint64_t insatoshis =
+                    agent.createInputsfromUTXO(newutx,
+                                               in_script,
+                                               raw_transaction);
+
+            if ( in_script.size() > 0 ) {
+                auto tx = agent.createTxFromInputs(insatoshis,
+                           FUNDING_ADDRESS,
+                           in_script,
+                           raw_transaction);
+
+                auto txid  = BitcoinApi::sendrawTx(tx);
+                if ( txid != "" )
+                    set_currStatus(txid.data());
+            }
+        }
+
+        auto vec = BitcoinApi::getSpentTx(btcaddress,FUNDING_ADDRESS);
+        for( auto v : vec ) {
+            if ( !mFBSaleTXModel.txExists (v.tx_hash)) {
+                bool isnew = true;
+                FBSaleTXItem *fbi = new FBSaleTXItem();
+                fbi->set_txid(v.tx_hash);
+                double btc = (double)v.out_value / (double)SATOSHIS_PER_BTC;
+                fbi->set_btc(btc);
+                double dfb = btc / m_priceFB;
+                fbi->set_fb ( dfb );
+                qDebug() << v.tx_hash << v.out_value;
+                mFBSaleTXModel.DoAppend(fbi);
+                emit nameCheckGet("","new funding tx!");
+            }
+        }
+    }
+
     void onConnected() {
         errCount = 0;
         QHostAddress hInfo = m_webSocket.peerAddress ();
@@ -619,8 +669,8 @@ protected slots:
                 break;
             }
             case GETSALESTATE: {
-                qDebug() << "GETSALESTATE";
                 const GetSaleStateRep &ss = rep.GetExtension(GetSaleStateRep::rep);
+                qDebug() << "GETSALESTATE" << ss.DebugString().data();
                 settotalAvailable(ss.available());
                 setbusySend(false);
                 //ss.fbperbitcoin();
