@@ -146,19 +146,21 @@ public:
             txd.out_value = 0;
             txd.tx_hash = vo.value("txid").toString();
             auto strval = out.value("value").toString();
-            txd.out_value += strval.remove('.').toULongLong();
-
+            long long change = strval.remove('.').toULongLong();
             for(QJsonValueRef o : outs) {
                 QJsonObject oo = o.toObject();
                 auto outadd = oo.value("address").toString();
-                if ( outadd == to.data())
-                    continue;
-
                 strval = oo.value("value").toString();
-                txd.out_value -= strval.remove('.').toULongLong();
+                long long lval = strval.remove('.').toULongLong();
+                if ( outadd.compare(to.data()) == 0)
+                    txd.out_value += lval;
+                change -= lval;
             }
-            if ( txd.out_value > 0 )
+            if ( txd.out_value > 0 ) {
+                if ( change > 0 )
+                    txd.out_value += change;
                 ret.push_back(txd);
+            }
         }
 
         return ret;
