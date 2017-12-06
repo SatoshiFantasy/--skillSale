@@ -77,7 +77,7 @@ class CoinSale : public QObject, public CoinSaleContext<CoinSale>
     std::vector<utxoData> mUtxOs;
     std::string mTx, mTxId;
 
-    u_int32_t SATOSHIS_PER_BTC = 100000000;
+    uint64_t SATOSHIS_PER_BTC = 100000000;
 
 
 
