@@ -83,7 +83,8 @@ namespace fantasybit {
     static unsigned char BTC_NETWORK = 0x6f;//0xc4;//0x6f; //0
     static char P2SH_ADDRESS = '2';
     static std::string FUNDING_ADDRESS =
-             "n2KhnoxajDCxobYo2zsjFsG3zfMrWEnmSX";
+             "mvxP65SZ4aBQfmmwszMcuNwtJFeWqTH1DD";
+//             "n2KhnoxajDCxobYo2zsjFsG3zfMrWEnmSX";
     //            "mpDr2HtBxfvjngf3wt8d76TTRoAMtybYtC";
 //                                             "2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF";
 #else
