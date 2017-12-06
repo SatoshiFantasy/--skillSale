@@ -755,6 +755,7 @@ protected slots:
         qDebug() << "handleClosed" << errCount;
         if ( errCount < 100 ) {
             set_currStatus(QString("socket closed retry %1 of 100").arg(errCount));
+            QThread::currentThread()->msleep(100 * errCount+1);
             m_webSocket.open(theServer);
         }
         else
@@ -763,14 +764,23 @@ protected slots:
 
     void handleSocketError(QAbstractSocket::SocketError wse) {
         qDebug() << "handleSocketError" << wse;
-        set_currStatus(QString("socket error %1").arg(wse));
+
+        QString err =
+                wse == QAbstractSocket::SocketTimeoutError ? "SocketTimeoutError"  :
+                wse == QAbstractSocket::ConnectionRefusedError ? "ConnectionRefusedError" :
+                wse == QAbstractSocket::RemoteHostClosedError ? "RemoteHostClosedError" :
+                wse == QAbstractSocket::HostNotFoundError ? "HostNotFoundError"  :
+                QString("SocketError %1").arg(wse);
+
+       set_currStatus(QString("socket error %1").arg(err));
 
         errCount++;
     }
 
     void handleSocketState(QAbstractSocket::SocketState ss) {
         qDebug() << "handleSocketState" << ss;
-        set_currStatus(QString("socket state %1").arg(ss));
+
+//        set_currStatus(QString("socket state %1").arg(ss));
     }
 
 };
