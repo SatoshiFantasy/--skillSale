@@ -17,14 +17,22 @@ Pane {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: 10
-        width: (parent.width / 3) *2
+        width: (parent.width / 3) *4
         wrapMode: Text.WordWrap
 //            maximumLineCount: 20
         horizontalAlignment: Qt.AlignHCenter
-        text: "Fantasy name is your public id and Fantasybit coin address"
+        text: CoinSale.currName !== "" ?
+                  (CoinSale.currName +
+                            "is your Fantasy Name. \n It is the user name assocaited to your Fantsybit wallet, and public key" )
+                :
+                  "Step 1: Select a Fantasy Name. \n\n This is your user name, and Fantsybit wallet address. " ;
+
         Component.onCompleted: {
             console.log(parent.width)
         }
+
+        font.pixelSize: 12
+
     }
 
     Column {

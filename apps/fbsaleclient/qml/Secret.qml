@@ -56,14 +56,52 @@ Pane {
     Column {
         anchors.fill: parent
         spacing: 40
-//        width: parent.width
+        anchors.horizontalCenter: parent.horizontalCenter
 
-        Label {
-            width: parent.width
-            wrapMode: Label.Wrap
-            horizontalAlignment: Qt.AlignHCenter
-            text: "A tool tip is a short piece of text that informs the user of a control's function."
+        Column {
+            spacing: 10
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: (secretpage.width / 6) *5
+
+            Label {
+    //            width: parent.width
+                wrapMode: Label.Wrap
+                anchors.horizontalCenter: parent.horizontalCenter
+                horizontalAlignment: Qt.AlignHCenter
+                width: (secretpage.width / 6) *5
+
+    //            text: "A tool tip is a short piece of text that informs the user of a control's function."
+                text: isdisplay ?
+                          ( CoinSale.secretIsVerified ?
+                               "Write down your 12 word recover secret!"
+                             :
+                               "Step 2: Write down your 12 word recover secret!"  )
+                        :  (  isverify ?
+                                "Step 2: Verify secret words."
+                            :
+                                "Step 1: Import secret words.");
+            }
+
+            Label {
+                wrapMode: Label.Wrap
+                anchors.horizontalCenter: parent.horizontalCenter
+//                horizontalAlignment: Qt.AlignHCenter
+                width: (secretpage.width / 6) *5
+
+                text: isdisplay ?
+                          ( CoinSale.secretIsVerified ?
+                               "These words are needed to obtain your Fantsybits and to recover stuck bitcoins. Hint: Click to copy secret to clipboard"
+                             :
+                               "These words are needed to obtain your Fantsybits and to recover stuck bitcoins. Hint: Click to copy secret to clipboard" )
+                        :  (  isverify ?
+                                "Type in or paste (right click) your 12 secret words, your bain wallet. Verify your brain wallet before sending bitcoin to funding address!"
+                            :
+                                "Type in or paste (right click) your 12 secret words, your bain wallet. Verify your brain wallet before sending bitcoin to funding address! ");
+
+                font.pixelSize: 12
+            }
         }
+
 
 //    ColumnLayout {
 //        anchors.horizontalCenter: parent.horizontalCenter
@@ -172,15 +210,15 @@ Pane {
             }
         }
 
-        RowLayout {
+        Column {
 //            anchors.top: rec1.bottom
             anchors.horizontalCenter: parent.horizontalCenter
-
+            spacing: 10;
             Button {
                 id: button1
-//                enabled: CoinSale.currName === "" ||  isverify
-//                visible: enabled
-                text: isimport ? "Import" : ( isverify ? "Verify" : "OK")
+                enabled: visible //CoinSale.currName === "" ||  isverify
+                visible: !CoinSale.secretIsVerified
+                text: isimport ? "Import" : ( isverify ? "Verify Secret" : "OK got it!")
                 onClicked: {
                     if ( !isdisplay ) {
                         var words = secretOut.join(" ")  ;
@@ -227,21 +265,33 @@ Pane {
 //                visible: isimport
             }
 
-            Button {
-                id: forgotbut
-                text: "Recover"
-                enabled: isverify
-                visible: isverify
-                onClicked: {
-//                    CoinSale.toolPop("try recover");
-                    rec1.ToolTip.show("Try Recover" ,500)
+            Text {
+                    id: forgotbut
+                    enabled: isverify
+                    visible: isverify
 
-
-//                    rec1.ToolTip.show("try recover secret" ,500)
-                    CoinSale.forgot()
-
-                }
+//                    anchors.topMargin: 10
+//                    anchors.top: col1.bottom
+//                    anchors.horizontalCenter: parent.horizontalCenter
+                    textFormat: Text.RichText
+                    text: "Forgot secret?  <a href=\"import\">Click to recover</a>"
+                    font.pixelSize: 10
+                    onLinkActivated: {
+                        CoinSale.forgot()
+                    }
             }
+
+//            Button {
+//                id: forgotbut
+//                text: "Recover"
+//                enabled: isverify
+//                visible: isverify
+//                onClicked: {
+//                    rec1.ToolTip.show("Try Recover" ,500)
+//                    CoinSale.forgot()
+
+//                }
+//            }
         }
     }
 

@@ -23,6 +23,7 @@ ApplicationWindow {
     property var altpages: [ "Fantasy Name",  "Brain Wallet", "Bitcoin Address", "Transactions and Balances"  ]
 
 
+    property int  buyamount: 0
     Material.theme: Material.Light
     Material.accent: "#0080A6"// Material.Amber
     Material.primary: "#0E3656"//BlueGreyMaterial.Blue
@@ -39,15 +40,15 @@ ApplicationWindow {
         visible: !first
         Material.foreground: Material.background
         id: toobar
-//        BuyButton {}
+        implicitHeight: gl.implicitHeight
+
         RowLayout {
             spacing: 20
             anchors.fill: parent
+            visible: !CoinSale.secretIsVerified
 
             Label {
                 id: titleLabel
-//                textFormat: Text.RichText
-//                text: "ƑantayɃit<sup>+Skill</sup> Sale"
                 text: (!tabBar || tabBar.currentIndex < 0) ? "" : pages[tabBar.currentIndex]
                 font.pixelSize: 16
                 elide: Label.ElideRight
@@ -55,8 +56,212 @@ ApplicationWindow {
                 verticalAlignment: Qt.AlignVCenter
                 Layout.fillWidth: true
 //                font.family: fontfamFB
+                //                textFormat: Text.RichText
+                //                text: "ƑantayɃit<sup>+Skill</sup> Sale"
+
             }
         }
+
+
+
+        MouseArea {
+
+            anchors.fill: parent
+        GridLayout  {
+            id: gl
+            visible: CoinSale.secretIsVerified
+            height: image12.height * 1.10
+            anchors.fill: parent
+            anchors.centerIn: parent
+//            anchors.margins: 20
+            clip: true
+//                Layout.preferredHeight: 100
+//                width: parent.width * .80
+//                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+            rows: 2
+            columns:6
+            Image {
+                Layout.rowSpan: 2
+                Layout.columnSpan: 2
+
+                id: image12
+                fillMode: Image.PreserveAspectFit
+                source: "FantsyBitLogoSmall.png"
+                Layout.column: 1
+                Layout.row: 1
+
+            }
+
+            Row {
+                Layout.columnSpan: 2
+                Layout.rowSpan: 1
+                Layout.alignment: Qt.AlignBottom
+                Layout.column: 3
+                Layout.row: 1
+
+                Label {
+                    text: qsTr("price: ")
+                    font.pixelSize: 12
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignRight
+//                            Layout.columnSpan: 1
+//                            Layout.rowSpan: 1
+//                            Layout.alignment: Qt.AlignCenter
+//                            Layout.column: 3
+//                            Layout.row: 1
+
+                }
+
+                Label {
+                    text: qsTr("0.00001 BTC")
+                    font.pixelSize: 12
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+//                            Layout.columnSpan: 1
+//                            Layout.rowSpan: 1
+//                            Layout.alignment: Qt.AlignCenter
+//                            Layout.column: 4
+//                            Layout.row: 1
+
+                }
+            }
+
+            Row {
+                Layout.columnSpan: 2
+                Layout.rowSpan: 1
+                Layout.alignment: Qt.AlignTop
+                Layout.column: 3
+                Layout.row: 2
+
+                Label {
+                id: label222
+                text: qsTr("available: ")
+                font.pixelSize: 12
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignRight
+//                        Layout.alignment: Qt.AlignCenter
+//                        Layout.columnSpan: 1
+//                        Layout.rowSpan: 1
+//                        Layout.column: 3
+//                        Layout.row: 2
+
+            }
+
+                Label {
+                id: available2
+                text: Number(Math.round(CoinSale.totalAvailable,10)).toLocaleString(Qt.locale("en-US"),'f',0)
+//                                +  " ƑɃ"
+                font.pixelSize: 12
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                font.family: fontfamFB
+
+//                        Layout.columnSpan: 1
+//                        Layout.rowSpan: 1
+//                        Layout.alignment: Qt.AlignHCenter
+//                        Layout.column: 4
+//                        Layout.row: 2
+
+
+            }
+            }
+
+            SpinBox {
+                focusPolicy: Qt.StrongFocus
+                wheelEnabled: true
+                id: bbox2
+                stepSize: 1000
+                from: 1000
+                value: first ? bbox.value : box2.value
+                property int decimals: 5
+                property real realValue: value * .00001
+                to: CoinSale.totalAvailable
+                validator: DoubleValidator {
+                    bottom: Math.min(bbox.from, bbox.to)
+                    top:  Math.max(bbox.from, bbox.to)
+                }
+                textFromValue: function(value, locale) {
+                    console.log( " from value" + value)
+                    return Number(value * .00001 ).toLocaleString(Qt.locale("en-US"), 'f', bbox.decimals) + " BTC"
+                }
+
+                valueFromText: function(text, locale) {
+                    console.log( " from text " + text)
+                    var t = text.split(" ")[0]
+                    var d = Number.fromLocaleString(Qt.locale("en-US"), t)
+                    var dd = d * 100000
+                    console.log(d)
+                    console.log(d / 0.00001)
+                    console.log(dd)
+                    return Math.round(dd * 100000) / 100000
+                }
+
+                font.pixelSize: 10
+//                        editable: true
+                Layout.preferredHeight: 20
+//                        Layout.preferredHeight: contentItem.implicitHeight
+                Layout.preferredWidth: image12.implicitWidth * 2
+//                        textFromValue: function(value, locale) {
+//                            return Number(value).toLocaleString(locale, 'f', 0) + " ƑɃ";
+//                        }
+
+//                        Layout.fillWidth: true;
+                editable: true
+                onValueChanged: {
+                    console.log("new value " + value)
+//                            if ( focus ) {
+//                                console.log("box new value " + value)
+
+//                                box.value = value
+//                            }
+
+                }
+                Layout.alignment: Qt.AlignCenter
+                Layout.columnSpan: 1
+                Layout.rowSpan: 2
+                Layout.column: 6
+                Layout.row: 1
+
+
+        }
+
+            SpinBox {
+                focusPolicy: Qt.StrongFocus
+                wheelEnabled: true
+                focus: true
+                id: box2
+                stepSize: 1000
+                from: 1000
+                to: CoinSale.totalAvailable
+                font.pixelSize: 12
+                editable: true
+                Layout.preferredHeight: 20
+//                        Layout.preferredHeight: contentItem.implicitHeight
+                Layout.preferredWidth: image12.implicitWidth * 2
+                textFromValue: function(value, locale) {
+                    return Number(value).toLocaleString(locale, 'f', 0) + " ƑɃ";
+                }
+
+                valueFromText: function(text, locale) {
+                    console.log( "fb from text " + text)
+                    var t = text.split(" ")[0]
+                    var d = Number.fromLocaleString(Qt.locale("en-US"), t)
+                    return d;
+                }
+
+                font.family: fontfamFB
+
+
+               value: bbox2.value
+               Layout.alignment: Qt.AlignCenter
+                Layout.columnSpan: 1
+                Layout.rowSpan: 2
+                Layout.column: 5
+                Layout.row: 1
+            }
+        }
+        }
+
     }
 
     StackView {
@@ -74,11 +279,11 @@ ApplicationWindow {
 
             Material.theme:  Material.Dark
             ColumnLayout {
-                anchors.centerIn: parent
+//                anchors.centerIn: (parent.top - parent.center) / 2
 
                 id: columnLayout2
                 clip: false
-                anchors.topMargin: 5
+                anchors.topMargin: 130
                 spacing: 40
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -123,7 +328,6 @@ ApplicationWindow {
                         Layout.rowSpan: 2
                         Layout.columnSpan: 2
 
-                        id: image1
                         fillMode: Image.PreserveAspectFit
                         source: "FantsyBitLogoSmall.png"
                         Layout.column: 1
@@ -231,6 +435,9 @@ ApplicationWindow {
 
 
                     SpinBox {
+                        focusPolicy: Qt.WheelFocus
+                        wheelEnabled: true
+                        hoverEnabled: true
                         focus: true
                         id: bbox
 //                        value: 50
@@ -295,7 +502,9 @@ ApplicationWindow {
                 }
 
                     SpinBox {
-                        focus: true
+                        focusPolicy: Qt.WheelFocus
+                        wheelEnabled: true
+                        hoverEnabled: true
                         id: box
                         stepSize: 1000
                         from: 1000
@@ -458,7 +667,7 @@ ApplicationWindow {
     footer:
         Column {
         width: parent.width
-        spacing: 15
+        spacing: 5
 
         ProgressBar {
             Material.foreground: Material.Red

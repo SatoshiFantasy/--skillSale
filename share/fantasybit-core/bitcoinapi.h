@@ -87,7 +87,9 @@ public:
 
     static std::string sendrawTx(const std::string &rawin) {
         auto json = RestfullService::pushBitcoinTx(rawin);
-        if ( json != "Transaction Submitted") {
+        auto strret = json.toStdString ();
+        qDebug() << json << strret.data ();
+        if ( std::string::npos == strret.find ("Transaction Submitted") ) {
             auto json2 = RestfullService::pushChainsoBitcoinTx(rawin);
 
             QJsonParseError * error = NULL;
