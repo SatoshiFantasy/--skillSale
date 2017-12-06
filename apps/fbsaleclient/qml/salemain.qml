@@ -789,7 +789,7 @@ ApplicationWindow {
 
         //            anchors.horizontalCenter: parent.horizontalCenter
                     id: logarea
-                    text: "..."
+                    text: CoinSale.currStatus//"..."
         //            anchors.bottom: parent.bottom
         //            horizontalAlignment: Text.AlignLeft
                     font.pixelSize: 10

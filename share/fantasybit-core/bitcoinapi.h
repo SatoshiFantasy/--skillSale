@@ -30,11 +30,15 @@ public:
 
         auto json = RestfullService::getBlockchainBtcAddressUnspent (btcaddress);
         if ( json != "Service Unavailable") {
+            if ( json == "No free outputs to spend") {
+                qDebug() << json;
+                return ret;
+            }
 
             QJsonParseError * error = NULL;
             QJsonDocument doc = QJsonDocument::fromJson(json,error);
             if (error != NULL || doc.isEmpty()){
-                    qDebug() << " error parsing json";
+                    qDebug() << " error parsing json:" << json;
                 if ( error != NULL ) qDebug() << error->errorString();
                     return ret;
             }

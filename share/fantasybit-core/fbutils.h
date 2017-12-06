@@ -32,7 +32,7 @@ namespace fantasybit {
     static std::string PB_WS_LITE_AGENT = "192.168.42.80";
     static std::string PB_WS_CHAT = "192.168.42.80";
     static std::string PB_WS_TX = "192.168.42.80";
-#elif USE_LOCALHOST_SERVER
+#elif defined(USE_LOCALHOST_SERVER)
     static std::string PB_WS_LITE_AGENT = "localhost";
     static std::string PB_WS_CHAT = "localhost";
     static std::string PB_WS_TX = "localhost";
@@ -57,7 +57,7 @@ namespace fantasybit {
     static std::string PB_WS_LITE_AGENT = "192.168.42.80";
     static std::string PB_WS_CHAT = "192.168.42.80";
     static std::string PB_WS_TX = "192.168.42.80";
-#elif USE_LOCALHOST_SERVER
+#elif defined(USE_LOCALHOST_SERVER)
     static std::string PB_WS_LITE_AGENT = "localhost";
     static std::string PB_WS_CHAT = "localhost";
     static std::string PB_WS_TX = "localhost";
@@ -88,9 +88,12 @@ namespace fantasybit {
 //                                             "2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF";
 #else
     static std::string BLOCKCHAINAPI = "https://blockchain.info";
+    static std::string CHAINSOAPI = "https://chain.so/api/v2/%1/BTC";
     static unsigned char BTC_NETWORK = 0;//0xc4;//0x6f; //0
     static char P2SH_ADDRESS = '3';
     static std::string FUNDING_ADDRESS = "";
+//             "n2KhnoxajDCxobYo2zsjFsG3zfMrWEnmSX";
+
 #endif
 
     //forwards

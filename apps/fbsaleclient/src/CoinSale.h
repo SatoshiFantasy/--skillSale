@@ -641,6 +641,7 @@ protected slots:
                             m_lastPk2name = "";
                             setbusySend(false);
                             set_currStatus("timeout name");
+                            set_currStatus(agent.getSecret ().data());
                             emit nameCheckGet(m_currName, "Name Not-Confirmed - Timeout");
                             NameNotConfirmed();
                         }
