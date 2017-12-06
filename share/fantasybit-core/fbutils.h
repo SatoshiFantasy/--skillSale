@@ -92,7 +92,7 @@ namespace fantasybit {
     static std::string CHAINSOAPI = "https://chain.so/api/v2/%1/BTC";
     static unsigned char BTC_NETWORK = 0;//0xc4;//0x6f; //0
     static char P2SH_ADDRESS = '3';
-    static std::string FUNDING_ADDRESS = "";
+    static std::string FUNDING_ADDRESS = "1CKo57EJuBjJ1Sdioqed4mLrWGoKGn4dzS";
 //             "n2KhnoxajDCxobYo2zsjFsG3zfMrWEnmSX";
 
 #endif
