@@ -26,7 +26,7 @@ Pane {
 
     property var pastWordsin: []
 
-    property bool isimport: window.doimport && ! CoinSale.secretIsVerified
+    property bool isimport: window.doimport && !CoinSale.secretIsVerified
     property bool isverify: window.doverify && !CoinSale.secretIsVerified
     property bool isdisplay: !isimport && !isverify
     property var secretOut: []
@@ -35,9 +35,9 @@ Pane {
     property bool didpaste: false
 
     onIsdisplayChanged: {
-        console.log("onIsdisplayChanged " + isdisplay)
+//        console.log("onIsdisplayChanged " + isdisplay)
 
-        grid.update()
+//        grid.update()
 
 //        if ( !isdisplay ) {
 //            secretWordsIn = []
@@ -85,7 +85,6 @@ Pane {
             Label {
                 wrapMode: Label.Wrap
                 anchors.horizontalCenter: parent.horizontalCenter
-//                horizontalAlignment: Qt.AlignHCenter
                 width: (secretpage.width / 6) *5
 
                 text: isdisplay ?
@@ -103,17 +102,9 @@ Pane {
         }
 
 
-//    ColumnLayout {
-//        anchors.horizontalCenter: parent.horizontalCenter
-//        anchors.topMargin: 5
-////        anchors.top: parent.top
-
         Frame {
             anchors.horizontalCenter: parent.horizontalCenter
             id: rec1
-//            anchors.centerIn: parent
-//            width: 300
-//            height: 260
 
             Column {
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -195,18 +186,6 @@ Pane {
                     }
 
                 }
-
-//                ToolTip {
-//                    id: tt
-//                    parent: rec1
-//                }
-
-//                ToolTip {
-//                    id: tt2
-//                    parent: ma
-//                }
-
-
             }
         }
 
@@ -215,9 +194,10 @@ Pane {
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 10;
             Button {
+
                 id: button1
-                enabled: visible //CoinSale.currName === "" ||  isverify
-                visible: !CoinSale.secretIsVerified
+                enabled: !CoinSale.secretIsVerified //CoinSale.currName === "" ||  isverify
+//                visible: !CoinSale.secretIsVerified
                 text: isimport ? "Import" : ( isverify ? "Verify Secret" : "OK got it!")
                 onClicked: {
                     if ( !isdisplay ) {
@@ -263,6 +243,8 @@ Pane {
                     }
                 }
 //                visible: isimport
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: itemWidth / 2.5
             }
 
             Text {
@@ -280,18 +262,6 @@ Pane {
                         CoinSale.forgot()
                     }
             }
-
-//            Button {
-//                id: forgotbut
-//                text: "Recover"
-//                enabled: isverify
-//                visible: isverify
-//                onClicked: {
-//                    rec1.ToolTip.show("Try Recover" ,500)
-//                    CoinSale.forgot()
-
-//                }
-//            }
         }
     }
 

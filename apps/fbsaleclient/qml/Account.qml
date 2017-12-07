@@ -88,6 +88,7 @@ Pane {
                 font.pixelSize: 10
                 onLinkActivated: {
                     CoinSale.currDialog = "secretimport";
+//                    claimButton.enabled = false
                 }
 
                 visible: CoinSale.currName === ""

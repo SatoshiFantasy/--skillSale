@@ -264,17 +264,19 @@ ApplicationWindow {
 
     }
 
-    StackView {
+    StackLayout  {
         id: stackView
         anchors.fill: parent
 
-        ToolTip {
-            id: tt
-            parent: stackView.currentItem
-        }
+        currentIndex: tabBar.currentIndex+1
+//        ToolTip {
+//            id: tt
+//            parent: stackView.currentItem
+//        }
 
 
-        initialItem: Pane {
+//        initialItem:
+        Pane {
             id: pane
 
             Material.theme:  Material.Dark
@@ -572,74 +574,11 @@ ApplicationWindow {
             }
             }
         }
-                    /*
-                    ColumnLayout {
-                        id: columnLayout1
-                        width: 100
-                        height: 100
-                        Layout.rowSpan: 2
-                        Layout.columnSpan: 3
 
-                        RowLayout {
-                            id: rowLayout1
-                            width: 100
-                            height: 100
-                            Layout.columnSpan: 2
-
-                            Label {
-                                id: price
-                                text: qsTr(".00001")
-                                font.bold: true
-                                font.pixelSize: 14
-                            }
-
-                            Label {
-                                id: btc
-                                text: qsTr("BTC")
-                                font.bold: true
-                                font.pixelSize: 14
-                                verticalAlignment: Text.AlignVCenter
-                            }
-                        }
-
-                        RowLayout {
-                            id: rowLayout2
-                            width: 100
-                            height: 100
-
-                            Label {
-                                id: available
-                                text: Number(Math.round(CoinSale.totalAvailable,10)).toLocaleString(Qt.locale("en-US"),'f',0)
-                                font.pixelSize: 12
-                                verticalAlignment: Text.AlignVCenter
-                            }
-
-                            Label {
-                                id: label2
-                                text: qsTr("available")
-                                font.pixelSize: 12
-                                Layout.columnSpan: 1
-                                Layout.rowSpan: 1
-                                verticalAlignment: Text.AlignVCenter
-                            }
-                        }
-                    }
-
-                     Button {
-                        id: button1
-                        text: enabled ? "BUY" : "..."
-                        enabled: CoinSale.totalAvailable > 0
-                        onClicked: {
-                            CoinSale.buy()
-                        }
-
-                        Layout.columnSpan: 1
-                        Layout.rowSpan: 2
-                        Layout.alignment: Qt.AlignCenter
-                        Layout.column: 6
-                        Layout.row: 1
-
-                    }*/
+        Account {}
+        Secret {}
+        Bitcoin {}
+        Balance {}
     }
 
 
@@ -649,23 +588,19 @@ ApplicationWindow {
         running: CoinSale.busySend
     }
 
-   Label {
+    Label {
        Material.foreground: Material.Red
 
         rotation: -45
         text: "Demo Testing"
-//        color: Material.Red.toString()//"#40000000"
         anchors.centerIn: parent
         font.pixelSize: 20
         font.bold:  true
         visible: CoinSale.isTestNet
-//        font.pixelSize: ProtoScreen.font( ProtoScreen.XXLARGE)
-//        anchors.fill: parent
     }
 
 
-    footer:
-        Column {
+    footer: Column {
         width: parent.width
         spacing: 5
 
@@ -696,53 +631,23 @@ ApplicationWindow {
             }
         }
 
-
         TabBar {
-        property int prev: -1
-        id: tabBar
-        visible: !window.first
-        enabled: !window.first
-        Layout.preferredHeight:  window.first ? 0 : implicitHeight
-        width: parent.width
-        Layout.fillWidth: true
-        currentIndex: -1
-        Repeater {
-            model: window.first ? 0 : pages.length;
-            TabButton {
-                text: pages[index]
-                font.pixelSize: 10
-            }
-        }
-
-
-//        TabButton {
-//            text: pages[0]
-//            font.pixelSize: 10
-//        }
-
-        onCurrentIndexChanged: {
-            console.log("TAb current index changed" + currentIndex);
-            if ( !window.first) {
-
-                if ( prev !== currentIndex ) {
-                    if( prev+1 == currentIndex) {
-                        prev = currentIndex
-                        stackView.push("qrc:/" + pages[currentIndex] + ".qml");
-                    }
-                    else if ( prev-1 == currentIndex) {
-                        prev = currentIndex
-                        stackView.pop();
-                    }
-                    currentIndex = prev;
+            property int prev: -1
+            id: tabBar
+            visible: !window.first
+            enabled: !window.first
+            Layout.preferredHeight:  window.first ? 0 : implicitHeight
+            width: parent.width
+            Layout.fillWidth: true
+            currentIndex: -1
+            Repeater {
+                model: window.first ? 0 : pages.length;
+                TabButton {
+                    text: pages[index]
+                    font.pixelSize: 10
                 }
-//                currTitle = pages[currentIndex];
-//                stackView.replace("qrc:/" + pages[currentIndex] + ".qml")
             }
         }
-
-   }
-
-
         ToolBar {
             Material.foreground: Material.Grey
             width: parent.width
@@ -760,16 +665,6 @@ ApplicationWindow {
     //            width: parent.width
                 spacing: 5
                 padding: 5
-//                Label {
-//                    anchors.verticalCenter: parent.verticalCenter
-//    //                anchors.horizontalCenter: parent.horizontalCenter
-//                    id: logarea3
-//                    text: "..."
-//        //            anchors.bottom: parent.bottom
-//        //            horizontalAlignment: Text.AlignLeft
-//                    font.pixelSize: 10
-////                    Layout.fillWidth: true;
-//                }
 
                 Label {
         //            anchors.horizontalCenter: parent.horizontalCenter
@@ -790,8 +685,6 @@ ApplicationWindow {
         //            anchors.horizontalCenter: parent.horizontalCenter
                     id: logarea
                     text: CoinSale.currStatus//"..."
-        //            anchors.bottom: parent.bottom
-        //            horizontalAlignment: Text.AlignLeft
                     font.pixelSize: 10
                     Layout.fillWidth: true;
 
@@ -836,10 +729,12 @@ ApplicationWindow {
                    break;
                case "secretverify":
                    doverify = true;
+                   doimport = false;
                    nexti = pagemap["Secret"];
                    break;
                case "secretimport":
                    doimport = true;
+                   doverify = false;
                    nexti = pagemap["Secret"];
                    break;
 
@@ -868,18 +763,19 @@ ApplicationWindow {
             console.log( "namehcek " + name + status)
             if(status === "true" ) {
                 window.nameStatsText = "name Check Pass... sending claim name tx to blockchain for: " + name;
-                toobar.ToolTip.show(window.nameStatsText ,5000)
+                toobar.ToolTip.show( "name Check Pass... sending claim name tx to blockchain for: " + name ,5000)
                 CoinSale.signPlayer(name);
             }
             else if ( status === "false"){
-                window.nameStatsText = name + " not Available - try new name or import"
+                window.nameStatsText = name + " not Available - try new name or import";
 //                stackView.ToolTip.show(window.nameStatsText ,10000)
-                  toobar.ToolTip.show(window.nameStatsText ,5000)
+                toobar.ToolTip.show(name + " not Available - try new name or import",5000)
 
             }
             else {
+                var toshow = name + status
                 window.nameStatsText = name + ": " + status
-                toobar.ToolTip.show(window.nameStatsText ,6000)
+                toobar.ToolTip.show(toshow ,6000)
             }
         }
 
