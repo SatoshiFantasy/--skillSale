@@ -773,7 +773,7 @@ ApplicationWindow {
 
             }
             else {
-                var toshow = name + status
+                var toshow = name + " " + status
                 window.nameStatsText = name + ": " + status
                 toobar.ToolTip.show(toshow ,6000)
             }
