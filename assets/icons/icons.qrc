@@ -37,8 +37,6 @@
         <file alias="arrow_drop_down.svg">navigation_arrow_drop_down.svg</file>
     </qresource>
     <qresource prefix="/">
-        <file>logoOnly.png</file>
-        <file>logoFinal.png</file>
         <file>icons/ic_timeline.png</file>
         <file>icons/action_account_circle.png</file>
         <file>icons/ic_poll.png</file>
@@ -47,7 +45,6 @@
         <file>icons/navigation_menu.png</file>
         <file>icons/action_settings.png</file>
         <file>icons/power_settings.png</file>
-        <file>logo-wordsOnly.png</file>
         <file>icons/ic_sync.png</file>
         <file>bird-anim-sprites.png</file>
         <file>icons/newspaper.png</file>
