@@ -2,18 +2,6 @@
 #define FBSALETX_H
 
 #include <QObject>
-
-
-//#include <QObject>
-//#include <QString>
-//#include "../QmlSupermacros/QQmlConstRefPropertyHelpers.h"
-//#include "../QmlModels/QQmlObjectListModel.h"
-//#include "../QmlSuperMacros/QQmlHelpersCommon.h"
-//#include "NameData.pb.h"
-//#include <QQmlHelpersCommon.h>
-//#include "FantasyName.h"
-//#include "Commissioner.h"
-
 #include <QQmlConstRefPropertyHelpers.h>
 #include <QQmlObjectListModel.h>
 

@@ -134,6 +134,7 @@ public:
         importOrClaimPlayerStatus.setInterval(2000);
         connect(&importOrClaimPlayerStatus, SIGNAL(timeout()),
                 this, SLOT(getPlayerStatus()),Qt::QueuedConnection);
+        importOrClaimPlayerStatus.setSingleShot(true);
 
         checkFundsTimer.setInterval(4000);
         connect(&checkFundsTimer, SIGNAL(timeout()),
@@ -249,6 +250,7 @@ public:
 
     void DoPostTx(const SignedTransaction &st) {
 #ifndef NO_DOPOSTTX
+        // to protoblock dataagent
         auto txstr = st.SerializeAsString();
         RestfullClient rest(QUrl(PAPIURL.data()));
         rest.postRawData("tx","octet-stream",txstr.data(),((size_t)txstr.size()));
@@ -407,29 +409,15 @@ public:
         foreverTimer.start();
     }
 
+    //from state machine
     void DisplayAddressPacksBalance() {}
     void StopCheckPacksTimer() {}
     void StartCheckPacksTimer() {}
     void RequestNewPacks() {}
     void SetVerifySecret(bool) {}
-
     void NameNotConfirmed() {}
 
-
-
-//    void checkname(const QString &name) {
-//        qDebug() << " in checkname " << name;
-//        WsReq req;
-//        req.set_ctype(CHECKNAME);
-//        CheckNameReq cnr;
-//        cnr.set_fantasy_name(name.toStdString());
-//        req.MutableExtension(CheckNameReq::req)->CopyFrom(cnr);
-//        qDebug() << " checkname sending " << req.DebugString().data();
-//        auto txstr = req.SerializeAsString();
-//        QByteArray qb(txstr.data(),(size_t)txstr.size());
-//        m_webSocket.sendBinaryMessage(qb);
-//    }
-
+    //wbsocket server requests
     void doPk2fname(const std::string &pkstr) {
         WsReq req;
         Pk2FnameReq pkreq;
@@ -520,6 +508,7 @@ protected slots:
         doPk2fname(m_lastPk2name);
     }
 
+    //timers
     void checkExedos() {
         qDebug() << " checkExedos ";
         bool isnew = false;
@@ -629,6 +618,7 @@ protected slots:
         }
     }
 
+    //websocket client
     void onConnected() {
         errCount = 0;
         QHostAddress hInfo = m_webSocket.peerAddress ();
@@ -655,7 +645,6 @@ protected slots:
            // qDebug() << "LightGateway::onBinaryMessageRecived " << rep.ShortDebugString().data();
         #endif
 
-//        set_currStatus("onBinaryMessageRecived");
         switch ( rep.ctype()) {
             case SIGNPACK: {
                 qDebug() << "SIGNPACK";
@@ -684,71 +673,74 @@ protected slots:
                 std::string name= pk2.fname();
 
                 qDebug() << pk2.DebugString().data();
-                if ( m_lastPk2name == pk2.req().pk()) {
-                    if ( name == "" ) {
-                        noNameCount++;
-                        if ( noNameCount > ((m_lastCheckName == "") ? 2 : 25) ) {
-                            importOrClaimPlayerStatus.stop();
-                            noNameCount = 0;
-                            m_lastCheckName = "";
-                            m_lastPk2name = "";
-                            setbusySend(false);
-                            set_currStatus("timeout name");
-                            set_currStatus(agent.getSecret ().data());
-                            emit nameCheckGet(m_currName, "Name Not-Confirmed - Timeout");
+                if ( m_lastPk2name != pk2.req().pk()) {
+                    if ( m_lastPk2name != "" )
+                        importOrClaimPlayerStatus.start();
+                    break;
+                }
+                if ( name == "" ) {
+                    noNameCount++;
+                    if ( noNameCount > ((m_lastCheckName == "") ? 2 : 25) ) {
+//                            importOrClaimPlayerStatus.stop();
+                        noNameCount = 0;
+                        m_lastCheckName = "";
+                        m_lastPk2name = "";
+                        setbusySend(false);
+                        set_currStatus("timeout name");
+                        set_currStatus(agent.getSecret ().data());
+                        emit nameCheckGet(m_currName, "Name Not-Confirmed - Timeout");
+                        NameNotConfirmed();
+                    }
+                    else
+                        importOrClaimPlayerStatus.start();
+                }
+                else if ( name ==  m_lastCheckName ) {
+//                            importOrClaimPlayerStatus.stop();
+                    noNameCount = 0;
+
+                    if ( agent.UseName(name) )
+                        setcurrName(name.data());
+
+                    m_lastCheckName = "";
+                    m_lastPk2name = "";
+                    setbusySend(false);
+                    emit nameCheckGet(m_currName, "Name Confirmed!");
+                    NameConfimed();
+                }
+                else if ( m_lastCheckName == "" ) {
+
+//                            importOrClaimPlayerStatus.stop();
+                    noNameCount = 0;
+                    setbusySend(false);
+
+                    if ( agent.finishImportMnemonic(m_lastPk2name,name) ) {
+                        if ( agent.UseName(name) ) {
+                            setcurrName(name.data());
+                            emit nameCheckGet(m_currName, "Name Confirmed");
+
+                            NameConfimed();
+                        }
+                        else {
+                            emit nameCheckGet(m_currName, "Name Not Confirmed");
                             NameNotConfirmed();
                         }
                     }
                     else {
-                        if ( name ==  m_lastCheckName ) {
-                            importOrClaimPlayerStatus.stop();
-                            noNameCount = 0;
-
-                            if ( agent.UseName(name) )
-                                setcurrName(name.data());
-
-                            m_lastCheckName = "";
-                            m_lastPk2name = "";
-                            setbusySend(false);
-                            emit nameCheckGet(m_currName, "Name Confirmed!");
-                            NameConfimed();
-                        }
-                        else if ( m_lastCheckName == "" ) {
-
-                            importOrClaimPlayerStatus.stop();
-                            noNameCount = 0;
-                            setbusySend(false);
-
-                            if ( agent.finishImportMnemonic(m_lastPk2name,name) ) {
-                                if ( agent.UseName(name) ) {
-                                    setcurrName(name.data());
-                                    emit nameCheckGet(m_currName, "Name Confirmed");
-
-                                    NameConfimed();
-                                }
-                                else {
-                                    emit nameCheckGet(m_currName, "Name Not Confirmed");
-                                    NameNotConfirmed();
-                                }
-                            }
-                            else {
-                                emit nameCheckGet(m_currName, "Name Not Confirmed");
-                                NameNotConfirmed();
-                            }
-
-
-                            m_lastPk2name = "";
-                        }
-                        else {
-                            importOrClaimPlayerStatus.stop();
-                            noNameCount = 0;
-                            emit nameCheckGet(m_lastCheckName.data(), "false");
-                            m_lastCheckName = "";
-                            m_lastPk2name = "";
-                            setbusySend(false);
-                            NameNotConfirmed();
-                        }
+                        emit nameCheckGet(m_currName, "Name Not Confirmed");
+                        NameNotConfirmed();
                     }
+
+
+                    m_lastPk2name = "";
+                }
+                else {
+//                            importOrClaimPlayerStatus.stop();
+                        noNameCount = 0;
+                        emit nameCheckGet(m_lastCheckName.data(), "false");
+                        m_lastCheckName = "";
+                        m_lastPk2name = "";
+                        setbusySend(false);
+                        NameNotConfirmed();
                 }
                 break;
             }
@@ -757,49 +749,13 @@ protected slots:
                 const CheckNameRep &cnr = rep.GetExtension(CheckNameRep::rep);
                 if (  cnr.req().fantasy_name() != "")
                     emit nameAvail(cnr.req().fantasy_name().data(),cnr.isavail() == "yes");
+                break;
             }
             default:
                 break;
         }
-//            case PK2FNAME: {
-//                const Pk2FnameRep &pk2 = rep.GetExtension(Pk2FnameRep::rep);
-//                auto name= pk2.fname();
-
-//                if ( m_lastSignedplayer == pk2.req().pk()) {
-//                    if ( name == "" ) {
-//                        noNameCount++;
-//                        if ( noNameCount > 50) {
-//                            signPlayerStatus.stop();
-//                            noNameCount = 0;
-//                        }
-//                        break;
-//                    }
-//                    else {
-//                        signPlayerStatus.stop();
-//                        noNameCount = 0;
-//                        if ( m_myPubkeyFname.at(m_lastSignedplayer) ==  name) {
-//                            auto fnp = Commissioner::AddName(name,m_lastSignedplayer);
-//                            if ( fnp != nullptr ) {
-//                                fnp->setBlockNump(pk2.fnb().block(),pk2.fnb().count());
-//                                emit NewFantasyName(pk2.fnb());
-//                                UseName(name.data());
-//                            }
-//                        }
-
-//                        m_lastSignedplayer = "";
-//                    }
-//                }
-//                break;
-//            }
-
-
-
     }
 
-//    void getSignedPlayerStatus() {
-//        qDebug() << " getSignedPlayerStatus ";
-//        doPk2fname(m_lastSignedplayer);
-//    }
     void handleAboutToClose() {
         qDebug() << "handleAboutToClose" << errCount;
         set_currStatus("handleAboutToClose");
