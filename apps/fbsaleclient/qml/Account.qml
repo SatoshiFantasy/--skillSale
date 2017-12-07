@@ -12,28 +12,42 @@ Pane {
     property alias nameStatsText: nameStatusL.text
 //    property alias tooltip: textField1.ToolTip
 
-    Label {
+
+    Column {
         id: lbl
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: 10
-        width: (parent.width / 3) *4
-        wrapMode: Text.WordWrap
-//            maximumLineCount: 20
-        horizontalAlignment: Qt.AlignHCenter
-        text: CoinSale.currName !== "" ?
-                  (CoinSale.currName +
-                            "is your Fantasy Name. \n It is the user name assocaited to your Fantsybit wallet, and public key" )
-                :
-                  "Step 1: Select a Fantasy Name. \n\n This is your user name, and Fantsybit wallet address. " ;
+        width: (secretpage.width / 6) *5
+        spacing: 10
 
-        Component.onCompleted: {
-            console.log(parent.width)
+        Label {
+//            width: parent.width
+            wrapMode: Label.Wrap
+            anchors.horizontalCenter: parent.horizontalCenter
+            horizontalAlignment: Qt.AlignHCenter
+            width: (secretpage.width / 6) *5
+
+            text: CoinSale.currName !== "" ?
+                      CoinSale.currName +
+                                " is your Fantasy Name."  :
+                      "Step 1: Select a Fantasy Name. " ;
         }
 
-        font.pixelSize: 12
+        Label {
+            wrapMode: Label.Wrap
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: (secretpage.width / 6) *5
 
+            text: CoinSale.currName !== "" ?
+                                "It is the user name assocaited to your Fantsybit wallet, and public key"
+                    :
+                      " This is your user name, and Fantsybit wallet address. " ;
+
+            font.pixelSize: 12
+        }
     }
+
 
     Column {
         spacing: 2
