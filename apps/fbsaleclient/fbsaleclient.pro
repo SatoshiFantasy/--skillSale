@@ -37,6 +37,7 @@ HEADERS += $$PWD/src/runguard.h \
     $$PWD/src/CoinSale.h \
     $$PWD/src/fbsaletx.h
 
+RC_FILE = myap.rc
 
 FANTASYBITLIB += fantasybit-core
 FBCOREPATH = $$OUT_PWD/../../share/$$FANTASYBITLIB
