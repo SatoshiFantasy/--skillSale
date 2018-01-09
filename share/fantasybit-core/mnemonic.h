@@ -844,7 +844,7 @@ const mnemonic_words wordlist = {
     "indoor",
     "industry",
     "ineligible",
-    "infacnt",
+    "infant",
     "infamous",
     "inflict",
     "inform",
