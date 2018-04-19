@@ -113,7 +113,7 @@ ApplicationWindow {
                 }
 
                 Label {
-                    text: qsTr("0.00001 BTC")
+                    text: qsTr("0.00002 BTC")
                     font.pixelSize: 12
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
@@ -269,20 +269,11 @@ ApplicationWindow {
         anchors.fill: parent
 
         currentIndex: tabBar.currentIndex+1
-//        ToolTip {
-//            id: tt
-//            parent: stackView.currentItem
-//        }
-
-
-//        initialItem:
         Pane {
             id: pane
 
             Material.theme:  Material.Dark
             ColumnLayout {
-//                anchors.centerIn: (parent.top - parent.center) / 2
-
                 id: columnLayout2
                 clip: false
                 anchors.topMargin: 130
@@ -290,16 +281,6 @@ ApplicationWindow {
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: parent.width
-
-//                Label {
-//                    width: parent.width
-//                    wrapMode: Label.Wrap
-//                    horizontalAlignment: Qt.AlignHCenter
-//                    text: "Fantasy name is your public id and Fantasybit wallet address, some use their twitter handle others remain anonymous"
-//                    Component.onCompleted: {
-//                        console.log(parent.width)
-//                    }
-//                }
 
                 Label {
                     id: label1
@@ -313,11 +294,6 @@ ApplicationWindow {
                     enabled: true
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
-
-//                BusyIndicator {
-//                    anchors.centerIn: parent
-//                    running: !button1.enabled
-//                }
 
                 GridLayout {
                     Layout.preferredHeight: 100
@@ -349,26 +325,14 @@ ApplicationWindow {
                             font.pixelSize: 12
                             verticalAlignment: Text.AlignVCenter
                             horizontalAlignment: Text.AlignRight
-//                            Layout.columnSpan: 1
-//                            Layout.rowSpan: 1
-//                            Layout.alignment: Qt.AlignCenter
-//                            Layout.column: 3
-//                            Layout.row: 1
-
                         }
 
                         Label {
                             id: price
-                            text: qsTr("0.00001 BTC")
+                            text: qsTr("0.00002 BTC")
                             font.pixelSize: 12
                             verticalAlignment: Text.AlignVCenter
                             horizontalAlignment: Text.AlignHCenter
-//                            Layout.columnSpan: 1
-//                            Layout.rowSpan: 1
-//                            Layout.alignment: Qt.AlignCenter
-//                            Layout.column: 4
-//                            Layout.row: 1
-
                         }
                     }
 
@@ -380,61 +344,22 @@ ApplicationWindow {
                         Layout.row: 2
 
                         Label {
-                        id: label2
-                        text: qsTr("available: ")
-                        font.pixelSize: 12
-                        verticalAlignment: Text.AlignVCenter
-                        horizontalAlignment: Text.AlignRight
-//                        Layout.alignment: Qt.AlignCenter
-//                        Layout.columnSpan: 1
-//                        Layout.rowSpan: 1
-//                        Layout.column: 3
-//                        Layout.row: 2
-
-                    }
+                            id: label2
+                            text: qsTr("available: ")
+                            font.pixelSize: 12
+                            verticalAlignment: Text.AlignVCenter
+                            horizontalAlignment: Text.AlignRight
+                        }
 
                         Label {
-                        id: available
-                        text: Number(Math.round(CoinSale.totalAvailable,10)).toLocaleString(Qt.locale("en-US"),'f',0)
-//                                +  " ƑɃ"
-                        font.pixelSize: 12
-                        verticalAlignment: Text.AlignVCenter
-                        horizontalAlignment: Text.AlignHCenter
-                        font.family: fontfamFB
-
-//                        Layout.columnSpan: 1
-//                        Layout.rowSpan: 1
-//                        Layout.alignment: Qt.AlignHCenter
-//                        Layout.column: 4
-//                        Layout.row: 2
-
-
+                            id: available
+                            text: Number(Math.round(CoinSale.totalAvailable,10)).toLocaleString(Qt.locale("en-US"),'f',0)
+                            font.pixelSize: 12
+                            verticalAlignment: Text.AlignVCenter
+                            horizontalAlignment: Text.AlignHCenter
+                            font.family: fontfamFB
+                        }
                     }
-                    }
-
-//                    Label {
-//                        id: lblh
-//                        text: "ƑɃ Qty"
-//                        font.pixelSize: 10
-//                        Layout.columnSpan: 1
-//                        Layout.rowSpan: 1
-//                        verticalAlignment: Text.AlignBottom
-//                        Layout.alignment: Qt.AlignHCenter
-//                        Layout.column: 5
-//                        Layout.row: 1
-//                        font.family: fontfamFB
-
-//                    }
-
-//                    Column {
-//                        Layout.columnSpan: 1
-//                        Layout.rowSpan: 2
-//                        Layout.alignment: Qt.AlignCenter
-//                        Layout.column: 5
-//                        Layout.row: 1
-//                        Layout.preferredHeight: 40
-
-
 
                     SpinBox {
                         focusPolicy: Qt.WheelFocus
@@ -442,12 +367,6 @@ ApplicationWindow {
                         hoverEnabled: true
                         focus: true
                         id: bbox
-//                        value: 50
-//                        width: itemWidth
-
-//                        verticalAlignment: Text.AlignBottom
-//                        Layout.alignment: Qt.AlignCenter
-//                        Layout.preferredWidth: window.width / 4
                         stepSize: 1000
                         from: 1000
                         value: box.value
@@ -475,32 +394,17 @@ ApplicationWindow {
                         }
 
                         font.pixelSize: 10
-//                        editable: true
                         Layout.preferredHeight: 20
-//                        Layout.preferredHeight: contentItem.implicitHeight
                         Layout.preferredWidth: button1.implicitWidth * 2
-//                        textFromValue: function(value, locale) {
-//                            return Number(value).toLocaleString(locale, 'f', 0) + " ƑɃ";
-//                        }
-
-//                        Layout.fillWidth: true;
                         editable: true
                         onValueChanged: {
                             console.log("new value " + value)
-//                            if ( focus ) {
-//                                console.log("box new value " + value)
-
-//                                box.value = value
-//                            }
-
                         }
                         Layout.alignment: Qt.AlignBottom
                         Layout.columnSpan: 1
                         Layout.rowSpan: 1
                         Layout.column: 5
                         Layout.row: 1
-
-
                 }
 
                     SpinBox {
@@ -514,7 +418,6 @@ ApplicationWindow {
                         font.pixelSize: 12
                         editable: true
                         Layout.preferredHeight: 20
-//                        Layout.preferredHeight: contentItem.implicitHeight
                         Layout.preferredWidth: button1.implicitWidth * 2
                         textFromValue: function(value, locale) {
                             return Number(value).toLocaleString(locale, 'f', 0) + " ƑɃ";
@@ -528,8 +431,6 @@ ApplicationWindow {
                         }
 
                         font.family: fontfamFB
-
-
                        value: bbox.value
                         Layout.alignment: Qt.AlignTop
                         Layout.columnSpan: 1
@@ -539,7 +440,6 @@ ApplicationWindow {
 
 
                     }
-//                    }
 
                     Button {
                        id: button1
@@ -554,24 +454,8 @@ ApplicationWindow {
                        Layout.alignment: Qt.AlignCenter
                        Layout.column: 6
                        Layout.row: 1
-
-                   }
-
-//                    Label {
-//                        id: lblh2
-//                        text: "BTC Cost"
-//                        font.pixelSize: 10
-//                        Layout.columnSpan: 1
-//                        Layout.rowSpan: 1
-//                        verticalAlignment: Text.AlignBottom
-//                        Layout.alignment: Qt.AlignHCenter
-//                        Layout.column: 7
-//                        Layout.row: 1
-
-//                    }
-
-
-            }
+                    }
+                }
             }
         }
 
@@ -580,7 +464,6 @@ ApplicationWindow {
         Bitcoin {}
         Balance {}
     }
-
 
     BusyIndicator {
         id: busy

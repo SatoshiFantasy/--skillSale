@@ -96,7 +96,7 @@ public:
                                       m_secretShow(""),
                                       m_secretIsVerified(false),
                                       noNameCount(0),
-                                      m_priceFB(0.00001)
+                                      m_priceFB(0.00002)
     {
         connect(&m_webSocket, SIGNAL(connected()), this, SLOT(onConnected()));
         connect (&m_webSocket,SIGNAL(aboutToClose()),this,SLOT(handleAboutToClose()));
