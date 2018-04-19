@@ -172,17 +172,17 @@ ApplicationWindow {
                 id: bbox2
                 stepSize: 1000
                 from: 1000
-                value: first ? bbox.value : box2.value
+                value: (first ? bbox.value : box2.value) * 2
                 property int decimals: 5
                 property real realValue: value * .00001
                 to: CoinSale.totalAvailable
                 validator: DoubleValidator {
-                    bottom: Math.min(bbox.from, bbox.to)
-                    top:  Math.max(bbox.from, bbox.to)
+                    bottom: Math.min(bbox2.from, bbox2.to)
+                    top:  Math.max(bbox2.from, bbox2.to)
                 }
                 textFromValue: function(value, locale) {
                     console.log( " from value" + value)
-                    return Number(value * .00001 ).toLocaleString(Qt.locale("en-US"), 'f', bbox.decimals) + " BTC"
+                    return Number(value * .00001 ).toLocaleString(Qt.locale("en-US"), 'f', bbox2.decimals) + " BTC"
                 }
 
                 valueFromText: function(text, locale) {
@@ -252,7 +252,7 @@ ApplicationWindow {
                 font.family: fontfamFB
 
 
-               value: bbox2.value
+               value: bbox2.value / 2
                Layout.alignment: Qt.AlignCenter
                 Layout.columnSpan: 1
                 Layout.rowSpan: 2
@@ -369,7 +369,7 @@ ApplicationWindow {
                         id: bbox
                         stepSize: 1000
                         from: 1000
-                        value: box.value
+                        value: box.value * 2
                         property int decimals: 5
                         property real realValue: value * .00001
                         to: CoinSale.totalAvailable
@@ -431,7 +431,7 @@ ApplicationWindow {
                         }
 
                         font.family: fontfamFB
-                       value: bbox.value
+                        value: bbox.value / 2
                         Layout.alignment: Qt.AlignTop
                         Layout.columnSpan: 1
                         Layout.rowSpan: 1
