@@ -170,8 +170,8 @@ ApplicationWindow {
                 focusPolicy: Qt.StrongFocus
                 wheelEnabled: true
                 id: bbox2
-                stepSize: 1000
-                from: 1000
+                stepSize: 2000
+                from: 2000
                 value: (first ? bbox.value : box2.value) * 2
                 property int decimals: 5
                 property real realValue: value * .00001
@@ -367,8 +367,8 @@ ApplicationWindow {
                         hoverEnabled: true
                         focus: true
                         id: bbox
-                        stepSize: 1000
-                        from: 1000
+                        stepSize: 2000
+                        from: 2000
                         value: box.value * 2
                         property int decimals: 5
                         property real realValue: value * .00001

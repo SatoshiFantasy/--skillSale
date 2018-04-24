@@ -28,9 +28,19 @@ Pane {
                     horizontalAlignment: Qt.AlignHCenter
 
                     textFormat: Text.RichText
+                    text: CoinSale.currName
+                    font.pixelSize: 24
+                }
+
+                Label {
+                    width: parent.width
+                    wrapMode: Label.Wrap
+                    horizontalAlignment: Qt.AlignHCenter
+
+                    textFormat: Text.RichText
                     text: "ƑɃ " + Number(CoinSale.pFBSaleTXModel.totalfb).toLocaleString(Qt.locale("en-US"),'f',0)
 
-                    font.pixelSize: 24
+                    font.pixelSize: 20
                     font.family: fontfamFB
 
                 }
@@ -58,7 +68,13 @@ Pane {
 //                text: "Transactions and Balance"
 //            }
 
-            ListView {
+//            Flickable {
+//                contentHeight: lv.implicitHeight
+//                anchors.horizontalCenter: parent.horizontalCenter
+//                width: pwidth
+
+                ListView {
+                    id: lv
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 width: pwidth
@@ -73,7 +89,7 @@ Pane {
                 delegate: balDelegate
                 spacing: 4
            }
-
+//            }
             ProgressBar {
                 width: parent.width
                 indeterminate: true

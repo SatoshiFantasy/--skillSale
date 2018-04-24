@@ -85,7 +85,7 @@ public:
     CoinSale(const std::string &host, int port,QObject *parent = 0)
                                     : QObject(parent),
                                       mFBSaleTXModel{this,QByteArray(),{"txid"}},
-                                      m_totalAvailable{0},
+                                      m_totalAvailable{},
                                       m_pFBSaleTXModel(&mFBSaleTXModel),
                                       m_busySend(true),
                                       m_checkFunds(false),
@@ -343,7 +343,7 @@ public:
     //            double hold = v.out_value;
     //            hold *= m_priceFB * btc;
                 double dfb = btc / m_priceFB;
-                fbi->set_fb ( dfb );
+                fbi->set_fb ( std::lround(dfb) );
                 qDebug() << v.tx_hash << v.out_value;
                 mFBSaleTXModel.DoAppend(fbi);
                 emit nameCheckGet("","new funding tx!");

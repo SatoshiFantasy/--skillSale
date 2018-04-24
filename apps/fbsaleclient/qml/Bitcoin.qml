@@ -32,7 +32,7 @@ Pane {
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     text:   CoinSale.secretIsVerified ?
-                                   "Step 3: Send payment to Bitcoin Address below." :
+                                   ("Fund " + CoinSale.currName + "- Send payment to Bitcoin Address below.") :
                                     "Final step before funding!" ;
                 }
 

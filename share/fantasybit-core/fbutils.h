@@ -72,7 +72,7 @@ namespace fantasybit {
 #endif
 
 
-    static std::string FBSALE_LOCALNET = "192.168.42.80";
+    static std::string FBSALE_LOCALNET = "192.168.42.71";
     static std::string FBSALE_LOCALHOST = "localhost";
     static std::string FBSALE_HOST = PB_WS_LITE_AGENT;
     static int FBSALE_AGENT_PORT = 9222;
@@ -92,7 +92,9 @@ namespace fantasybit {
     static std::string CHAINSOAPI = "https://chain.so/api/v2/%1/BTC";
     static unsigned char BTC_NETWORK = 0;//0xc4;//0x6f; //0
     static char P2SH_ADDRESS = '3';
-    static std::string FUNDING_ADDRESS = "1CKo57EJuBjJ1Sdioqed4mLrWGoKGn4dzS";
+    static std::string FUNDING_ADDRESS = "1GKUkwVSyxKeCFc5tTT5v9q8jre4gxnBPk";//fork2
+
+//            "1CKo57EJuBjJ1Sdioqed4mLrWGoKGn4dzS"; //fork1
 //             "n2KhnoxajDCxobYo2zsjFsG3zfMrWEnmSX";
 
 #endif

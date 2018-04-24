@@ -534,7 +534,7 @@ std::string FantasyAgent::createTxFromInputs(uint64_t inputsatoshis,
 
     auto pk = m_priv.get_public_key().serialize();
     std::string fordebugout = "";
-    uint64_t satoshifee = 25000;
+    uint64_t satoshifee = 5000;
     int numoutputs = 2;
     {
         auto size = ( unsigned char )numoutputs;
