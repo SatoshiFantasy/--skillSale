@@ -9,3 +9,4 @@ SUBDIRS += \
 
 
 
+CONFIG += c++11

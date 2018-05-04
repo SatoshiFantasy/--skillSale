@@ -23,7 +23,7 @@
 //#include <QFile>
 //#include <QString>
 #include <QStandardPaths>
-#include <RestFullService.h>
+//#include "RestFullService.h"
 #include <fbutils.h>
 #include <QDebug>
 

@@ -25,5 +25,10 @@ win32{
 #    DEFINES += GOOGLE_NAMESPACE=google
 }
 
+linux {
+    GENERATEDDIR = $$PWD/../generated
+#    DEFINES += GOOGLE_NAMESPACE=google
+}
+
 
 INCLUDEPATH += $$GENERATEDDIR

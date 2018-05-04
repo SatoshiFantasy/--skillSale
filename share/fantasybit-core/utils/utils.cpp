@@ -88,4 +88,36 @@ std::string to_hex( const std::string &in ) {
 
 sha256::operator std::string()const { return  str(); }
 
+std::string toBtcAddress(const public_key_data &in) {
+    pb::sha256 ret;
+    hashc(in.key_data, 33, ret.data);
+    qDebug() << ret.str ().data ();
+    unsigned char hash2data[25];
+    unsigned char *hash2 = hash2data;//new unsigned char[25];
+
+    RIPEMD160(ret.data, sizeof(ret.data), (unsigned char*)&hash2[1]);
+    hash2[0] = fantasybit::BTC_NETWORK;
+    hashc(hash2, 21, ret.data);
+    pb::sha256  ret2x;
+    hashc(ret.data,sizeof(ret.data),ret2x.data);
+    memcpy((unsigned char*)&hash2[21],ret2x.begin (),4);
+    std::string   temp =  to_hex(hash2,25);
+
+    //       temp;
+    //        temp.assign((char *)hash2,25);
+
+    qDebug() << " temp string " << temp.data ();
+    return EncodeBase58(hash2,hash2+25);
+}
+
+std::string fromBtcAddress(const std::string &in) {
+    std::vector<unsigned char> out;
+    DecodeBase58 (in,out);
+    return to_hex(((unsigned char*)out.data())+1,out.size ()-5);
+}
+
+std::string to_base58(const public_key_data &in) {
+    return EncodeBase58( in.key_data, in.key_data+33);
+}
+
 }

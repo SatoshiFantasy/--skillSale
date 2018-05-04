@@ -100,7 +100,7 @@ private:
             case LeaderBoardRefreshInterval: return 5;
             case ConfirmSendAndCopyProjections: return true;
             case GenesisTranactionLocation :
-            #ifdef Q_OS_WIN
+            #if defined(Q_OS_WIN) || defined(Q_OS_LINUX)
                 return storagePath(storageDirName)+"/"+"GenesisTransition-Tr-Transaction.txt";
             #endif
             #ifdef Q_OS_MAC
@@ -112,7 +112,7 @@ private:
             }
             #endif
             case GenesisTransition2014Location :
-            #ifdef Q_OS_WIN
+            #if defined(Q_OS_WIN) || defined(Q_OS_LINUX)
                 return storagePath(storageDirName)+"/"+"Transition2014.out";
             #endif
             #ifdef Q_OS_MAC
@@ -125,7 +125,7 @@ private:
             #endif
 
             case GenesisBootLocation2016 :
-            #ifdef Q_OS_WIN
+            #if defined(Q_OS_WIN) || defined(Q_OS_LINUX)
                 return storagePath(storageDirName);//+"bootstraptest201601.out";
             #endif
             #ifdef Q_OS_MAC

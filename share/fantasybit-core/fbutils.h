@@ -125,7 +125,8 @@ namespace fantasybit {
 
 
     static std::string GET_ROOT_DIR() {
-        return Platform::instance()->getRootDir();
+        Platform *p = Platform::instance();
+        return "";//p->getRootDir();
     }
 
     static std::string FB_PORT(int port) {

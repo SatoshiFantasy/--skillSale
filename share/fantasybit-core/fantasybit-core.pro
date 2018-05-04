@@ -18,6 +18,7 @@ contains(DEFINES, PRODFOOTBALL){
 
 INCLUDEPATH += $$PWD/bitcoin-core-base58
 INCLUDEPATH += $$PWD/utils
+INCLUDEPATH += $$PWD
 
 SOURCES += \
     city.cpp \

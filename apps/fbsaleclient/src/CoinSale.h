@@ -17,15 +17,16 @@
 #include "FantasyAgent.h"
 
 #include "StateData.pb.h"
-#include <fbutils.h>
+#include "fbutils.h"
 #include <QString>
 #include <QTimer>
-#include <RestfullService.h>
+#include "RestfullService.h"
 
 #include "CoinSale_sm.h"
 #include <mnemonic.h>
 #include <bitcoinapi.h>
 #include <fbsaletx.h>
+#include <cmath>
 
 namespace fantasybit {
 

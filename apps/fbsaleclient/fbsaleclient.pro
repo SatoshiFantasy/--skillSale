@@ -9,6 +9,9 @@ CONFIG += c++11
 QT += qml quick core websockets network xmlpatterns qml-private quick-private quickcontrols2
 TEMPLATE = app
 
+#QMAKE_CXXFLAGS_CXX11 = -std=c++11
+
+
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -50,6 +53,9 @@ message(FBCOREPATH $$FBCOREPATH)
 win32:CONFIG(release, debug|release): LIBS += -L$$FBCOREPATH/release/ -l$$FANTASYBITLIB
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$FBCOREPATH/debug/ -l$$FANTASYBITLIB
 else:macx: LIBS += -L$$FBCOREPATH/ -l$$FANTASYBITLIB
+else:linux: LIBS += -L$$FBCOREPATH/debug/lib$${FANTASYBITLIB}.a #-L$$FBCOREPATH/ -llib$${FANTASYBITLIB}.a
+
+#CONFIG(debug, debug|release): LIBS += -L$$FBCOREPATH/debug/ -l$$FANTASYBITLIB
 
 
 win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$FBCOREPATH/release/lib$${FANTASYBITLIB}.a

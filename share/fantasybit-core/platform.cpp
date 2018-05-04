@@ -1,5 +1,5 @@
 #include "platform.h"
-#include <appsettings.h>
+#include "appsettings.h"
 #include <QDir>
 #include <QStandardPaths>
 #include <QCoreApplication>

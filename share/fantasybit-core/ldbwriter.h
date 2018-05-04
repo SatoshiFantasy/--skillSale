@@ -2,7 +2,7 @@
 #define LDBWRITER_H
 
 #include <leveldb/db.h>
-#include <qdebug>
+//#include <qdebug>
 #include <utils.h>
 #include <string>
 #include <StateData.pb.h>

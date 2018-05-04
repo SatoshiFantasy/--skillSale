@@ -5,3 +5,4 @@ SUBDIRS += \
 #    $$PWD/fbsaleserv
 
 
+CONFIG += c++11

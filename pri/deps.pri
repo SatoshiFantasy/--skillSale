@@ -4,7 +4,7 @@ include ($$PWD/defs.pri)
 ## Globals
 ##############
 
-DIRPREFIX = $$PWD/../protoblock-prebuiltLibs
+DIRPREFIX = /home/jay/work/protoblock-prebuiltlibs
 
 
 ##############
@@ -125,16 +125,33 @@ android {
 ##############
 ##   LINUX
 ##############
-linux!android{
+linux {
         message(Linux Build)
-        CONFIG += link_pkgconfig
-        PKGCONFIG += openssl \
-                    protobuf \
 
-        ##  SECP251K1
-        LIBS +=$$DIRPREFIX/linux/lib/libsecp256k1.a
-        PRE_TARGETDEPS += $$DIRPREFIX/linux/lib/libsecp256k1.a
+        INCLUDEPATH += $$DIRPREFIX/linux/include/
+        DEPENDPATH += $$DIRPREFIX/linux/include/
+
+        LIBS += /usr/local/lib/libprotobuf.a
+        PRE_TARGETDEPS += /usr/local/lib/libprotobuf.a
+
+        LIBS += $$DIRPREFIX/linux/lib/libleveldb.a
+        LIBS += -lssl #/usr/local/lib/libssl.a
+#        PRE_TARGETDEPS += /usr/local/lib/libssl.a
+
+#        LIBS+=$$DIRPREFIX/osx/lib/libcrypto.a
+#        PRE_TARGETDEPS+=$$DIRPREFIX/osx/lib/libcrypto.a
+
+#        DEFINES += GOOGLE_NAMESPACE=google
+
+#        CONFIG += link_pkgconfig
+#        PKGCONFIG += openssl \
+#                    protobuf \
+
+#        ##  SECP251K1
+#        LIBS +=$$DIRPREFIX/linux/lib/libsecp256k1.a
+#        PRE_TARGETDEPS += $$DIRPREFIX/linux/lib/libsecp256k1.a
 
         DEFINES += GOOGLE_NAMESPACE=google
 }
 
+message(xxx $$INCLUDEPATH)

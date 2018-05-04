@@ -6,12 +6,13 @@
 
 #include <secp256k1/hash_impl.h>
 #include <secp256k1/secp256k1.h>
+#include <secp256k1/hash.h>
 
 #include <google/protobuf/message.h>
 
 #include <city.hpp>
-#include <base58.h>
-#include <genericsingleton.h>
+#include "base58.h"
+#include "genericsingleton.h"
 #include <openssl/ripemd.h>
 #include <sstream>
 #include <iomanip>
@@ -234,7 +235,7 @@ namespace pb {
     };
 
     inline void hashc(const unsigned  char *in,size_t size,unsigned char *out32) {
-        secp256k1_sha256_t hasher;
+        secp256k1_sha256 hasher;
         secp256k1_sha256_initialize(&hasher);
         secp256k1_sha256_write(&hasher, in, size);
         secp256k1_sha256_finalize(&hasher, out32);
@@ -295,27 +296,7 @@ namespace pb {
         return ret;
     }
 
-    static std::string toBtcAddress(const public_key_data &in ) {
-        pb::sha256 ret;
-        hashc(in.key_data, 33, ret.data);
-        qDebug() << ret.str ().data ();
-        unsigned char hash2data[25];
-        unsigned char *hash2 = hash2data;//new unsigned char[25];
-
-        RIPEMD160(ret.data, sizeof(ret.data), (unsigned char*)&hash2[1]);
-        hash2[0] = fantasybit::BTC_NETWORK;
-        hashc(hash2, 21, ret.data);
-        pb::sha256  ret2x;
-        hashc(ret.data,sizeof(ret.data),ret2x.data);
-        memcpy((unsigned char*)&hash2[21],ret2x.begin (),4);
-        std::string   temp =  to_hex(hash2,25);
-
-//       temp;
-//        temp.assign((char *)hash2,25);
-
-        qDebug() << " temp string " << temp.data ();
-        return EncodeBase58(hash2,hash2+25);
-    }
+    static std::string toBtcAddress(const public_key_data &in );
 
 //    static std::string toRedeemScript(const public_key_data &in ) {
 //        pb::sha256 ret;
@@ -330,15 +311,9 @@ namespace pb {
 
 //    }
 
-    static std::string fromBtcAddress(const std::string &in ) {
-        std::vector<unsigned char> out;
-        DecodeBase58 (in,out);
-        return to_hex(((unsigned char*)out.data())+1,out.size ()-5);
-    }
+    static std::string fromBtcAddress(const std::string &in );
 
-    static std::string to_base58( const public_key_data &in ) {
-        return EncodeBase58( in.key_data, in.key_data+33);
-    }
+    static std::string to_base58( const public_key_data &in );
 
     static std::string to_base58( const char* d, size_t s ) {
         return EncodeBase58( (const unsigned char*)d, (const unsigned char*)d+s ).c_str();
