@@ -113,7 +113,7 @@ ApplicationWindow {
                 }
 
                 Label {
-                    text: qsTr("0.00002 BTC")
+                    text: qsTr("0.00003 BTC")
                     font.pixelSize: 12
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
@@ -170,8 +170,8 @@ ApplicationWindow {
                 focusPolicy: Qt.StrongFocus
                 wheelEnabled: true
                 id: bbox2
-                stepSize: 2000
-                from: 2000
+                stepSize: 3000
+                from: 3000
                 value: (first ? bbox.value : box2.value) * 2
                 property int decimals: 5
                 property real realValue: value * .00001
@@ -329,7 +329,7 @@ ApplicationWindow {
 
                         Label {
                             id: price
-                            text: qsTr("0.00002 BTC")
+                            text: qsTr("0.00003 BTC")
                             font.pixelSize: 12
                             verticalAlignment: Text.AlignVCenter
                             horizontalAlignment: Text.AlignHCenter
@@ -367,9 +367,9 @@ ApplicationWindow {
                         hoverEnabled: true
                         focus: true
                         id: bbox
-                        stepSize: 2000
-                        from: 2000
-                        value: box.value * 2
+                        stepSize: 30000
+                        from: 3000
+                        value: box.value * 3
                         property int decimals: 5
                         property real realValue: value * .00001
                         to: CoinSale.totalAvailable
@@ -412,7 +412,7 @@ ApplicationWindow {
                         wheelEnabled: true
                         hoverEnabled: true
                         id: box
-                        stepSize: 1000
+                        stepSize: 10000
                         from: 1000
                         to: CoinSale.totalAvailable
                         font.pixelSize: 12
@@ -431,7 +431,7 @@ ApplicationWindow {
                         }
 
                         font.family: fontfamFB
-                        value: bbox.value / 2
+                        value: bbox.value / 3.0
                         Layout.alignment: Qt.AlignTop
                         Layout.columnSpan: 1
                         Layout.rowSpan: 1
